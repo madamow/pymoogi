@@ -1,0 +1,14 @@
+ewfind
+standard_out   'out1'
+summary_out    'out2'
+model_in       'ptps1413.odfnew'
+lines_in       'lines_abf.dat'
+atmosphere    0
+molecules     1 
+lines         1 
+flux/int      0 
+damping       0 
+obspectrum    0
+plot          0
+units         0 
+strong        0 

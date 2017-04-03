@@ -1,0 +1,85 @@
+
+Dear MOOG users:
+
+The first major overhaul of MOOG in several years has occurred.  Andy 
+McWilliam has worked especially on corrected and expanded "Barklem"
+damping data and algorithms.  Several folks, especially Christian Johnson, 
+Andy McWilliam, Caty Pilachowski, Marc Schaeuble, and Jennifer Sobeck, 
+have contributed a lot of testing time to verify the coding.  I appreciate
+all your comments that were received, even if I don't cite you by
+name.
+
+Below I list the major changes to the code.  As always, final 
+responsibility for MOOG rests with me, and I will be very grateful 
+to anyone who can identify bugs (they undoubtedly exist) in the 
+new code.  Please compare the new outputs to those you are familiar 
+with in old code versions, and make sure that they are the same 
+or similar (see below).
+
+Yes, the MOOG writeup needs to be updated.  I'll get to it "soon".
+
+      Regards, Chris Sneden
+
+
+---------------------------------------------------------------------------
+
+Here are the most significant changes to MOOG:
+
+--- Solar abundance defaults are those of Asplund et al. 2009, ARA&A.
+
+--- A more sensible default molecule list for equilibrium computations
+    has been put in place.  If the user does not specify any value 
+    of the (new) parameter "molset", or says "molset 0", a set molecules 
+    involving only H, C, N, O, Mg, and Ti will be employed.  If the 
+    user instead explicitly says "molset 1" then a much larger set 
+    of molecules (more suited to M-star calculations) will be employed 
+   in molecular equilibrium.  All this is detailed in comment 
+   statements in Bmolec.f .
+
+--- At Andy's suggestion, I put a damper in Linabund.f so that when an
+    synthesized EW is needing another iteration to match the observed
+    EW, AND the log(RW) > -4.7, then the abundance change is slowed
+    down (this seems to get predicted and observed EWs to agree more
+    easily for strong lines).
+
+--- Andy's corrections to Barklem damping and his additions of radiative 
+    damping for all Barklem lines have been implemented.
+
+--- A fix has been made to the stupidity that Caty and collaborators 
+    found for molecular lines in abfind.
+
+--- Corrections have been made to the explicit damping routine "trudamp" 
+    (meaning that now it works!) and shift of Andy's Ca II K-line 
+    explicit damping from "damping" to "trudamp".
+
+--- If the input damping number from the user is > 1e-4 then that is 
+    the value the user wants; this is a change from > 1e-5.  99.9%
+    of users will not encounter this situation.
+
+--- I added arbitrary explicitly huge radiatiive damping constants 
+    for CH 3693A, and Ca I 6318, 6343, 6361A autoionization lines; the
+    constants are set empirically to match the breadth of the lines;  the
+    user can modify this by multiplying the assumed damping by the 
+    damping number that is the 5th parameter in that line's input
+    to the linelist (wavelength, ID, chi, loggf, dampnum).
+
+--- A trap has been set to catch users who are attempting to make 
+    synthetic spectrum wavelength step sizes more precise than 0.001A. 
+
+--- Abundance outputs (particularly those relevant to EW analyses) now
+    will have numbers with 3 significant digits instead of 2.  Moreover,
+    a new column in the abfind and ewfind summary output files gives
+    the numeric species value of each line.  The naive user will
+    undoubtedly believe in the "accuracy" of these 3-digit abundances,
+    but my attitude is "not my problem".
+
+--- Various and sundry internal plumbing changes have been done to make 
+    routines more clear and hopefully less fragile.  Only a true fan
+    of coding would be interested in these, and I can't remember a 
+    lot of them.
+
+
+
+
+
+

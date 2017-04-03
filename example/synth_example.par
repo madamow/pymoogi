@@ -1,0 +1,30 @@
+synth
+standard_out    'out1'
+summary_out     'out2'
+smoothed_out    'out3'
+model_in        'ptps1413.odfnew'
+lines_in        '6100_6105.lin'
+observed_in     'Li_6103_612630.asc'
+atmosphere      1
+lines           1
+molecules       2
+flux/int        0
+damping         1
+plot            2
+isotopes      4    5
+607.01214    1.0   1.0   1.0   1.0   1.0
+607.01314    20.   20.   20.   20.   20.
+  3.0007     1.0   1.0   1.0   1.0   1.0
+  3.0006     100.  100. 100. 100. 100.
+abundances    4    5
+    8    0. .0 .0 .0 .0
+    7    0.6 0.6 0.6 0.6 0.6
+    6    -.3 -.3 -.3 -.3 -.3
+    3    2.6 2.65 2.7 2.75 2.8
+synlimits
+   6100.0 6105.0    0.02    5.00
+plotpars       1
+   6101.0 6105.0    0.00    1.05
+     0.00 -0.015   0.000    1.00
+   g        0.10     0.0     0.0     0.0     0.0
+obspectrum     5
