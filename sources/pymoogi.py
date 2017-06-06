@@ -1039,8 +1039,12 @@ class ABPlot(object):
         horizontalalignment='center',
         transform=ax[1].transAxes,fontsize='smaller')
         
+        ymin = self.species_tab[:,6].min() - 0.5
+        ymax = self.species_tab[:,6].max() + 0.5
+        
         for iax in [0,1,2]:
            ax[iax].set_ylabel("log eps")
+           ax[iax].set_ylim(ymin,ymax)
         
     def update_plot(self):
         clear()
