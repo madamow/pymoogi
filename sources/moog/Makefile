@@ -36,7 +36,7 @@ FC = gfortran -O2 -g
 all: MOOG ;
 	@echo -----------------------------------------------------------------
 	@echo 
-	@echo Compilatios successful.
+	@echo Compilation successful.
 	@echo Now export the MOOG_PATH.
 	@echo check README.md file for instructions
 	@echo
