@@ -43,4 +43,4 @@ Do not forget to `source` your .bashrc or .profile file.
 #### Who do I talk to? ####
 
 * Email me if you need any help or if you have an idea how to make pymoogi better:
-madamow[at]astro.as.utexas.edu
+madamow[at]icloud.com
