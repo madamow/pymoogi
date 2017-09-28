@@ -104,7 +104,12 @@ def isfloat(value):
 def str_to_list(s):
     #Write long str as a list
     #divide long string, get lines without spaces
+    
+    #Trace and replace \r
+    s = s.replace('\r', '').replace('\t', ' ')
+    
     lines= s.split('\n')
+    
     tab=[]
     driver = lines[0]
     for line in lines[1:]:
