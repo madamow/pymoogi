@@ -159,6 +159,7 @@ def list_to_dict(sf):
         dict['isotopes'][1:]=sorted(dict['isotopes'][1:], key=getKey)
     except KeyError:
         pass
+
     return driver,dict
 
 ##Recreate back proper string
@@ -169,7 +170,7 @@ def dict_to_str(driver,dict):
           'observed_in','atmosphere',
           'trudamp','units','lines','molecules',
           'flux/int','fluxlimits','coglimits','blenlimits',
-          'obspectrum','iraf','damping','plot','histogram']
+          'iraf','damping','plot','histogram']
 
 
     for elem in keys:
