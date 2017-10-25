@@ -168,8 +168,9 @@ def dict_to_str(driver,dict):
           'lines_in','strong','stronglines_in','freeform','opacit',
           'observed_in','atmosphere',
           'trudamp','units','lines','molecules',
-          'flux/int ','fluxlimits','coglimits','blenlimits',
+          'flux/int','fluxlimits','coglimits','blenlimits',
           'obspectrum','iraf','damping','plot','histogram']
+
 
     for elem in keys:
         if elem in dict.keys():
