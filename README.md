@@ -28,16 +28,18 @@ For running pyMOOGi you will need:
 * clone or download pyMOOGi from repository
 * export path to moog directory:
 
-  `export MOOGPATH=/your/path/to/pymoogi/sources/moog`
+  `export MOOGPATH=/your/path/to/pymoogi/pymoogi/moog`
 
 Make sure that your system noticed those changes: check your .bashrc or .profile file, you should see MOOGPATH there. 
 Do not forget to `source` your .bashrc or .profile file.
 
-* go to /your/path/to/pymoogi/sources/moog
+* go to /your/path/to/pymoogi/pymoogi/moog
 * run Makefile (just type `make` in terminal) - there might be some warnings, but at the end you should get an executable file called MOOG
+* go to /your/path/to/pymoogi/pymoogi/moog and run setup file:
+`python setup.py install`
 * now you are ready to run some calculations. Go to example catalog and type:
 
-`python ../sources/pymoogi.py synth_example.par`
+`pymoogi synth_example.par`
 
 
 #### Who do I talk to? ####
