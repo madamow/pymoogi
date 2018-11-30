@@ -23,7 +23,12 @@ class SynthPlot(object):
         self.pars = copy.deepcopy(self.org_pars)
         self.p2_flag = False
         self.flag = ''
-        self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
+        self.obs_in_flag = False
+        self.obs = np.array([])
+        if 'observed_in' in self.pars.keys():
+            self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
+            self.obs_in_flag = True
+
         self.points = []
         self.xylim = map(float, self.pars['plotpars'][1])
         self.driver = 'synth'     
@@ -42,7 +47,8 @@ class SynthPlot(object):
 
     def ax_plot(self):
         # some basic formatting on plot
-        self.ax.plot(self.lam, self.flux, 'o', color=rcParams['lines.color'])
+        if self.obs_in_flag:
+            self.ax.plot(self.obs[:, 0], self.obs[:, 1], 'o', color=rcParams['lines.color'])
         self.ax.set_xlim(self.xylim[0], self.xylim[1])
         self.ax.set_ylim(self.xylim[2], self.xylim[3])
 
@@ -63,7 +69,7 @@ class SynthPlot(object):
     def bx_plot(self):
         # Plot O-C on second panel
         # bx.xaxis.set_minor_locator( ticker.AutoMinorLocator() )
-        yoc = np.interp(self.sflux[0][0], self.lam, self.flux)
+        yoc = np.interp(self.sflux[0][0], self.obs[:, 0], self.obs[:,1])
     
         colors = []
         for spec in self.sflux:
@@ -119,7 +125,7 @@ class SynthPlot(object):
                 veil = float(self.pars['veil'])
                 self.sflux[i, 1, :] = (spec[1] + veil)/(1. + veil)
 
-        if self.p2_flag is True:
+        if self.p2_flag is True and self.obs_in_flag is True:
             self.ax = plt.subplot2grid((2, 1), (0, 0))
             self.bx = plt.subplot2grid((2, 1), (1, 0), sharex=self.ax)
             self.ax_plot()
@@ -150,9 +156,13 @@ class SynthPlot(object):
             title_obj = self.ax.set_title(self.pars['title'])
 
         # Print input files' names
-        files_info = self.pars['observed_in'][0] + "\n" + \
-                     self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
-        
+
+        if self.obs_in_flag:
+            files_info = self.pars['observed_in'][0] + "\n" + \
+                         self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
+        else:
+            files_info = self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
+
         # Set smoothing info:
         smo_info = "smoothing: "+str(self.pars['plotpars'][3][0]) + " = "
         smo_nr = filter(lambda x: float(x) != 0, self.pars['plotpars'][3][1:])
@@ -289,11 +299,12 @@ class SynthPlot(object):
     def apply_shifts(self):
         # watch for double shifts!
         v_shift, w_shift, a_fac, m_fac = self.pars['plotpars'][2]
-        self.lam = self.obs[:, 0] + float(w_shift)
+        print w_shift
+        self.obs[:, 0] = self.obs[:, 0] + float(w_shift)
         l_shift = float(v_shift) / light_speed
-        self.lam = self.lam * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
-        self.flux = self.obs[:, 1] * float(m_fac) + float(a_fac)
-    
+        self.obs[:, 0] = self.obs[:, 0] * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
+        self.obs[:, 1] = self.obs[:, 1] * float(m_fac) + float(a_fac)
+
     def find_multip_res(self, factor, d):
         yobs, model = d
         if self.flag == 'r':
@@ -476,8 +487,8 @@ class SynthPlot(object):
             if 'abundances' in self.pars.keys():
                 sno = int(self.pars['abundances'][0][1])
                 for elem in enumerate(self.pars['abundances'][1:]):
-                    print "%3s" % "", "%10s" % elem[0], \
-                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][:sno]))
+                    print "%3s" % "", "%10s" % elem[1][0], \
+                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][1][:sno]))
                 print ""
             
             if 'isotopes' in self.pars.keys():
@@ -546,26 +557,31 @@ class SynthPlot(object):
 
     ####################################################################
     def run_synth(self):
-        self.apply_shifts()
-        
+        if self.obs_in_flag is True:
+            self.apply_shifts()
+
         quit_moog = False
         while not quit_moog:
             self.do_plot()
             clear()
             
             print_driver(self.driver)
+            if not self.obs_in_flag:
+                print " !!! No observed spectrum provided"
+                print " !!! Operations on observed spectrum are not active\n"
+
             self.print_options()
 
             self.flag = raw_input()
             if self.flag == 'q':
                 quit_moog = True
-            elif self.flag == 'a' or self.flag == 'r':
+            elif self.obs_in_flag and (self.flag == 'a' or self.flag == 'r'):
                 self.rescale_obs()
                 self.apply_shifts()
-            elif self.flag == 'w':
+            elif self.obs_in_flag and self.flag == 'w':
                 self.w_shift()
                 self.apply_shifts()
-            elif self.flag == 'v':
+            elif self.obs_in_flag and self.flag == 'v':
                 self.v_shift()
                 self.apply_shifts()
             elif self.flag == 'h' or self.flag == 'f':
