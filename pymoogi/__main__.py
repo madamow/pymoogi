@@ -44,10 +44,16 @@ def main():
     SM_style()
     plt.ion()
 
-    if driver == 'synth' and params['plotpars'][0] == 1:
+    if driver == 'synth' and int(params['plot'][0]) > 0:
+        # show plot
+        # parameters for plot are defined by user
         p = SynthPlot(params)
         p.run_synth()
-        
+    elif driver == 'synth' and params['plotpars'][0] == 1 and int(params['plot'][0]) == 0:
+        # do not show plot
+        # creates two output files, no output with smoothed synthetic spectra
+        run_moog(driver, params)
+
     elif driver == 'abfind':
         p = AbfindPlot(params)
         p.run()

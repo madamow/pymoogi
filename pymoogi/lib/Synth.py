@@ -16,34 +16,45 @@ from read_out_files import out2_synth, out3_synth
 light_speed = sc.c * 0.001
 
 
+def print_options():
+    print "OPTIONS?    s=new smoothing     r=rescale obs."
+    print "            a=add # to obs.     h=hardcopy"
+    print "            c=change bounds     q=quit"
+    print "            m=redo same plot    o=orig. plot bounds"
+    print "            v=velocity shift    w=wavelength shift "
+    print "            z=use zoom button   p=cursor position"
+    print "            t=change title      f=postscript file "
+    print "            n=new abundances    d=obs/syn deviation"
+    print "            l=add veiling       u=undo all; replot"
+    print "\nWhat is your choice? "
+
+
 class SynthPlot(object):
 
     def __init__(self, org_pars):
         self.org_pars = org_pars
         self.pars = copy.deepcopy(self.org_pars)
+
+        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
+        self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
+
         self.p2_flag = False
         self.flag = ''
         self.obs_in_flag = False
         self.obs = np.array([])
-        if 'observed_in' in self.pars.keys():
+
+        if 'observed_in' in self.pars.keys() or int(self.pars['plot'][0]) == 2:
             self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
             self.obs_in_flag = True
 
         self.points = []
-        self.xylim = map(float, self.pars['plotpars'][1])
-        self.driver = 'synth'     
+        if self.pars['plotpars'][0] == 1:
+            self.xylim = map(float, self.pars['plotpars'][1])
+        else:
+            self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
+        self.driver = 'synth'
 
-    def print_options(self):
-        print "OPTIONS?    s=new smoothing     r=rescale obs."
-        print "            a=add # to obs.     h=hardcopy"
-        print "            c=change bounds     q=quit"
-        print "            m=redo same plot    o=orig. plot bounds"
-        print "            v=velocity shift    w=wavelength shift "
-        print "            z=use zoom button   p=cursor position"
-        print "            t=change title      f=postscript file "
-        print "            n=new abundances    d=obs/syn deviation"
-        print "            l=add veiling       u=undo all; replot"
-        print "\nWhat is your choice? "
+        self.labels = []
 
     def ax_plot(self):
         # some basic formatting on plot
@@ -110,11 +121,9 @@ class SynthPlot(object):
     
     def do_plot(self):
         self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
-        self.out3 = out3_synth(self.pars['smoothed_out'][0][1:-1])
-        self.sflux = np.array(copy.deepcopy(self.out3), dtype=float)
-        
+        self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
+
         # Create labels
-        self.labels = []
         for i, spec in enumerate(self.sflux):
             s = ''
             for l in self.out2[i][2]:
@@ -148,15 +157,8 @@ class SynthPlot(object):
         self.ax.yaxis.set_minor_locator(ticker.AutoMinorLocator())
         x_formatter = ticker.ScalarFormatter(useOffset=False)
         self.ax.xaxis.set_major_formatter(x_formatter)
-        
-        # Set title
-        if self.pars['title'] == "":
-            title_obj = self.ax.set_title(self.out2[0][1])
-        else:
-            title_obj = self.ax.set_title(self.pars['title'])
 
         # Print input files' names
-
         if self.obs_in_flag:
             files_info = self.pars['observed_in'][0] + "\n" + \
                          self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
@@ -164,10 +166,13 @@ class SynthPlot(object):
             files_info = self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
 
         # Set smoothing info:
-        smo_info = "smoothing: "+str(self.pars['plotpars'][3][0]) + " = "
-        smo_nr = filter(lambda x: float(x) != 0, self.pars['plotpars'][3][1:])
-        for item in smo_nr:
-            smo_info = smo_info + item + ", "
+        if self.pars['plotpars'][0] == 1:
+            smo_info = "smoothing: "+str(self.pars['plotpars'][3][0]) + " = "
+            smo_nr = filter(lambda x: float(x) != 0, self.pars['plotpars'][3][1:])
+            for item in smo_nr:
+                smo_info = smo_info + item + ", "
+        else:
+            smo_info = ''
 
         extra_info = files_info + smo_info + "\n"
 
@@ -223,11 +228,20 @@ class SynthPlot(object):
             self.pars['plotpars'][1][3] = trf
 
     ####################################################################
+    # Check and edit plotpar parameter is it was 0 and user made changes
+    # in default plot settings
+    def add_plotparams(self):
+        if self.pars['plotpars'][0] == 0:
+            self.pars['plotpars'] = [1,
+                                     [str(self.xylim[0]), str(self.xylim[1]), str(self.xylim[2]), str(self.xylim[3])],
+                                     ['0.', '0.', '0.', '1.'], ['n', '0.', '0.', '0.', '0.', '0.']]
+
+    ####################################################################
     # Change smoothing
     ####################################################################
+
     def smo_g(self):
-        print "GIVE THE FWHM OF THE GAUSSIAN FUNCTION: [", \
-            self.pars['plotpars'][3][1], ']'
+        print "GIVE THE FWHM OF THE GAUSSIAN FUNCTION: [", self.pars['plotpars'][3][1], ']'
         g = raw_input()
         if isfloat(g) is False:
             g = self.pars['plotpars'][3][1]  # keep the old value
@@ -262,6 +276,13 @@ class SynthPlot(object):
         return l_smooth
     
     def change_smoothing(self):
+        # Last settings for smoothing
+        try:
+            ps = self.pars['plotpars'][3][0]
+        except IndexError:
+            ps = "n"
+        print "Previous setting:", ps, '\n'
+
         print "  SMOOTHING: n=NONE, g=GAUSS, l=LORENZ, \
         v=ROTATION, m=MACROTURBULENCE\n \
                     c=v+g, d=m+g, r=m+v+g, p=VARIABLE GAUSS"
@@ -299,7 +320,6 @@ class SynthPlot(object):
     def apply_shifts(self):
         # watch for double shifts!
         v_shift, w_shift, a_fac, m_fac = self.pars['plotpars'][2]
-        print w_shift
         self.obs[:, 0] = self.obs[:, 0] + float(w_shift)
         l_shift = float(v_shift) / light_speed
         self.obs[:, 0] = self.obs[:, 0] * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
@@ -478,6 +498,7 @@ class SynthPlot(object):
     def abundances(self):
         iterate = True
         clear()
+        sno = 0
         while iterate:
             clear()
             print_driver(self.driver)
@@ -557,7 +578,7 @@ class SynthPlot(object):
 
     ####################################################################
     def run_synth(self):
-        if self.obs_in_flag is True:
+        if self.obs_in_flag is True and self.pars['plotpars'][0] == 1:
             self.apply_shifts()
 
         quit_moog = False
@@ -570,35 +591,41 @@ class SynthPlot(object):
                 print " !!! No observed spectrum provided"
                 print " !!! Operations on observed spectrum are not active\n"
 
-            self.print_options()
+            print_options()
 
             self.flag = raw_input()
             if self.flag == 'q':
                 quit_moog = True
             elif self.obs_in_flag and (self.flag == 'a' or self.flag == 'r'):
+                self.add_plotparams()
                 self.rescale_obs()
                 self.apply_shifts()
             elif self.obs_in_flag and self.flag == 'w':
+                self.add_plotparams()
                 self.w_shift()
                 self.apply_shifts()
             elif self.obs_in_flag and self.flag == 'v':
+                self.add_plotparams()
                 self.v_shift()
                 self.apply_shifts()
             elif self.flag == 'h' or self.flag == 'f':
                 self.hardcopy()
             elif self.flag == 'c':
+                self.add_plotparams()
                 self.change_plotlim()
             elif self.flag == "m":
                 self.do_plot()
             elif self.flag == 's':
+                self.add_plotparams()
                 self.change_smoothing()
                 run_moog(self.driver, self.pars)
             elif self.flag == 'n':
                 self.abundances()               
             elif self.flag == 'u':
                 self.pars = copy.deepcopy(self.org_pars)
-                self.xylim = map(float, self.pars['plotpars'][1])
-                self.apply_shifts()
+                self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
+                if self.pars['plotpars'][0] == 1:
+                  self.apply_shifts()
                 run_moog(self.driver, self.pars)
             elif self.flag == 'l':
                 self.add_veil()

@@ -89,8 +89,10 @@ def list_to_dict(sf):
                         dict_par[line[0]].append(1)
                         for i in iline:
                             dict_par[line[0]].append(tab[i])
-                    else:
+                    else:  # default values are set for plotting parameters:
                         dict_par[line[0]].append(0)
+
+
     try:
         dict_par['abundances'][1:] = sorted(dict_par['abundances'][1:], key=get_key)
     except KeyError:
@@ -100,6 +102,7 @@ def list_to_dict(sf):
         dict_par['isotopes'][1:] = sorted(dict_par['isotopes'][1:], key=get_key)
     except KeyError:
         pass
+
 
     return driver, dict_par
 
@@ -149,6 +152,7 @@ def dict_to_str(driver, dict_par):
 
 
 def run_moog(driver, pars):
+    print "Calling MOOG"
     st = dict_to_str(driver, pars)
 
     with open('./batch.par', 'w') as batchpar:

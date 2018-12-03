@@ -81,19 +81,20 @@ def out2_synth(file):
     return out2_tab
 
 def out3_synth(file):
-    # like out2
+    # Open and read smoothed synthetic spectra created by MOOG
     with open(file, 'r') as fh:
         data_all = fh.read().split("the number of")
     data_all.pop(0)
 
-    tab_out3=[]
+    tab_out3 = []
 
     for data in data_all:
         flux = []
         for line in filter(None,data.split("\n")):
             line_list=line.split()
+
             try:
-                np.array(line_list,dtype=float)
+                line_list = np.array(line_list, dtype=float)
                 flux.append(line_list)
             except:
                 pass
