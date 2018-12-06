@@ -60,6 +60,7 @@ class SynthPlot(object):
         # some basic formatting on plot
         if self.obs_in_flag:
             self.ax.plot(self.obs[:, 0], self.obs[:, 1], 'o', color=rcParams['lines.color'])
+        self.xylim = map(float, self.pars['plotpars'][1])
         self.ax.set_xlim(self.xylim[0], self.xylim[1])
         self.ax.set_ylim(self.xylim[2], self.xylim[3])
 
