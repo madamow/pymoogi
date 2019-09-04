@@ -38,17 +38,15 @@ class SynthPlot(object):
         self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
 
-
-
-
         self.p2_flag = False
         self.flag = ''
         self.obs_in_flag = False
         self.obs = np.array([])
 
         if 'observed_in' in list(self.pars.keys()) or int(self.pars['plot'][0]) == 2:
-            self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
+            self.obs_org = np.loadtxt(self.pars['observed_in'][0][1:-1])
             self.obs_in_flag = True
+            self.obs = np.copy(self.obs_org)
 
         self.points = []
         if self.pars['plotpars'][0] == 1:
@@ -324,10 +322,13 @@ class SynthPlot(object):
     def apply_shifts(self):
         # watch for double shifts!
         v_shift, w_shift, a_fac, m_fac = self.pars['plotpars'][2]
-        self.obs[:, 0] = self.obs[:, 0] + float(w_shift)
+        print(w_shift)
+        print(self.obs_org.shape)
+
+        self.obs[:, 0] = self.obs_org[:, 0] + float(w_shift)
         l_shift = float(v_shift) / light_speed
-        self.obs[:, 0] = self.obs[:, 0] * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
-        self.obs[:, 1] = self.obs[:, 1] * float(m_fac) + float(a_fac)
+        self.obs[:, 0] = self.obs_org[:, 0] * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
+        self.obs[:, 1] = self.obs_org[:, 1] * float(m_fac) + float(a_fac)
 
     def find_multip_res(self, factor, d):
         yobs, model = d
@@ -338,10 +339,8 @@ class SynthPlot(object):
         return newf - model
 
     def find_multip(self):
-        print(self.sflux)
-        exit()
-        syntf = np.average(self.sflux[:, 1, :], axis=0)
-        obsf = np.interp(self.sflux[0, 0], self.obs[:, 0], self.obs[:, 1])
+        syntf = np.average(self.sflux, axis=0)
+        obsf = np.interp(self.slam, self.obs[:, 0], self.obs[:, 1])
         factor = so.leastsq(self.find_multip_res, [1.],
                             args=([obsf, syntf]), full_output=1)
         return round(factor[0][0], 2)
@@ -629,7 +628,6 @@ class SynthPlot(object):
                 self.abundances()               
             elif self.flag == 'u':
                 self.pars = copy.deepcopy(self.org_pars)
-                self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
                 if self.pars['plotpars'][0] == 1:
                     self.apply_shifts()
                 run_moog(self.driver, self.pars)
