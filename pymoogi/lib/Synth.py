@@ -10,23 +10,23 @@ import scipy.constants as sc
 import scipy.optimize as so
 from matplotlib import rcParams
 from matplotlib import ticker
-from Common_functions import *
-from read_out_files import out2_synth, out3_synth
+from .Common_functions import *
+from .read_out_files import out2_synth, out3_synth
 
 light_speed = sc.c * 0.001
 
 
 def print_options():
-    print "OPTIONS?    s=new smoothing     r=rescale obs."
-    print "            a=add # to obs.     h=hardcopy"
-    print "            c=change bounds     q=quit"
-    print "            m=redo same plot    o=orig. plot bounds"
-    print "            v=velocity shift    w=wavelength shift "
-    print "            z=use zoom button   p=cursor position"
-    print "            t=change title      f=postscript file "
-    print "            n=new abundances    d=obs/syn deviation"
-    print "            l=add veiling       u=undo all; replot"
-    print "\nWhat is your choice? "
+    print("OPTIONS?    s=new smoothing     r=rescale obs.")
+    print("            a=add # to obs.     h=hardcopy")
+    print("            c=change bounds     q=quit")
+    print("            m=redo same plot    o=orig. plot bounds")
+    print("            v=velocity shift    w=wavelength shift ")
+    print("            z=use zoom button   p=cursor position")
+    print("            t=change title      f=postscript file ")
+    print("            n=new abundances    d=obs/syn deviation")
+    print("            l=add veiling       u=undo all; replot")
+    print("\nWhat is your choice? ")
 
 
 class SynthPlot(object):
@@ -43,13 +43,13 @@ class SynthPlot(object):
         self.obs_in_flag = False
         self.obs = np.array([])
 
-        if 'observed_in' in self.pars.keys() or int(self.pars['plot'][0]) == 2:
+        if 'observed_in' in list(self.pars.keys()) or int(self.pars['plot'][0]) == 2:
             self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
             self.obs_in_flag = True
 
         self.points = []
         if self.pars['plotpars'][0] == 1:
-            self.xylim = map(float, self.pars['plotpars'][1])
+            self.xylim = list(map(float, self.pars['plotpars'][1]))
         else:
             self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
         self.driver = 'synth'
@@ -60,7 +60,7 @@ class SynthPlot(object):
         # some basic formatting on plot
         if self.obs_in_flag:
             self.ax.plot(self.obs[:, 0], self.obs[:, 1], 'o', color=rcParams['lines.color'])
-        self.xylim = map(float, self.pars['plotpars'][1])
+        self.xylim = list(map(float, self.pars['plotpars'][1]))
         self.ax.set_xlim(self.xylim[0], self.xylim[1])
         self.ax.set_ylim(self.xylim[2], self.xylim[3])
 
@@ -169,7 +169,7 @@ class SynthPlot(object):
         # Set smoothing info:
         if self.pars['plotpars'][0] == 1:
             smo_info = "smoothing: "+str(self.pars['plotpars'][3][0]) + " = "
-            smo_nr = filter(lambda x: float(x) != 0, self.pars['plotpars'][3][1:])
+            smo_nr = [x for x in self.pars['plotpars'][3][1:] if float(x) != 0]
             for item in smo_nr:
                 smo_info = smo_info + item + ", "
         else:
@@ -178,7 +178,7 @@ class SynthPlot(object):
         extra_info = files_info + smo_info + "\n"
 
         # Set isotopes labels
-        if 'isotopes' in self.pars.keys():
+        if 'isotopes' in list(self.pars.keys()):
             iso_txt = self.isotope_labels() + "\n"
             extra_info = extra_info + iso_txt
 
@@ -199,32 +199,32 @@ class SynthPlot(object):
     def set_cursor(self):
         cid = plt.gcf().canvas.mpl_connect('button_press_event',
                                            self.mark_points)
-        print "Click on the plot window to mark a point(s)"
-        print "and press enter when you get all markers you wanted..."
-        print "or type c to remove all previous points"
-        a = raw_input()
+        print("Click on the plot window to mark a point(s)")
+        print("and press enter when you get all markers you wanted...")
+        print("or type c to remove all previous points")
+        a = input()
         plt.gcf().canvas.mpl_disconnect(cid)
         if a == 'c':
             self.points = []
 
     def change_plotlim(self):
-        print "LEFT WAVELENGTH (", self.pars['plotpars'][1][0], ")"
-        ll = raw_input()
+        print("LEFT WAVELENGTH (", self.pars['plotpars'][1][0], ")")
+        ll = input()
         if isfloat(ll) and ll != '':
             self.pars['plotpars'][1][0] = ll
         
-        print "RIGHT WAVELENGTH (", self.pars['plotpars'][1][1], ")"
-        rl = raw_input()
+        print("RIGHT WAVELENGTH (", self.pars['plotpars'][1][1], ")")
+        rl = input()
         if isfloat(rl) and rl != '':
             self.pars['plotpars'][1][1] = rl
         
-        print "BOTTOM RELATIVE FLUX (", self.pars['plotpars'][1][2], ")"
-        brf = raw_input()
+        print("BOTTOM RELATIVE FLUX (", self.pars['plotpars'][1][2], ")")
+        brf = input()
         if isfloat(brf) and brf != '':
             self.pars['plotpars'][1][2] = brf
         
-        print "TOP RELATIVE FLUX (", self.pars['plotpars'][1][3], ")"
-        trf = raw_input()
+        print("TOP RELATIVE FLUX (", self.pars['plotpars'][1][3], ")")
+        trf = input()
         if isfloat(trf) and trf != '':
             self.pars['plotpars'][1][3] = trf
 
@@ -242,19 +242,19 @@ class SynthPlot(object):
     ####################################################################
 
     def smo_g(self):
-        print "GIVE THE FWHM OF THE GAUSSIAN FUNCTION: [", self.pars['plotpars'][3][1], ']'
-        g = raw_input()
+        print("GIVE THE FWHM OF THE GAUSSIAN FUNCTION: [", self.pars['plotpars'][3][1], ']')
+        g = input()
         if isfloat(g) is False:
             g = self.pars['plotpars'][3][1]  # keep the old value
         return g
             
     def smo_vrot(self):
-        print "GIVE THE STELLAR vsini: [", self.pars['plotpars'][3][2], ']'
-        v1 = raw_input()
+        print("GIVE THE STELLAR vsini: [", self.pars['plotpars'][3][2], ']')
+        v1 = input()
 
-        print "GIVE THE LIMB DARKENING COEFFICIENT:[", \
-            self.pars['plotpars'][3][3], ']'
-        v2 = raw_input()
+        print("GIVE THE LIMB DARKENING COEFFICIENT:[", \
+            self.pars['plotpars'][3][3], ']')
+        v2 = input()
 
         if isfloat(v1) is False or isfloat(v2) is False:
             v1 = self.pars['plotpars'][3][2]
@@ -262,16 +262,16 @@ class SynthPlot(object):
         return v1, v2
 
     def smo_vmac(self):
-        print "GIVE THE MACROTURBULENT VELOCITY: [", self.pars['plotpars'][3][4], ']'
-        m = raw_input()
+        print("GIVE THE MACROTURBULENT VELOCITY: [", self.pars['plotpars'][3][4], ']')
+        m = input()
         if isfloat(m) is False:
             m = self.pars['plotpars'][3][4]
         return m
 
     def smo_lntz(self):
-        print "GIVE THE FWHM OF THE LORENTZIAN FUNCTION:[", \
-            self.pars['plotpars'][3][5], ']'
-        l_smooth = raw_input()
+        print("GIVE THE FWHM OF THE LORENTZIAN FUNCTION:[", \
+            self.pars['plotpars'][3][5], ']')
+        l_smooth = input()
         if isfloat(l_smooth) is False:
             l_smooth = self.pars['plotpars'][3][5]
         return l_smooth
@@ -282,12 +282,12 @@ class SynthPlot(object):
             ps = self.pars['plotpars'][3][0]
         except IndexError:
             ps = "n"
-        print "Previous setting:", ps, '\n'
+        print("Previous setting:", ps, '\n')
 
-        print "  SMOOTHING: n=NONE, g=GAUSS, l=LORENZ, \
+        print("  SMOOTHING: n=NONE, g=GAUSS, l=LORENZ, \
         v=ROTATION, m=MACROTURBULENCE\n \
-                    c=v+g, d=m+g, r=m+v+g, p=VARIABLE GAUSS"
-        smo = raw_input()
+                    c=v+g, d=m+g, r=m+v+g, p=VARIABLE GAUSS")
+        smo = input()
 
         if smo == 'n':
             self.pars['plotpars'][3] = ['n', '0.', '0.', '0.', '0.', '0.']
@@ -343,15 +343,15 @@ class SynthPlot(object):
             
     def rescale_obs(self):
         if self.flag == 'r':
-            print "MULTIPLY THE OBSERVED POINTS BY WHAT FACTOR?"
+            print("MULTIPLY THE OBSERVED POINTS BY WHAT FACTOR?")
         else:
-            print "ADD WHAT NUMBER TO THE OBSERVED POINTS?"
-        print "press 'a' to find this factor automatically\n"
-        rfactor = raw_input()
+            print("ADD WHAT NUMBER TO THE OBSERVED POINTS?")
+        print("press 'a' to find this factor automatically\n")
+        rfactor = input()
 
         if rfactor == 'a':
             rfactor = str(self.find_multip())
-            print "%s %s" % ("Your new factor is:", rfactor)
+            print("%s %s" % ("Your new factor is:", rfactor))
             time.sleep(2.0)
 
         try:
@@ -361,61 +361,61 @@ class SynthPlot(object):
             elif self.flag == 'a':
                 self.pars['plotpars'][2][2] = rfactor
         except ValueError:
-            print "Your new value is not a number!"
+            print("Your new value is not a number!")
             time.sleep(2.0)
 
         # Check if user uses additive and multiplicative shift at the same time
         if float(self.pars['plotpars'][2][2]) != 0.0 and self.flag == 'r':
-            print "You cannot use additive shift and multiplicative\n \
-            shift at the same time. Setting additive shift to 0"
+            print("You cannot use additive shift and multiplicative\n \
+            shift at the same time. Setting additive shift to 0")
             self.pars['plotpars'][2][2] = '0.0'
-            print "Press enter to continue"
-            raw_input()
+            print("Press enter to continue")
+            input()
             
         elif float(self.pars['plotpars'][2][3]) != 1.0 and self.flag == 'a':
-            print self.pars['plotpars'][2]
-            print "You cannot use additive shift and multiplicative\n \
-            shift at the same time. Setting multipl. shift to 1"
+            print(self.pars['plotpars'][2])
+            print("You cannot use additive shift and multiplicative\n \
+            shift at the same time. Setting multipl. shift to 1")
             self.pars['plotpars'][2][3] = '1.0'
-            print "Press enter to continue"
-            raw_input()
+            print("Press enter to continue")
+            input()
        
     def v_shift(self):
-        print "SHIFT THE OBSERVED POINTS BY WHAT VELOCITY (KM/S)?"
-        rfactor = raw_input()
+        print("SHIFT THE OBSERVED POINTS BY WHAT VELOCITY (KM/S)?")
+        rfactor = input()
         self.pars['plotpars'][2][0] = rfactor
         # Check if w_fac is 0, if not - change it to 0
         if float(self.pars['plotpars'][2][1]) != 0.0:
-            print "You cannot use wavelength shift and velocity\n \
-            shift at the same time. Setting wavelength shift to 0"
+            print("You cannot use wavelength shift and velocity\n \
+            shift at the same time. Setting wavelength shift to 0")
             self.pars['plotpars'][2][1] = '0.0'
-            print "Press any key to continue"
-            raw_input()
+            print("Press any key to continue")
+            input()
     
     def w_shift(self):
-        print "SHIFT THE OBSERVED POINTS BY WHAT WAVELENGTH?"
-        rfactor = raw_input()
+        print("SHIFT THE OBSERVED POINTS BY WHAT WAVELENGTH?")
+        rfactor = input()
         self.pars['plotpars'][2][1] = rfactor
         # Check if v_fac is 0, if not - change it to 0
         if float(self.pars['plotpars'][2][0]) != 0.0:
-            print "You cannot use wavelength shift and velocity\n \
-            shift at the same time. Setting velocity shift to 0"
+            print("You cannot use wavelength shift and velocity\n \
+            shift at the same time. Setting velocity shift to 0")
             self.pars['plotpars'][2][0] = '0.0'
-            print "Press enter to continue"
-            raw_input()
+            print("Press enter to continue")
+            input()
     
     ####################################################################
     # Add veil
     ####################################################################
     def add_veil(self):
-        print "This option was created for pre Main-Sequence stars"
-        print "Use it wisely! Setting veiling to 0.0 will remove \
-        veiling from synthetic spectra. \n"
+        print("This option was created for pre Main-Sequence stars")
+        print("Use it wisely! Setting veiling to 0.0 will remove \
+        veiling from synthetic spectra. \n")
 
-        print "WHAT IS THE ADDITIONAL FLUX IN TERMS OF CONTINUUM? [", \
-            self.pars['veil'], "]"
+        print("WHAT IS THE ADDITIONAL FLUX IN TERMS OF CONTINUUM? [", \
+            self.pars['veil'], "]")
 
-        veil = raw_input()
+        veil = input()
         if isfloat(veil) is False:
             pass
         else:
@@ -427,7 +427,7 @@ class SynthPlot(object):
     def change_abund(self):
         in_list = []
         
-        if 'abundances' in self.pars.keys():
+        if 'abundances' in list(self.pars.keys()):
             for val in self.pars['abundances'][1:]:
                 in_list.append(val[0])
             in_list = set(in_list)
@@ -437,14 +437,14 @@ class SynthPlot(object):
             syn_no = 0
             self.pars['abundances'] = [['0', '0']]
 
-        print "Which element to change?"
-        a_id = raw_input()
-        print "n = new abundances, or z = zero offsets?"
-        flag = raw_input()     
+        print("Which element to change?")
+        a_id = input()
+        print("n = new abundances, or z = zero offsets?")
+        flag = input()     
     
         if flag == 'n':
-            print "Enter the new offsets on the line below :"
-            new = raw_input().split(None)
+            print("Enter the new offsets on the line below :")
+            new = input().split(None)
             if a_id in in_list:
                 for index, val in enumerate(self.pars['abundances'][1:]):
                     if val[0] == a_id:
@@ -462,38 +462,38 @@ class SynthPlot(object):
             self.pars['abundances'][0][1] = str(len(new))
     
     def change_isotopes(self):
-        print "\nOptions: c = change an isotopic factor"
-        print "         n = enter a new isotope "
-        print "What is your choice?"
-        flag = raw_input()
+        print("\nOptions: c = change an isotopic factor")
+        print("         n = enter a new isotope ")
+        print("What is your choice?")
+        flag = input()
 
         if flag == 'c':
-            print "Which isotope number from the list?"
-            i_id = int(raw_input())
-            print "What are the new division factors?"
-            new = raw_input().split(None)
+            print("Which isotope number from the list?")
+            i_id = int(input())
+            print("What are the new division factors?")
+            new = input().split(None)
             self.pars['isotopes'][i_id][1] = new
 
         elif flag == 'n':  # add new entry to isotopes table
-            print "What is the new isotope designation?"
-            new_iso = raw_input()
+            print("What is the new isotope designation?")
+            new_iso = input()
                         
-            print "What are its division factors?"
+            print("What are its division factors?")
 
-            new_fac = raw_input().split(None)
+            new_fac = input().split(None)
             
-            if 'isotopes' not in self.pars.keys():
+            if 'isotopes' not in list(self.pars.keys()):
                 self.pars['isotopes'] = [['0', str(len(new_fac))]]
                 
             self.pars['isotopes'].append([new_iso, new_fac])
             self.pars['isotopes'][0][0] = str(len(self.pars['isotopes'][1:]))
 
     def change_syn_no(self):
-        print "How many synths?"
-        syn_no = raw_input()
-        if 'abundances' in self.pars.keys():
+        print("How many synths?")
+        syn_no = input()
+        if 'abundances' in list(self.pars.keys()):
             self.pars['abundances'][0][1] = syn_no
-        if 'isotopes' in self.pars.keys():
+        if 'isotopes' in list(self.pars.keys()):
             self.pars['isotopes'][0][1] = syn_no
        
     def abundances(self):
@@ -504,27 +504,27 @@ class SynthPlot(object):
             clear()
             print_driver(self.driver)
 
-            print "element, abundance offsets OR isotope number, isotope name, factors"
+            print("element, abundance offsets OR isotope number, isotope name, factors")
 
-            if 'abundances' in self.pars.keys():
+            if 'abundances' in list(self.pars.keys()):
                 sno = int(self.pars['abundances'][0][1])
                 for elem in enumerate(self.pars['abundances'][1:]):
-                    print "%3s" % "", "%10s" % elem[1][0], \
-                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][1][:sno]))
-                print ""
+                    print("%3s" % "", "%10s" % elem[1][0], \
+                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][1][:sno])))
+                print("")
             
-            if 'isotopes' in self.pars.keys():
+            if 'isotopes' in list(self.pars.keys()):
                 for i, elem in enumerate(self.pars['isotopes'][1:]):
-                    print "%3i" % int(i+1), "%10s" % elem[0], \
-                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][:sno]))
+                    print("%3i" % int(i+1), "%10s" % elem[0], \
+                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][:sno])))
 
-            print "%10s %-25s %-25s" % \
-                  ("\nOptions:", "c = change abundance", "i = change isotopic ratio")
-            print "%10s %-25s %-25s %-10s" % \
-                  ("", "n = change # syntheses", "q = rerun syntheses", "x = exit")
-            print "What is your choice?"
+            print("%10s %-25s %-25s" % \
+                  ("\nOptions:", "c = change abundance", "i = change isotopic ratio"))
+            print("%10s %-25s %-25s %-10s" % \
+                  ("", "n = change # syntheses", "q = rerun syntheses", "x = exit"))
+            print("What is your choice?")
 
-            aopt = raw_input()
+            aopt = input()
 
             if aopt == 'c':
                 self.change_abund()
@@ -536,9 +536,9 @@ class SynthPlot(object):
                 run_moog(self.driver, self.pars)
                 iterate = False
             elif aopt == 'x':  # Forget all changes
-                if 'abundances' in self.pars.keys():
+                if 'abundances' in list(self.pars.keys()):
                     self.pars['abundances'] = self.org_pars['abundances']
-                if 'isotopes' in self.pars.keys():    
+                if 'isotopes' in list(self.pars.keys()):    
                     self.pars['isotopes'] = self.org_pars['isotopes']
                 iterate = False
 
@@ -570,8 +570,8 @@ class SynthPlot(object):
                 artist.set_color('k')
 
         if self.flag == 'f':
-            print "Give the file name for the POSTSRIPT plot image:"
-            tf = raw_input() + ".pdf"
+            print("Give the file name for the POSTSRIPT plot image:")
+            tf = input() + ".pdf"
         else:
             tf = "plot_"+id_generator() + ".pdf"
         
@@ -589,12 +589,12 @@ class SynthPlot(object):
             
             print_driver(self.driver)
             if not self.obs_in_flag:
-                print " !!! No observed spectrum provided"
-                print " !!! Operations on observed spectrum are not active\n"
+                print(" !!! No observed spectrum provided")
+                print(" !!! Operations on observed spectrum are not active\n")
 
             print_options()
 
-            self.flag = raw_input()
+            self.flag = input()
             if self.flag == 'q':
                 quit_moog = True
             elif self.obs_in_flag and (self.flag == 'a' or self.flag == 'r'):
@@ -633,18 +633,18 @@ class SynthPlot(object):
             elif self.flag == 'p':
                 self.set_cursor()
             elif self.flag == 'z':
-                print "Use zoom button in plot window"
+                print("Use zoom button in plot window")
             elif self.flag == 'd':
                 self.p2_flag = True
             elif self.flag == 't':
-                print "Enter new title"
-                self.pars['title'] = raw_input()
+                print("Enter new title")
+                self.pars['title'] = input()
             elif self.flag == 'o':
                 self.pars['plotpars'][1] = self.org_pars['plotpars'][1]
-                self.xylim = map(float, self.pars['plotpars'][1])
+                self.xylim = list(map(float, self.pars['plotpars'][1]))
                 self.p2_flag = False
             else:
-                print "Do not understand"
+                print("Do not understand")
                 time.sleep(0.5)
 
             plt.clf()
