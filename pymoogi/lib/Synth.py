@@ -10,8 +10,8 @@ import scipy.constants as sc
 import scipy.optimize as so
 from matplotlib import rcParams
 from matplotlib import ticker
-from .Common_functions import *
-from .read_out_files import out2_synth, out3_synth
+from Common_functions import *
+from read_out_files import out2_synth, out3_synth
 
 light_speed = sc.c * 0.001
 
@@ -36,7 +36,10 @@ class SynthPlot(object):
         self.pars = copy.deepcopy(self.org_pars)
 
         self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
-        self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
+        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
+
+
+
 
         self.p2_flag = False
         self.flag = ''
@@ -67,7 +70,7 @@ class SynthPlot(object):
         # Plot syntetic spectra
         colors = []
         for i, line in enumerate(self.sflux):
-            ssp = self.ax.plot(line[0], line[1], label=self.labels[i])
+            ssp = self.ax.plot(self.slam, line, label=self.labels[i])
             colors.append(ssp[0].get_color())
         
         # Create legend
@@ -81,12 +84,12 @@ class SynthPlot(object):
     def bx_plot(self):
         # Plot O-C on second panel
         # bx.xaxis.set_minor_locator( ticker.AutoMinorLocator() )
-        yoc = np.interp(self.sflux[0][0], self.obs[:, 0], self.obs[:,1])
+        yoc = np.interp(self.slam, self.obs[:, 0], self.obs[:,1])
     
         colors = []
         for spec in self.sflux:
-            l = self.bx.plot(spec[0], yoc - spec[1],
-                             label=round(np.std(yoc - spec[1], ddof=1), 4))
+            l = self.bx.plot(self.slam, yoc - spec,
+                             label=round(np.std(yoc - spec, ddof=1), 4))
             colors.append(l[0].get_color())
         self.bx.axhline(0., ls='dotted', color='r')
     
@@ -122,7 +125,7 @@ class SynthPlot(object):
     
     def do_plot(self):
         self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
-        self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
+        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
 
         # Create labels
         for i, spec in enumerate(self.sflux):
@@ -252,7 +255,7 @@ class SynthPlot(object):
         print("GIVE THE STELLAR vsini: [", self.pars['plotpars'][3][2], ']')
         v1 = input()
 
-        print("GIVE THE LIMB DARKENING COEFFICIENT:[", \
+        print("GIVE THE LIMB DARKENING COEFFICIENT:[",
             self.pars['plotpars'][3][3], ']')
         v2 = input()
 
@@ -269,7 +272,7 @@ class SynthPlot(object):
         return m
 
     def smo_lntz(self):
-        print("GIVE THE FWHM OF THE LORENTZIAN FUNCTION:[", \
+        print("GIVE THE FWHM OF THE LORENTZIAN FUNCTION:[",
             self.pars['plotpars'][3][5], ']')
         l_smooth = input()
         if isfloat(l_smooth) is False:
@@ -335,49 +338,51 @@ class SynthPlot(object):
         return newf - model
 
     def find_multip(self):
+        print(self.sflux)
+        exit()
         syntf = np.average(self.sflux[:, 1, :], axis=0)
         obsf = np.interp(self.sflux[0, 0], self.obs[:, 0], self.obs[:, 1])
         factor = so.leastsq(self.find_multip_res, [1.],
                             args=([obsf, syntf]), full_output=1)
         return round(factor[0][0], 2)
             
-    def rescale_obs(self):
+    def rescale_flux(self):
         if self.flag == 'r':
             print("MULTIPLY THE OBSERVED POINTS BY WHAT FACTOR?")
         else:
             print("ADD WHAT NUMBER TO THE OBSERVED POINTS?")
+
         print("press 'a' to find this factor automatically\n")
         rfactor = input()
 
         if rfactor == 'a':
             rfactor = str(self.find_multip())
-            print("%s %s" % ("Your new factor is:", rfactor))
+            print(f'Your new factor is: {rfactor}')
             time.sleep(2.0)
-
-        try:
-            float(rfactor)
-            if self.flag == 'r':
-                self.pars['plotpars'][2][3] = rfactor
-            elif self.flag == 'a':
-                self.pars['plotpars'][2][2] = rfactor
-        except ValueError:
-            print("Your new value is not a number!")
+        else:
+            try:
+                float(rfactor)
+                if self.flag == 'r':
+                    self.pars['plotpars'][2][3] = rfactor
+                elif self.flag == 'a':
+                    self.pars['plotpars'][2][2] = rfactor
+            except ValueError:
+                print('Your new value is not a number!')
             time.sleep(2.0)
 
         # Check if user uses additive and multiplicative shift at the same time
+        message = "You cannot use additive shift and multiplicative shift at the same time.\n"
+
         if float(self.pars['plotpars'][2][2]) != 0.0 and self.flag == 'r':
-            print("You cannot use additive shift and multiplicative\n \
-            shift at the same time. Setting additive shift to 0")
+            message +=" Setting additive shift to 0\nPress enter to continue"
             self.pars['plotpars'][2][2] = '0.0'
-            print("Press enter to continue")
+            print(message)
             input()
             
         elif float(self.pars['plotpars'][2][3]) != 1.0 and self.flag == 'a':
-            print(self.pars['plotpars'][2])
-            print("You cannot use additive shift and multiplicative\n \
-            shift at the same time. Setting multipl. shift to 1")
+            message += "Setting multipl. shift to 1\nPress enter to continue"
             self.pars['plotpars'][2][3] = '1.0'
-            print("Press enter to continue")
+            print(message)
             input()
        
     def v_shift(self):
@@ -412,7 +417,7 @@ class SynthPlot(object):
         print("Use it wisely! Setting veiling to 0.0 will remove \
         veiling from synthetic spectra. \n")
 
-        print("WHAT IS THE ADDITIONAL FLUX IN TERMS OF CONTINUUM? [", \
+        print("WHAT IS THE ADDITIONAL FLUX IN TERMS OF CONTINUUM? [",
             self.pars['veil'], "]")
 
         veil = input()
@@ -509,18 +514,18 @@ class SynthPlot(object):
             if 'abundances' in list(self.pars.keys()):
                 sno = int(self.pars['abundances'][0][1])
                 for elem in enumerate(self.pars['abundances'][1:]):
-                    print("%3s" % "", "%10s" % elem[1][0], \
+                    print("%3s" % "", "%10s" % elem[1][0],
                         ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][1][:sno])))
                 print("")
             
             if 'isotopes' in list(self.pars.keys()):
                 for i, elem in enumerate(self.pars['isotopes'][1:]):
-                    print("%3i" % int(i+1), "%10s" % elem[0], \
+                    print("%3i" % int(i+1), "%10s" % elem[0],
                         ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][:sno])))
 
-            print("%10s %-25s %-25s" % \
+            print("%10s %-25s %-25s" %
                   ("\nOptions:", "c = change abundance", "i = change isotopic ratio"))
-            print("%10s %-25s %-25s %-10s" % \
+            print("%10s %-25s %-25s %-10s" %
                   ("", "n = change # syntheses", "q = rerun syntheses", "x = exit"))
             print("What is your choice?")
 
@@ -599,7 +604,7 @@ class SynthPlot(object):
                 quit_moog = True
             elif self.obs_in_flag and (self.flag == 'a' or self.flag == 'r'):
                 self.add_plotparams()
-                self.rescale_obs()
+                self.rescale_flux()
                 self.apply_shifts()
             elif self.obs_in_flag and self.flag == 'w':
                 self.add_plotparams()
@@ -626,7 +631,7 @@ class SynthPlot(object):
                 self.pars = copy.deepcopy(self.org_pars)
                 self.obs = np.loadtxt(self.pars['observed_in'][0][1:-1])
                 if self.pars['plotpars'][0] == 1:
-                  self.apply_shifts()
+                    self.apply_shifts()
                 run_moog(self.driver, self.pars)
             elif self.flag == 'l':
                 self.add_veil()
