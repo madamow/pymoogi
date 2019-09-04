@@ -5,7 +5,7 @@ import numpy as np
 import subprocess as sp
 import scipy.stats as ss
 import random
-from .elements import ELEMENTS
+from elements import ELEMENTS
 
 # Check if you have enviromental variable "MOOGPATH"
 try:
