@@ -35,7 +35,7 @@ def out2_synth(file):
         isotopes=[]
         flux=[]
 
-        for line in filter(None, data.split("\n")):
+        for line in [_f for _f in data.split("\n") if _f]:
             line_list  = line.split()
             #Find values for x axis
             try:
@@ -62,7 +62,7 @@ def out2_synth(file):
                 ratio= line.strip().split(":")[1].strip().split("=")[-1].strip()
                 isotopes.append([isot, ratio])
 
-        for line in  filter(None, data.split("\n")):
+        for line in  [_f for _f in data.split("\n") if _f]:
             line_list  = line.split()
             #Find all lines that match format data_line
             try:
@@ -90,7 +90,7 @@ def out3_synth(file):
 
     for data in data_all:
         flux = []
-        for line in filter(None,data.split("\n")):
+        for line in [_f for _f in data.split("\n") if _f]:
             line_list=line.split()
 
             try:
