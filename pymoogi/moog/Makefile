@@ -46,7 +46,7 @@ all: MOOG ;
 	@echo -----------------------------------------------------------------
 
 MOOG:  $(OBJECTS);
-	$(FC) $(OBJECTS) -o MOOG 
+	$(FC) $(OBJECTS) -static-libgfortran -o MOOG 
 
 $(OBJECTS): $(COMMON)
 
