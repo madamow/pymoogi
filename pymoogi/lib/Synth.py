@@ -56,6 +56,7 @@ class SynthPlot(object):
         self.driver = 'synth'
 
         self.labels = []
+        self.fig, self.ax = plt.subplots()
 
     def ax_plot(self):
         # some basic formatting on plot
@@ -340,7 +341,7 @@ class SynthPlot(object):
 
     def find_multip(self):
         syntf = np.average(self.sflux, axis=0)
-        obsf = np.interp(self.slam, self.obs[:, 0], self.obs[:, 1])
+        obsf = np.interp(self.slam, self.obs_org[:, 0], self.obs_org[:, 1])
         factor = so.leastsq(self.find_multip_res, [1.],
                             args=([obsf, syntf]), full_output=1)
         return round(factor[0][0], 2)
@@ -361,13 +362,15 @@ class SynthPlot(object):
         else:
             try:
                 float(rfactor)
-                if self.flag == 'r':
-                    self.pars['plotpars'][2][3] = rfactor
-                elif self.flag == 'a':
-                    self.pars['plotpars'][2][2] = rfactor
             except ValueError:
                 print('Your new value is not a number!')
             time.sleep(2.0)
+
+        if self.flag == 'r':
+            self.pars['plotpars'][2][3] = rfactor
+        elif self.flag == 'a':
+            self.pars['plotpars'][2][2] = rfactor
+
 
         # Check if user uses additive and multiplicative shift at the same time
         message = "You cannot use additive shift and multiplicative shift at the same time.\n"
