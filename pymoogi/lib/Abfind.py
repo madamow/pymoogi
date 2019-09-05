@@ -1,8 +1,7 @@
-from .Common_functions import *
+from Common_functions import *
 import numpy as np
 import matplotlib.pyplot as plt
-from .elements import ELEMENTS
-from .read_out_files import out2_abfind
+from read_out_files import out2_abfind
 import copy
 import time
 
@@ -90,7 +89,7 @@ class AbfindPlot(object):
         
     def update_plot(self):
         clear()
-        plt.gca().set_color_cycle('None')
+        # plt.gca().set_color_cycle('None')
         if not self.chosen_labels:
             print("Your list is empty")
         self.clear_axes()  
@@ -112,8 +111,8 @@ class AbfindPlot(object):
         xcoord, ycoord = [event.xdata, event.ydata]
         r_ind = np.abs(ycoord - self.species_tab[:, 6]).argmin()
         self.species_tab = np.delete(self.species_tab, r_ind, 0)
-        for i in [0, 1, 2]:
-            self.ax[i].set_color_cycle('None')
+        # for i in [0, 1, 2]:
+        #    self.ax[i].set_color_cycle('None')
         self.clear_axes()
         self.make_plot()
         print("Switch [m]odel, change [v]t, [q]uit or any other key to plot")
