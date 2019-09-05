@@ -1,1 +1,4 @@
 pymoogi/moog/*.o
+example/out*
+example/eqw*
+example/batch.par
