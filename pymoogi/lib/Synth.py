@@ -244,7 +244,7 @@ class SynthPlot(object):
     ####################################################################
 
     def smo_g(self):
-        print("GIVE THE FWHM OF THE GAUSSIAN FUNCTION: [", self.pars['plotpars'][3][1], ']')
+        print('GIVE THE FWHM OF THE GAUSSIAN FUNCTION: [', self.pars['plotpars'][3][1], ']')
         g = input()
         if isfloat(g) is False:
             g = self.pars['plotpars'][3][1]  # keep the old value
