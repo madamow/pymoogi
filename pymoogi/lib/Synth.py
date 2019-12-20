@@ -54,7 +54,7 @@ class SynthPlot(object):
             self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
         self.driver = 'synth'
 
-        self.labels = []
+        self.labels = [None] * int(self.pars['abundances'][0][1])
 
     def ax_plot(self):
         # some basic formatting on plot
@@ -129,7 +129,7 @@ class SynthPlot(object):
             s = ''
             for l in self.out2[i][2]:
                 s = s + l[0] + "=" + l[1] + " "
-            self.labels.append(s.strip())
+            self.labels[i] = s.strip()
             
             if self.pars['veil'] > 0.0:
                 veil = float(self.pars['veil'])
