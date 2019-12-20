@@ -37,7 +37,7 @@ class SynthPlot(object):
 
         self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
-
+       
         self.p2_flag = False
         self.flag = ''
         self.obs_in_flag = False
@@ -55,7 +55,7 @@ class SynthPlot(object):
             self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
         self.driver = 'synth'
 
-        self.labels = []
+        self.labels = [None] * int(self.pars['abundances'][0][1])
         self.fig, self.ax = plt.subplots()
 
     def ax_plot(self):
@@ -131,12 +131,12 @@ class SynthPlot(object):
             s = ''
             for l in self.out2[i][2]:
                 s = s + l[0] + "=" + l[1] + " "
-            self.labels.append(s.strip())
+            self.labels[i] = s.strip()
             
             if self.pars['veil'] > 0.0:
                 veil = float(self.pars['veil'])
                 self.sflux[i, 1, :] = (spec[1] + veil)/(1. + veil)
-
+        
         if self.p2_flag is True and self.obs_in_flag is True:
             self.ax = plt.subplot2grid((2, 1), (0, 0))
             self.bx = plt.subplot2grid((2, 1), (1, 0), sharex=self.ax)
