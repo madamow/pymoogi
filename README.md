@@ -17,7 +17,7 @@ For easy updates and installing libraries I strongly recommend [miniConda](http:
 
 For running pyMOOGi you will need:
 
- * python 2.7
+ * python 2.7 (pyMOOGi for python 3.7 and current version of numpy,scipy and matplotlib may be downloaded from dev-py37 branch)
  * numpy (I use version 1.10.2)
  * scipy (I use version 0.16.1)
  * matplotlib (I use version 1.5.1)
@@ -31,7 +31,7 @@ For running pyMOOGi you will need:
   `export MOOGPATH=/your/path/to/pymoogi/pymoogi/moog`
 
 Make sure that your system noticed those changes: check your .bashrc or .profile file, you should see MOOGPATH there. 
-Do not forget to `source` your .bashrc or .profile file.
+Do not forget to `source` your .bashrc, .profile, or eqiuvalent file.
 
 * go to /your/path/to/pymoogi/pymoogi/moog
 * run Makefile (just type `make` in terminal) - there might be some warnings, but at the end you should get an executable file called MOOG
@@ -43,8 +43,18 @@ Do not forget to `source` your .bashrc or .profile file.
 
 `pymoogi synth_example.par`
 
+### Issues
+
+The most common issue with running pyMOOGi seems to be getting MOOG executable, especially for Mac OS X users.
+Please mind that I may not be able to help you with solving issues that are specific to your machine
+(like missing libraries, non-standard OS configurations, multiple versions of python etc.)
+that stop you from getting a MOOG executable.
+
+My general tip for Mac OS X users: make sure that your XCode is up to date, having XCode Tools installed may also help.
+
+For issues related to pyMOOGi - report an issue. Please use **Issues** tab at the top of pyMOOGi github page, and then start **New issue**.
 
 #### Who do I talk to? ####
 
-* Email me if you need any help or if you have an idea how to make pymoogi better:
+* Email me if you have an idea how to make pymoogi better:
 madamow[at]icloud.com

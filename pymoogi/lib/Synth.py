@@ -56,7 +56,9 @@ class SynthPlot(object):
         self.driver = 'synth'
 
         self.labels = [None] * int(self.pars['abundances'][0][1])
+
         self.fig, self.ax = plt.subplots()
+
 
     def ax_plot(self):
         # some basic formatting on plot
