@@ -32,11 +32,7 @@ c*****decide if certain element abundances need to be modified.
       endif
       if (num .ne. 5) then
          write (nf1out,1004)
-         if (isynth .ge. 1 .and. isynth .le. 5) then
-            xmetals = abscale + abfactor(isynth)
-         else
-            xmetals = abscale
-         endif
+         xmetals = abscale + abfactor(isynth)
          if (ninetynineflag .eq. 1) then
             write (nf1out,1005) xmetals
             if (nf2out .gt. 0) write (nf2out,1005) xmetals
@@ -128,7 +124,14 @@ c*****read in the strong lines if needed
          write (*,1003) wave1(j), atom1(j)
          stop
       endif 
-      if (width(j) .lt. 0.) go to 333
+      if (width(j) .lt. 0.) then
+         if (control .eq. 'blends ') then
+            write (*,*) 'BLENDS cannot have negative EWs!  I QUIT!'
+            stop
+         else
+            go to 333
+         endif
+      endif
       if (iunits .eq. 1) wave1(j) = 1.d+4*wave1(j)
       j = j + 1
       if (j .le. nlines) go to 333
@@ -175,7 +178,7 @@ c*****here excitation potentials are changed from cm^-1 to eV, if needed
 
 c*****here log(gf) values are turned into gf values, if needed
       do j=1,nlines+nstrong
-         if (gfstyle.eq.1 .or. gf(j) .lt. 0) then
+         if (gfstyle.eq.0 .or. gf(j) .lt. 0) then
             do jj=1,nlines+nstrong
                gf(jj) = 10.**gf(jj)
             enddo
