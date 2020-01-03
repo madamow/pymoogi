@@ -17,10 +17,10 @@ For easy updates and installing libraries I strongly recommend [miniConda](http:
 
 For running pyMOOGi you will need:
 
- * python 2.7 (pyMOOGi for python 3.7 and current version of numpy,scipy and matplotlib may be downloaded from dev-py37 branch)
- * numpy (I use version 1.10.2)
- * scipy (I use version 0.16.1)
- * matplotlib (I use version 1.5.1)
+ * python 3.7 (pyMOOGi for python 2.7 is available here - check tags)
+ * numpy 
+ * scipy 
+ * matplotlib 
  * make sure you can use matplotlib backend called 'qt5Agg' (if you decided to install python and its libraries with miniConda, this backend was installed automatically with matplotlib)
 
 ### I have python set, what now? ###
