@@ -231,7 +231,7 @@ c  give values for all quantities (that is, explicit zeros will need to
 c  be put instead of blank spaces.
       if     (keyword .eq. 'freeform') then
          read (array,*) linfileopt
-
+ 
  
 c  keyword 'standard_out' controls the name of the verbose standard output
       elseif (keyword .eq. 'standard_out') then
