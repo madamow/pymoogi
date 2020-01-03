@@ -4,7 +4,7 @@ import os
 import sys
 
 path = os.path.dirname(os.path.realpath(__file__))  # directory of pymoogi
-print path
+print(path)
 # location of pyEW functions:
 sys.path.append("%s/lib/" % path)
 
@@ -19,7 +19,7 @@ for package in required:
     try:
         exec('import {}'.format(package))
     except ImportError:
-        print('\nYou need to install the package "{}"'.format(package))
+        print(('\nYou need to install the package "{}"'.format(package)))
         exit()
 
 plt.switch_backend('qt5Agg')
@@ -34,8 +34,8 @@ def main():
     try:
         run_moog(driver, params)
     except:
-        print "#####################\n Cannot run MOOG."
-        print "Check batch.par file and your input file for errors."
+        print("#####################\n Cannot run MOOG.")
+        print("Check batch.par file and your input file for errors.")
         exit()
 
     params['veil'] = 0.

@@ -43,7 +43,7 @@ def SM_style():
     rcParams['xtick.color']  =    'white'
     rcParams['ytick.color']  =    'white'
 
-    #legends
+    # legends
     rcParams['legend.numpoints']= 1
     rcParams['legend.fontsize'] = 'large'
     rcParams['legend.shadow']   = False

@@ -10,17 +10,17 @@ from elements import ELEMENTS
 # Check if you have enviromental variable "MOOGPATH"
 try:
     MOOG_HOME = os.environ['MOOGPATH']
-    print "MOOGPATH =", MOOG_HOME
+    print("MOOGPATH =", MOOG_HOME)
 except KeyError:
-    print "MOOGPATH not found"
-    print "Export MOOG path"
+    print("MOOGPATH not found")
+    print("Export MOOG path")
     exit()
 
 # Check if you have executable MOOG file exists
 if os.path.isfile(os.path.join(MOOG_HOME, "MOOG")):
-    print "MOOG is ready"
+    print("MOOG is ready")
 else:
-    print "Compile MOOG"
+    print("Compile MOOG")
     exit()
 
 
@@ -54,10 +54,10 @@ def str_to_list(s):
     driver = lines[0]
     for line in lines[1:]:
         # Remove unneccesary spaces
-        l_list = filter(None,  line.split(" "))
+        l_list = [_f for _f in line.split(" ") if _f]
         tab.append(l_list)
 
-    return driver, filter(None, tab)
+    return driver, [_f for _f in tab if _f]
 
 
 def list_to_dict(sf):
@@ -118,10 +118,10 @@ def dict_to_str(driver, dict_par):
             'iraf', 'damping', 'plot', 'histogram']
 
     for elem in keys:
-        if elem in dict_par.keys():
+        if elem in list(dict_par.keys()):
             s = s + elem + " "+str(dict_par[elem][0]) + "\n"
 
-    if 'abundances' in dict_par.keys():
+    if 'abundances' in list(dict_par.keys()):
         no_ab = int(dict_par['abundances'][0][1])
         s = s + "abundances " + dict_par['abundances'][0][0] + " " + dict_par['abundances'][0][1] + "\n"
       
@@ -129,30 +129,30 @@ def dict_to_str(driver, dict_par):
             s = s + "    " + line[0] + "    "
             s = s + (' '.join(line[1][:no_ab])) + "\n"
 
-    if 'isotopes' in dict_par.keys():
+    if 'isotopes' in list(dict_par.keys()):
         no_iso = int(dict_par['isotopes'][0][1])
         s = s + "isotopes " + dict_par['isotopes'][0][0] + " "+dict_par['isotopes'][0][1] + "\n"
         for line in dict_par['isotopes'][1:]:
             s = s + "    "+line[0] + "    "
             s = s + (' '.join(line[1][:no_iso])) + "\n"
 
-    if 'synlimits' in dict_par.keys():
+    if 'synlimits' in list(dict_par.keys()):
         s = s + "synlimits\n"
         s = s + "    "+' '.join(dict_par['synlimits'][0]) + "\n"
 
-    if 'plotpars' in dict_par.keys():
+    if 'plotpars' in list(dict_par.keys()):
         s = s + "plotpars" + " " + str(dict_par['plotpars'][0]) + "\n"
         for line in dict_par['plotpars'][1:]:
             s = s+(' '.join(line)) + "\n"
 
-    if 'obspectrum' in dict_par.keys():
+    if 'obspectrum' in list(dict_par.keys()):
         s = s + "obspectrum " + dict_par['obspectrum'][0] + "\n"
 
     return s
 
 
 def run_moog(driver, pars):
-    print "Calling MOOG"
+    print("Calling MOOG")
     st = dict_to_str(driver, pars)
 
     with open('./batch.par', 'w') as batchpar:
@@ -161,9 +161,9 @@ def run_moog(driver, pars):
 
 
 def print_driver(driver):
-    print "****************************************************************************"
-    print "MOOG IS CONTROLLED BY DRIVER", driver
-    print "****************************************************************************\n"
+    print("****************************************************************************")
+    print("MOOG IS CONTROLLED BY DRIVER", driver)
+    print("****************************************************************************\n")
 
 
 def id_generator(size=3, chars=string.ascii_uppercase + string.digits):
@@ -177,25 +177,25 @@ def do_stats(x, y):
 
 
 def print_stats(t):
-    print "Here are abundances for", ELEMENTS[int(t[0, 1])]
-    print "%10s %5s %8s %8s %8s %7s %7s %8s" % \
-          ("wavelength", "ID", "EP", "logGF", "EWin", "logRWin", "abund", "delavg")
+    print("Here are abundances for", ELEMENTS[int(t[0, 1])])
+    print("%10s %5s %8s %8s %8s %7s %7s %8s" % \
+          ("wavelength", "ID", "EP", "logGF", "EWin", "logRWin", "abund", "delavg"))
     for l in t[t[:, 0].argsort()]:
-        print "%10.2f %5.1f %8.2f %8.2f %7.2f %7.3f %8.3f %8.3f" % \
-                  (l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
+        print("%10.2f %5.1f %8.2f %8.2f %7.2f %7.3f %8.3f %8.3f" % \
+                  (l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7]))
     if t.shape[0] == 1.:
-        print "Just one line, no stats"
+        print("Just one line, no stats")
     else:
-        print "average abundance  = %-9.3f std. deviation =  %-9.3f #lines = %3i" % \
-              (np.average(t[:, 6]), np.std(t[:, 6], ddof=1), len(t[:, 6]))
+        print("average abundance  = %-9.3f std. deviation =  %-9.3f #lines = %3i" % \
+              (np.average(t[:, 6]), np.std(t[:, 6], ddof=1), len(t[:, 6])))
     if t.shape[0] > 3.:
-        print "E.P. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" % \
-              (do_stats(t[:, 2], t[:, 6]))
-        print "R.W. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" % \
-              (do_stats(t[:, 5], t[:, 6]))
-        print "wav. correl.:  slope = %7.3e  intercept = %7.3f  corr. coeff. = %7.3f\n" % \
-              (do_stats(t[:, 0], t[:, 6]))
+        print("E.P. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" % \
+              (do_stats(t[:, 2], t[:, 6])))
+        print("R.W. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" % \
+              (do_stats(t[:, 5], t[:, 6])))
+        print("wav. correl.:  slope = %7.3e  intercept = %7.3f  corr. coeff. = %7.3f\n" % \
+              (do_stats(t[:, 0], t[:, 6])))
     else:
-        print "No statistics done for E.P. trends"
-        print "No statistics done for R.W. trends"
-        print "No statistics done for wav. trends\n"
+        print("No statistics done for E.P. trends")
+        print("No statistics done for R.W. trends")
+        print("No statistics done for wav. trends\n")

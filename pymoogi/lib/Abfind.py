@@ -1,7 +1,6 @@
 from Common_functions import *
 import numpy as np
 import matplotlib.pyplot as plt
-from elements import ELEMENTS
 from read_out_files import out2_abfind
 import copy
 import time
@@ -24,12 +23,12 @@ class AbfindPlot(object):
     
     def choose_labels(self):
         print_driver(self.driver)
-        labels = map(str, np.unique(np.array(self.data[:, 1], dtype=int)))
-        print "Elements in your list:"
-        print labels
+        labels = list(map(str, np.unique(np.array(self.data[:, 1], dtype=int))))
+        print("Elements in your list:")
+        print(labels)
         if len(labels) > 1:
-            print "Choose element(s)"
-            chosen_labels = raw_input().split(" ")
+            print("Choose element(s)")
+            chosen_labels = input().split(" ")
             if chosen_labels[0] == 'q':
                 exit()
         else:
@@ -37,7 +36,7 @@ class AbfindPlot(object):
        
         for lbl in chosen_labels:
             if lbl not in labels:
-                print "No data for atomic number", lbl
+                print("No data for atomic number", lbl)
                 chosen_labels.remove(lbl)
                
         return chosen_labels
@@ -90,9 +89,9 @@ class AbfindPlot(object):
         
     def update_plot(self):
         clear()
-        plt.gca().set_color_cycle('None')
+        # plt.gca().set_color_cycle('None')
         if not self.chosen_labels:
-            print "Your list is empty"
+            print("Your list is empty")
         self.clear_axes()  
         clear()
 
@@ -112,21 +111,21 @@ class AbfindPlot(object):
         xcoord, ycoord = [event.xdata, event.ydata]
         r_ind = np.abs(ycoord - self.species_tab[:, 6]).argmin()
         self.species_tab = np.delete(self.species_tab, r_ind, 0)
-        for i in [0, 1, 2]:
-            self.ax[i].set_color_cycle('None')
+        # for i in [0, 1, 2]:
+        #    self.ax[i].set_color_cycle('None')
         self.clear_axes()
         self.make_plot()
-        print "Switch [m]odel, change [v]t, [q]uit or any other key to plot"
+        print("Switch [m]odel, change [v]t, [q]uit or any other key to plot")
     
     def switch_model(self, org_pars):
         old_model = self.org_pars['model_in']
-        print "Name of file with new model of atmosphere?"
-        new_model = raw_input()
+        print("Name of file with new model of atmosphere?")
+        new_model = input()
         self.org_pars['model_in'] = ["\'" + new_model + "\'"]
         try:
             run_moog(self.driver, self.org_pars)
         except:
-            print "\n No such a file"
+            print("\n No such a file")
             org_pars['model_in'] = [old_model]
             time.sleep(1.5)
             
@@ -150,14 +149,14 @@ class AbfindPlot(object):
             self.chosen_labels = self.choose_labels()
             self.update_plot()            
             plt.show()
-            print "Switch [m]odel, change [v]t, [q]uit or any other key to plot again"
-            plot_again = raw_input()
+            print("Switch [m]odel, change [v]t, [q]uit or any other key to plot again")
+            plot_again = input()
             if plot_again == 'm':
                 self.switch_model(self.org_pars)
                 self.data = out2_abfind(self.org_pars['summary_out'][0][1:-1])
             elif plot_again == 'v':
-                print "What is the new microturbulence (km/s)?"
-                vt = raw_input()
+                print("What is the new microturbulence (km/s)?")
+                vt = input()
                 
                 self.change_vt(vt)
                 self.data = out2_abfind(self.org_pars['summary_out'][0][1:-1])
