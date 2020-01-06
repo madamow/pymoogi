@@ -64,7 +64,7 @@ c*****format statements
 1001  format (79('*'))
 1002  format (a7)
 1003  format (22x,'MOOG IS CONTROLLED BY DRIVER ',a7)
-1004  format (25(' '),'MOOG LTE VERSION (JUN 2014)',26(' '))
+1004  format (25(' '),'MOOG LTE VERSION (FEB 2017)',26(' '))
 1010  format (a80)
 1011  format (i3)
 
