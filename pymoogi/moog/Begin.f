@@ -120,11 +120,7 @@ c*****format statements
 1001  format (79('*'))
 1002  format (a7)
 1003  format (22x,'MOOG IS CONTROLLED BY DRIVER ',a7)
-<<<<<<< HEAD
-1004  format (25(' '),'MOOG LTE VERSION (FEB 2017)',26(' '))
-=======
 1004  format (25(' '),'MOOG LTE VERSION (FEB 2017)',26(' '))   
->>>>>>> 0ea84791500bb48a64b30bd30af75ada3c289db0
 1010  format (a80)
 1011  format (i3)
 
