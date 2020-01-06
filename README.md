@@ -1,6 +1,6 @@
 # README #
 
-This python wrapper for MOOG allows you to use  ***ewfind*** (non-interactive), ***synth***, ***blends*** and ***abfind*** drivers in an interactive way without the need for SuperMongo package. I kept the original MOOG layout, and added some minor improvements. You will find all MOOG source files in this repository (**MOOG version from November 2019**). All your MOOG's configuration files should work with this wrapper. For *synth* driver observed spectrum must be in text format (at least for now). To learn more about MOOG, visit Chris Sneden's webpage: [MOOG](http://www.as.utexas.edu/~chris/moog.html)
+This python wrapper for MOOG allows you to use  ***ewfind***, ***blends*** (both non-interactive), ***synth***  and ***abfind*** drivers in an interactive way without the need for SuperMongo package. I kept the original MOOG layout, and added some minor improvements. You will find all MOOG source files in this repository (**MOOG version from November 2019**). All your MOOG's configuration files should work with this wrapper. For *synth* driver observed spectrum must be in text format (at least for now). To learn more about MOOG, visit Chris Sneden's webpage: [MOOG](http://www.as.utexas.edu/~chris/moog.html)
 
  
 ### How do I get set up? ###
