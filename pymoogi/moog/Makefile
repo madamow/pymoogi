@@ -3,7 +3,7 @@
 
 #     here are the object files
 OBJECTS = Abfind.o Batom.o Begin.o  \
-	Blankstring.o Bmolec.o Boxit.o \
+	Blankstring.o Blends.o Bmolec.o Boxit.o \
 	Cdcalc.o Chabund.o  \
 	Correl.o Crosscorr.o Curve.o Damping.o Discov.o \
 	Eqlib.o Estim.o Ewfind.o \
@@ -18,8 +18,9 @@ OBJECTS = Abfind.o Batom.o Begin.o  \
 	Partnew.o Plotremember.o  \
 	Prinfo.o Putasci.o Readobs.o \
 	Rinteg.o Setmols.o Smooth.o Stats.o Sunder.o Synspec.o \
-	Synth.o Tablepop.o Taukap.o Trudamp.o Ucalc.o Vargauss.o \
-	Vmacro.o Voigt.o Wavecalc.o Writenumber.o
+	Synth.o Tablepop.o Taukap.o Total.o Trudamp.o Ucalc.o Vargauss.o \
+	Vmacro.o Voigt.o \
+        Weedout.o Wavecalc.o Writenumber.o
 
 
 #     here are the common files
