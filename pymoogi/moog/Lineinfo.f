@@ -29,7 +29,9 @@ c******************************************************************************
 c*****here the line data are output to "standard_out"; all relevant 
 c     drivers use this
 c     if you don't want any line output, linprintopt=0 will exit the routine
+
 1     if (linprintopt .lt. 1) return
+
 c     if you want standard output, linprintopt=1 is chosen
 c     linprintopt>=2 outputs ionization potentials, charges, masses,
 c                            reduced masses for molecules, 
@@ -42,7 +44,7 @@ c     lineprintop =4 outputs line-center opacities
          iatom = idint(atom1(j))
          loggf = dlog10(gf(j))
          logstrength = dlog10(strength(j))
-         if (iatom .lt. 100) then
+         if     (iatom .lt. 100) then
             if (iunits .eq. 1) then
                write (nf1out,1003) j, 1.d-4*wave1(j), names(iatom),
      .           ion(ich), atom1(j), e(j,1), loggf, damptype(j), 
@@ -54,31 +56,55 @@ c     lineprintop =4 outputs line-center opacities
             endif
             if (linprintopt .ge. 2) write (nf1out,1005) 
      .                 (chi(j,k),k=1,3), charge(j), amass(j), rdmass(j)
-         else
-            call sunder (atom1(j),ia,ib)
-            if (ia .eq. 1) then
-               l = ia
-               ia = ib
-               ib = l
+         elseif (iatom .lt. 10000) then
+            call sunder (atom1(j),i1,i2)
+            if (i1 .eq. 1) then
+               l = i1
+               i1 = i2
+               i2 = l
             endif
             leftovr = idint(10000.*(atom1(j)-iatom)+0.1)
-            if (ia .lt. 10) then
-               read (names(ia),1006) name
-               write (molname,1007) name,names(ib),leftovr
+            if (i1 .lt. 10) then
+               read (names(i1),1006) name
+               write (molname,1007) name,names(i2),leftovr
             else
-               write (molname,1008) names(ia),names(ib),leftovr
+               write (molname,1008) names(i1),names(i2),leftovr
             endif
             if (iunits .eq. 1) then
                write (nf1out,1009) j, 1.d-4*wave1(j), molname, 
-     .           atom1(j), e(j,1), gf(j), damptype(j), logstrength,
-     .           1000.*width(j)
+     .               atom1(j), e(j,1), loggf, damptype(j), 
+     .               logstrength, 1000.*width(j)
             else
                write (nf1out,1010) j, wave1(j), molname, 
-     .           atom1(j), e(j,1), gf(j), damptype(j), logstrength,
-     .           1000.*width(j)
+     .               atom1(j), e(j,1), loggf, damptype(j), 
+     .               logstrength, 1000.*width(j)
             endif
-            if (linprintopt .ge. 2) write (nf1out,1005) 
-     .                 (chi(j,k),k=1,3), charge(j), amass(j), rdmass(j)
+            if (linprintopt .ge. 2) 
+     .         write (nf1out,1005) 
+     .               d0(j), (chi(j,k),k=1,2), charge(j), amass(j), 
+     .               rdmass(j)
+         elseif (iatom .lt. 1000000) then
+            call sunder (atom1(j),i1,i2)
+            xia = dble(i2)
+            call sunder (xia,i2,i3)
+            if (iatom .eq. 10108) then
+               molname = 'H_2O    '
+            else
+               molname = 'CO_2    '
+            endif
+            if (iunits .eq. 1) then
+               write (nf1out,1009) j, 1.d-4*wave1(j), molname,
+     .               atom1(j), e(j,1), loggf, damptype(j),
+     .               logstrength, 1000.*width(j)
+            else
+               write (nf1out,1010) j, wave1(j), molname,
+     .               atom1(j), e(j,1), loggf, damptype(j),
+     .               logstrength, 1000.*width(j)
+            endif
+            if (linprintopt .ge. 2)
+     .         write (nf1out,1005)
+     .               d0(j), (chi(j,k),k=1,2), charge(j), amass(j),
+     .               rdmass(j)
          endif
       enddo    
       if (start.ne.0.0 .or. sstop.ne.0.0) then
@@ -122,11 +148,11 @@ c     molecular line can possibly be in this category
          if (iatom .lt. 100) then
             if (iunits .eq. 1) then
                write (nf1out,1003) j-nlines,1.d-4*wave1(j),names(iatom),
-     .                             ion(ich), atom1(j), e(j,1), gf(j),
+     .                             ion(ich), atom1(j), e(j,1), loggf,
      .                             damptype(j), logstrength
             else
                write (nf1out,1004) j-nlines, wave1(j),names(iatom),
-     .                             ion(ich), atom1(j), e(j,1), gf(j), 
+     .                             ion(ich), atom1(j), e(j,1), loggf,
      .                             damptype(j), logstrength
             endif
          else
@@ -197,13 +223,14 @@ c     look here also for the calls to the trend line calculations
          endif
          ew = 1000.*width(l)
          rw = dlog10(width(l)/wave1(l))
-         write (array,3007) wave1(l), atom1(l), e(l,1), dlog10(gf(l)),
+         loggf = dlog10(gf(l))
+         write (array,3007) wave1(l), atom1(l), e(l,1), loggf,
      .         ew, rw, abundout(l), diff
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
             call prinfo (line)
          endif
-         write (nf2out,3007) wave1(l), atom1(l), e(l,1), dlog10(gf(l)),
+         write (nf2out,3007) wave1(l), atom1(l), e(l,1), loggf,
      .         ew, rw, abundout(l), diff
       enddo
       write (array,3008) average, deviate, kount

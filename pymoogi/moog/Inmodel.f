@@ -15,8 +15,10 @@ c******************************************************************************
       real*8 element(95), logepsilon(95)
       real*8 kaprefmass(100)
       real*8 bmol(110)
+      integer nel(7)
       character list*80, list2*70
       integer append
+      data (nel(i),i=1,7)/  1,  2,  6, 12, 13, 14, 26/
 
 
 c*****Read in the key word to define the model type
@@ -272,9 +274,9 @@ c     saved.
 
 c*****Set up the default molecule list
       if (molset .eq. 0) then
-         nmol = 21
+         nmol = 30
       else
-         nmol = 57
+         nmol = 59
       endif
       if     (molset .eq. 0) then
          do i=1,110
@@ -315,31 +317,6 @@ c     molecular equilibrium if needed.
 
 c*****do the general molecular equilibrium
 101   call eqlib
-
-
-c     In the number density array "numdens", the elements denoted by
-c     the first subscripts are named in at the ends of the assignment
-c     lines; at present these are the only ones needed for continuous 
-c     opacities
-c     
-      do i=1,ntau
-         numdens(1,1,i) = xamol(1,i)                                    H I
-         numdens(1,2,i) = xmol(1,i)                                     H II
-         numdens(2,1,i) = xamol(2,i)                                    He I
-         numdens(2,2,i) = xmol(2,i)                                     Hi II
-         numdens(3,1,i) = xamol(3,i)                                    C I
-         numdens(3,2,i) = xmol(3,i)                                     C II
-         numdens(4,1,i) = xamol(6,i)                                    Mg I
-         numdens(4,2,i) = xmol(6,i)                                     Mg II
-         numdens(5,1,i) = xamol(7,i)                                    Al I
-         numdens(5,2,i) = xmol(7,i)                                     Al II
-         numdens(6,1,i) = xamol(8,i)                                    Si I
-         numdens(6,2,i) = xmol(8,i)                                     Si II
-         numdens(7,1,i) = xamol(16,i)                                   Fe I
-         numdens(7,2,i) = xmol(16,i)                                    Fe II
-         numdens(8,1,i) = xmol(17,i)                                    H_2
-      enddo
-
 
 
 c*****SPECIAL NEEDS: for NEWMARCS models, to convert kaprefs to our units
