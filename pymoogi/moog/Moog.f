@@ -48,6 +48,8 @@ c*****use one of the standard driver routines ("isotop" is obsolete):
          call abfind
       elseif (control .eq. 'ewfind ') then
          call ewfind
+      elseif (control .eq. 'blends ') then
+         call blends
 
 c*****or, put in your own drivers in the form below....
       elseif (control .eq. 'mine  ') then
@@ -78,6 +80,5 @@ c*****format statements
 
 
       end
-
 
       
