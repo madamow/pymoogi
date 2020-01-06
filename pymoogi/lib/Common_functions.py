@@ -63,7 +63,7 @@ def str_to_list(s):
 def list_to_dict(sf):
     driver, tab = str_to_list(sf)
     smoothing_types = ['g', 'l', 'v', 'm', 'c', 'd', 'r']
-    l_par = {'isotopes', 'abundances', 'plotpars', 'synlimits'}
+    l_par = {'isotopes', 'abundances', 'plotpars', 'synlimits', 'blenlimits'}
 
     # Transform list to dict
     dict_par = {}
@@ -81,7 +81,7 @@ def list_to_dict(sf):
                     iline = np.arange(ind + 1, 1 + ind + int(line[1]))
                     for i in iline:
                         dict_par[line[0]].append([tab[i][0], tab[i][1:]])
-                elif line[0] == 'synlimits':
+                elif line[0] == 'synlimits' or line[0] == 'blenlimits':
                     dict_par[line[0]].append(tab[ind + 1])
                 elif line[0] == 'plotpars':
                     if line[1] == '1':
@@ -91,8 +91,6 @@ def list_to_dict(sf):
                             dict_par[line[0]].append(tab[i])
                     else:  # default values are set for plotting parameters:
                         dict_par[line[0]].append(0)
-
-
     try:
         dict_par['abundances'][1:] = sorted(dict_par['abundances'][1:], key=get_key)
     except KeyError:
@@ -114,7 +112,7 @@ def dict_to_str(driver, dict_par):
             'lines_in', 'strong', 'stronglines_in', 'freeform', 'opacit',
             'observed_in', 'atmosphere',
             'trudamp', 'units', 'lines', 'molecules',
-            'flux/int', 'fluxlimits', 'coglimits', 'blenlimits',
+            'flux/int', 'fluxlimits', 'coglimits',
             'iraf', 'damping', 'plot', 'histogram']
 
     for elem in keys:
@@ -139,6 +137,10 @@ def dict_to_str(driver, dict_par):
     if 'synlimits' in list(dict_par.keys()):
         s = s + "synlimits\n"
         s = s + "    "+' '.join(dict_par['synlimits'][0]) + "\n"
+
+    if 'blenlimits' in list(dict_par.keys()):
+        s = s + "blenlimits\n"
+        s = s + "    "+' '.join(dict_par['blenlimits'][0]) + "\n"
 
     if 'plotpars' in list(dict_par.keys()):
         s = s + "plotpars" + " " + str(dict_par['plotpars'][0]) + "\n"
