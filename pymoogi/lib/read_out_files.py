@@ -89,8 +89,6 @@ def out3_synth(file):
         data_all = fh.read().split("the number of")
     data_all.pop(0)
 
-    tab_out3 = np.array([])
-
     for i, data in enumerate(data_all):
         flux = []
         for line in [_f for _f in data.split("\n") if _f]:
@@ -104,7 +102,7 @@ def out3_synth(file):
 
         np_flux = np.asarray(flux)
         if i == 0:
-            tab_out3 = np_flux[:, 1]
+            tab_out3 = np.array([np_flux[:, 1]])
             lam3 = np_flux[:, 0]
         else:
             tab_out3 = np.vstack([tab_out3, np_flux[:, 1]])

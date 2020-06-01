@@ -72,10 +72,11 @@ class SynthPlot(object):
 
         # Plot syntetic spectra
         colors = []
+
         for i, line in enumerate(self.sflux):
             ssp = self.ax.plot(self.slam, line, label=self.labels[i])
             colors.append(ssp[0].get_color())
-        
+
         # Create legend
         try:
             legend = self.ax.legend(loc=3, frameon=False)
@@ -83,6 +84,7 @@ class SynthPlot(object):
                 text.set_color(color)
         except AttributeError:
             pass
+
 
     def bx_plot(self):
         # Plot O-C on second panel
