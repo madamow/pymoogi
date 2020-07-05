@@ -17,7 +17,7 @@ For easy updates and installing libraries I strongly recommend [miniConda](http:
 
 For running pyMOOGi you will need:
 
- * python 3.7 
+ * python3
  * numpy 
  * scipy 
  * matplotlib 
