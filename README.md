@@ -35,7 +35,7 @@ Do not forget to `source` your .bashrc, .profile, or eqiuvalent file.
 
 * go to /your/path/to/pymoogi/pymoogi/moog
 * run Makefile (just type `make` in terminal) - there might be some warnings, but at the end you should get an executable file called MOOG
-* go to /your/path/to/pymoogi/pymoogi/moog and run setup file:
+* go to /your/path/to/pymoogi/ and run setup file:
 
 `python setup.py install`
 
