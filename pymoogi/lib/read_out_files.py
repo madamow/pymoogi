@@ -21,10 +21,11 @@ def out2_abfind(file):
     return line_data[1:, :]
 
 
-def out2_synth(file):
+def out2_synth(file, delimiter='ALL'):
     # split into blocks
     with open(file, 'r') as fh:
-        data_all = fh.read().split("ALL")
+        data_all = fh.read().split(delimiter)
+
     # first element is always empty, remove it
     data_all.pop(0)
 
@@ -54,10 +55,17 @@ def out2_synth(file):
                 model = " ".join(line.split(":")[1].split())
 
             # Find abundances
-            if line_list[0] == 'element':
-                el = line.strip().split(":")[0].strip().split(" ")[-1]
-                ab = line.strip().split(":")[1].strip().split(" ")[-1]
-                ax.append([el, ab])
+            if delimiter=='ALL':
+                if line_list[0] == 'element':
+                    el = line.strip().split(":")[0].strip().split(" ")[-1]
+                    ab = line.strip().split(":")[1].strip().split(" ")[-1]
+                    ax.append([el, ab])
+            else:
+                if line_list[0] == 'overall':
+                    el = '99'
+                    ab = line_list[-2]
+                    ax.append([el, ab])
+
             # Find isotopes
             if line_list[0] == 'Isotopic':
                 isot = line.strip().split(":")[1].strip().split("=")[0].strip()

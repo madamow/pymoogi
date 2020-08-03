@@ -37,7 +37,14 @@ class SynthPlot(object):
         self.org_pars = org_pars
         self.pars = copy.deepcopy(self.org_pars)
 
-        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
+
+        if self.pars['abundances'][1][0]=='99':
+            dm = 'Changing'
+        else:
+            dm = 'ALL'
+
+        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
+
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
        
         self.p2_flag = False
@@ -60,7 +67,11 @@ class SynthPlot(object):
         self.labels = [None] * int(self.pars['abundances'][0][1])
 
         self.fig, self.ax = plt.subplots()
-        self.mh = float(self.out2[0][1].split("=")[-1])
+        try:
+            self.mh = float(self.out2[0][1].split("=")[-1])
+        except:
+            self.mh=0.
+
 
     def ax_plot(self):
         # some basic formatting on plot
@@ -131,10 +142,16 @@ class SynthPlot(object):
         self.xylim[2], self.xylim[3] = axes.get_ylim()
     
     def do_plot(self):
-        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
+        if self.pars['abundances'][1][0] == '99':
+            dm = 'Changing'
+        else:
+            dm = 'ALL'
+        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
+
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
 
         # Create labels
+
         for i, spec in enumerate(self.sflux):
             s = ''
             for l in self.out2[i][2]:
@@ -144,6 +161,7 @@ class SynthPlot(object):
             if self.pars['veil'] > 0.0:
                 veil = float(self.pars['veil'])
                 self.sflux[i, 1, :] = (spec[1] + veil)/(1. + veil)
+
         
         if self.p2_flag is True and self.obs_in_flag is True:
             self.ax = plt.subplot2grid((2, 1), (0, 0))
@@ -459,7 +477,7 @@ class SynthPlot(object):
         print("Enter the new abundances or offsets on the line below :")
         new = input().split(None)
         
-        if a_id in in_list:
+        if a_id in in_list and a_id != '99':
             for index, val in enumerate(self.pars['abundances'][1:]):
                 if val[0] == a_id:
                     if flag == 'n':
