@@ -12,8 +12,10 @@ from matplotlib import rcParams
 from matplotlib import ticker
 from Common_functions import *
 from read_out_files import out2_synth, out3_synth
+from solar_abund import get_solar_abund
 
 light_speed = sc.c * 0.001
+solar = get_solar_abund()
 
 
 def print_options():
@@ -35,7 +37,14 @@ class SynthPlot(object):
         self.org_pars = org_pars
         self.pars = copy.deepcopy(self.org_pars)
 
-        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
+
+        if self.pars['abundances'][1][0]=='99':
+            dm = 'Changing'
+        else:
+            dm = 'ALL'
+
+        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
+
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
        
         self.p2_flag = False
@@ -58,6 +67,10 @@ class SynthPlot(object):
         self.labels = [None] * int(self.pars['abundances'][0][1])
 
         self.fig, self.ax = plt.subplots()
+        try:
+            self.mh = float(self.out2[0][1].split("=")[-1])
+        except:
+            self.mh=0.
 
 
     def ax_plot(self):
@@ -129,10 +142,16 @@ class SynthPlot(object):
         self.xylim[2], self.xylim[3] = axes.get_ylim()
     
     def do_plot(self):
-        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1])
+        if self.pars['abundances'][1][0] == '99':
+            dm = 'Changing'
+        else:
+            dm = 'ALL'
+        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
+
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
 
         # Create labels
+
         for i, spec in enumerate(self.sflux):
             s = ''
             for l in self.out2[i][2]:
@@ -142,6 +161,7 @@ class SynthPlot(object):
             if self.pars['veil'] > 0.0:
                 veil = float(self.pars['veil'])
                 self.sflux[i, 1, :] = (spec[1] + veil)/(1. + veil)
+
         
         if self.p2_flag is True and self.obs_in_flag is True:
             self.ax = plt.subplot2grid((2, 1), (0, 0))
@@ -453,22 +473,39 @@ class SynthPlot(object):
         print("Which element to change?")
         a_id = input()
         print("n = new abundances, or z = zero offsets?")
-        flag = input()     
-    
-        if flag == 'n':
-            print("Enter the new offsets on the line below :")
-            new = input().split(None)
-            if a_id in in_list:
-                for index, val in enumerate(self.pars['abundances'][1:]):
-                    if val[0] == a_id:
-                        self.pars['abundances'][index+1][1][:syn_no] = new
-            else:
-                self.pars['abundances'].append([a_id, new])
-   
-        elif flag == 'z':
+        flag = input()
+        print("Enter the new abundances or offsets on the line below :")
+        new = input().split(None)
+        
+        if a_id in in_list and a_id != '99':
             for index, val in enumerate(self.pars['abundances'][1:]):
                 if val[0] == a_id:
-                    self.pars['abundances'].pop(index+1)
+                    if flag == 'n':
+                        new_off = []
+                        for a in new:
+                            new_off.append("%.2f" % (float(a) - solar[int(a_id)] - self.mh))
+                        new_off = list(map(str, new_off))
+                        self.pars['abundances'][index+1][1][:syn_no] = new_off
+                    elif flag== 'z':
+                        self.pars['abundances'][index+1][1][:syn_no] = new
+        elif int(a_id) == 99:
+            print(r"""
+                     -''--.
+                   _`>   `\.-'<
+                _.'     _     '._
+              .'   _.='   '=._   '.
+              >_   / /_\ /_\ \   _<
+                / (  \o/\\o/  ) \
+                >._\ .-,_)-. /_.<
+            jgs     /__/ \__\
+                      '---' """)
+            time.sleep(0.5)
+            for index, val in enumerate(self.pars['abundances'][1:]):
+                self.pars['abundances'][index+1][1][:syn_no] = new
+        else:
+            self.pars['abundances'].append([a_id, new])
+   
+
     
         self.pars['abundances'][0][0] = str(len(self.pars['abundances'][1:]))
         if self.pars['abundances'][0][1] == '0':
