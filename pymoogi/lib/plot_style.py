@@ -5,14 +5,14 @@ def SM_style():
     # lines
     matplotlib.rc('figure', facecolor ='black')
 
-    rcParams['lines.linewidth']  = 2.0
+    rcParams['lines.linewidth']  = 1.5
     rcParams['lines.linestyle']  = '-'
     rcParams['lines.color']      = 'white'
 
     # fonts & text
     rcParams['font.family']      = 'serif'
     rcParams['font.weight']      = 'normal'
-    rcParams['font.size']        = 12.0
+    rcParams['font.size']        = 10.0
     rcParams['text.color']       = 'white'
 
     # axes & ticks
