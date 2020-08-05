@@ -152,15 +152,19 @@ class SynthPlot(object):
         else:
             dm = 'ALL'
         self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
-
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
 
         # Create labels
-
         for i, spec in enumerate(self.sflux):
             s = ''
-            for l in self.out2[i][2]:
-                s = s + l[0] + "=" + l[1] + " "
+            if dm == 'ALL':
+                for l in self.out2[i][2]:
+                    s += l[0] + "=" + l[1] + " "
+            else:
+                for l in self.out2[i][2]:
+                    s += '[M/H] FOR ALL ELEMENTS: ' + l[1] + " "
+
+
             self.labels[i] = s.strip()
             
             if self.pars['veil'] > 0.0:
