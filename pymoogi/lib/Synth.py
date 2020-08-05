@@ -46,7 +46,11 @@ class SynthPlot(object):
         self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
 
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
-       
+
+        self.m, self.ls = ['', '-']
+        if len(self.slam) < 500:
+            self.m, self.ls =['.', '']
+
         self.p2_flag = False
         self.flag = ''
         self.obs_in_flag = False
@@ -75,8 +79,9 @@ class SynthPlot(object):
 
     def ax_plot(self):
         # some basic formatting on plot
+
         if self.obs_in_flag:
-            self.ax.plot(self.obs[:, 0], self.obs[:, 1], 'o', color=rcParams['lines.color'])
+            self.ax.plot(self.obs[:, 0], self.obs[:, 1], ls=self.ls, marker=self.m, color=rcParams['lines.color'])
 
         if self.pars['plotpars'][0] == 1:
             self.xylim = list(map(float, self.pars['plotpars'][1]))
