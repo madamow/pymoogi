@@ -76,6 +76,7 @@ c******************************************************************************
       real*8 ffbeg(11,11), ffend(11,11), fftt(11), wfflog(22)
       real*8 fftheta(100), thetaff(11), wavek(22)
       real*8 xhmin(100)
+      real*8 wave(1), wavelog(1), fftlog(1), hminbf(1)
       equivalence (ff(1,1),ffbeg(1,1)), (ff(1,12),ffend(1,1))
       save
 c  From Mathisen (1984), after Wishart (1979) and Broad & Reinhardt (1976) 
@@ -156,14 +157,14 @@ c  .754209 Hotop & Lineberger (1985, J. Phys. Chem. Ref. Data, 14,731-752)
       endif
 
 c  main opacity computation yielding "aHminus"
-      wave = 2.99792458d17/freq
-      wavelog = dlog(wave)
+      wave(1) = 2.99792458d17/freq
+      wavelog(1) = dlog(wave(1))
       do itheta=1,11
          nnnn = 22
          call linter (wfflog,fflog(1,itheta),nnnn,wavelog,fftlog,1)
-         fftt(itheta) = dexp(fftlog)/thetaff(itheta)*5040.*1.380658E-16
+         fftt(itheta) = dexp(fftlog(1))/thetaff(itheta)*5040.0d0*1.380658E-16
       enddo
-      hminbf = 0.
+      hminbf(1) = 0.
       nnnn = 85
       if (freq  .gt.  1.82365d14) 
      .              maxwave = map1(wbf,bf,nnnn,wave,hminbf,1) 
@@ -171,7 +172,7 @@ c  main opacity computation yielding "aHminus"
          nnnn = 11
          call linter (thetaff,fftt,nnnn,theta(i),fftheta(i),1)
          hminff = fftheta(i)*numdens(1,1,i)/u(1,1,i)*2.*ne(i)
-         h = hminbf*1.d-18*(1.-evhkt(i))*xhmin(i)
+         h = hminbf(1)*1.d-18*(1.-evhkt(i))*xhmin(i)
          aHminus(i) = h + hminff
       enddo
 
