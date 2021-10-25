@@ -1,0 +1,46 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - "doc/**"
+      - README.md
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [
+          macos-latest,
+          ubuntu-latest,
+        ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - uses: actions/checkout@v2
+    - name: Build MOOG (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: make -C pymoogi/moog
+    - name: Build MOOG (MacOS)
+      if: runner.os == 'MacOS'
+      shell: bash
+      run: make FC=gfortran-11 -C pymoogi/moog
+    - name: Run Tests
+      shell: bash
+      run: |
+        export MOOGPATH=$GITHUB_WORKSPACE/pymoogi/moog
+        cp example/synth_example.par example/batch.par
+        cd example && ${MOOGPATH}/MOOG
+        diff -u $GITHUB_WORKSPACE/example/out3 $GITHUB_WORKSPACE/example/out3.gold
+        exit $?
