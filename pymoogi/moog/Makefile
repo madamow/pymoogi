@@ -30,7 +30,8 @@ COMMON =  Atmos.com Dummy.com Equivs.com Factor.com Kappa.com Linex.com \
 
 #edit this file here if you prefer other compiler
 CC = cc
-FC = gfortran -O2 -g
+FC = gfortran
+FFLAGS = -O2 -g
 
 
 #        here are the compilation and linking commands
@@ -47,7 +48,7 @@ all: MOOG ;
 	@echo -----------------------------------------------------------------
 
 MOOG:  $(OBJECTS);
-	$(FC) $(OBJECTS) -static-libgfortran -o MOOG 
+	$(FC) $(FFLAGS) $(OBJECTS) -static-libgfortran -o MOOG
 
 $(OBJECTS): $(COMMON)
 
