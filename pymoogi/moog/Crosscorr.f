@@ -26,14 +26,15 @@ c******************************************************************************
       endif
 
 
-      do 10 i=minpt,maxpt
+      do i=minpt,maxpt
          xx = xcross(i)
          yy = ycross(i+ishift)
          xsum = xsum + xx
          ysum = ysum + yy
          xysum = xysum + xx*yy
          x2sum = x2sum + xx*xx
-10       y2sum = y2sum + yy*yy
+         y2sum = y2sum + yy*yy
+      enddo
 
 
       xn = real(maxpt - minpt + 1)

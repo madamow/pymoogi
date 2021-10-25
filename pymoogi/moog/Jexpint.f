@@ -29,29 +29,58 @@ c
       if (x.ge.100.) goto 800 
       if (x.le.-100.) goto 800 
       xu=x
-      if(xu)603,602,603
+      if (xu.eq.0.) then
+        goto 602
+      else
+        goto 603
+      endif
   602 rex=1.d+00
-      if(n-1)800,800,801
+
+      if(n-1 .le. 0) then
+        goto 800
+      else
+        goto 801
+      endif
   800 expint=0.
       goto 777
   801 expint=1./xint(n-1)
       goto 777
-  603 if(xu-xsave)604,503,604
+  603 if(xu-xsave.eq.0.0) then
+        goto 503
+      else
+        goto 604
+      endif
   604 xsave=xu
       xm=-xu
       emx = dexp(xm)
 c
 c  select method for computing ei(xm)
 c
-      if(xm-24.5)501,400,400
-  501 if(xm-5.)502,300,300
-  502 if(xm+1.)100,200,200
+      if(xm-24.5 .lt. 0.0) then
+        goto 501
+      else
+        goto 400
+      endif
+  501 if(xm-5.0 .lt. 0.0) then
+        goto 502
+      else
+        goto 300
+      endif
+  502 if(xm+1.0 .lt. 0.0) then
+        goto 100
+      else
+        goto 200
+      endif
   503 eisave=-arg
       exsave=emx
 c
 c  now recurse to higher orders
 c
-      if(n-1)507,507,505
+      if (n-1 .le. 0) then
+         goto 507
+      else
+         goto 505
+      endif
  505  do 506 i=2,n
         eisave=(xu*eisave-exsave)/(-xint(i-1))
   506 continue
@@ -83,7 +112,11 @@ c
       xzero=i
       xdelta=xzero-xm
       arg=tab(i-4)
-      if(xdelta)303,305,303
+      if(xdelta .eq. 0.0) then
+        goto 305
+      else
+        goto 303
+      endif
   303 y=arg
       deltax=xdelta/xzero
       power=1./deltax
@@ -91,7 +124,11 @@ c
         power=power*deltax
         y=((y-power/xzero)*xdelta)/xint(i)
         arg=arg+y
-        if(abs(y/arg)-1.d-8)305,304,304
+        if (abs(y/arg)-1.d-8 .lt. 0.0) then
+          goto 305
+        else
+          goto 304
+        endif
   304 continue
   305 arg=emx*arg
       goto 503

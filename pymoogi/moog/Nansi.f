@@ -16,9 +16,10 @@ c******************************************************************************
        ypos = y
 
 
-       do 11 ipos=ypos,maxline
+       do ipos=ypos,maxline
           istat = ivmove(ipos,xpos)
-11        istat = ivcleol()
+          istat = ivcleol()
+       enddo
        istat = ivmove(y,x)
 c
        ivcleof = 0
