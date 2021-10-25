@@ -6,7 +6,7 @@ c     ascii array 'linechars' until the first blank is seen;
 c     it is most useful for discovering the length of a file name.
 c***************************************************************************
 
-      character*80 linechars
+      character(len=*) linechars
       integer num
 
 
