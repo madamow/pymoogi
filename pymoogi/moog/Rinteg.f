@@ -12,10 +12,11 @@ c******************************************************************************
       fint(1) = start 
       rinteg = start
       n1 = n - 1
-      do 10 i=1,n1
-         fint(i+1)= (a(i)+b(i)/2.*(x(i+1)+x(i))+ 
+      do i=1,n1
+         fint(i+1) = (a(i)+b(i)/2.*(x(i+1)+x(i))+
      .     c(i)/3.*((x(i+1)+x(i))*x(i+1)+x(i)*x(i)))*(x(i+1)-x(i))
-10    rinteg = rinteg + fint(i+1)
+         rinteg = rinteg + fint(i+1)
+      enddo
 
       return
       end 
@@ -36,13 +37,14 @@ c******************************************************************************
       b(n)=(f(n)-f(n1))/(x(n)-x(n1))
       a(n)=f(n)-x(n)*b(n) 
       if(n.eq.2)return
-      do 1 j=2,n1
-      j1=j-1
-      d=(f(j)-f(j1))/(x(j)-x(j1)) 
-      c(j)=f(j+1)/((x(j+1)-x(j))*(x(j+1)-x(j1)))-f(j)/((x(j)-x(j1))*
-     1(x(j+1)-x(j)))+f(j1)/((x(j)-x(j1))*(x(j+1)-x(j1)))
-      b(j)=d-(x(j)+x(j1))*c(j)
-    1 a(j)=f(j1)-x(j1)*d+x(j)*x(j1)*c(j)
+      do j=2,n1
+        j1=j-1
+        d=(f(j)-f(j1))/(x(j)-x(j1))
+        c(j)=f(j+1)/((x(j+1)-x(j))*(x(j+1)-x(j1)))-f(j)/((x(j)-x(j1))*
+     .               (x(j+1)-x(j)))+f(j1)/((x(j)-x(j1))*(x(j+1)-x(j1)))
+        b(j)=d-(x(j)+x(j1))*c(j)
+        a(j)=f(j1)-x(j1)*d+x(j)*x(j1)*c(j)
+      enddo
       c(2)=0.
       b(2)=(f(3)-f(2))/(x(3)-x(2))
       a(2)=f(2)-x(2)*b(2)

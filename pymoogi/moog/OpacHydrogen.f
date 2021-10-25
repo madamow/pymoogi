@@ -222,7 +222,7 @@ c******************************************************************************
 
       l = 2
       ll = 0
-      do 50 k=1,nnew
+      do k=1,nnew
 10       if(xnew(k) .lt. xold(l)) go to 20
          l = l + 1
          if (l .gt. nold) go to 30
@@ -271,11 +271,7 @@ c******************************************************************************
          a = fold(l) - xold(l)*b
          ll = l
 50       fnew(k)= a + (b + c*xnew(k))*xnew(k)
-
-         map1 = ll - 1 
-         return
-         end
-
-
-
-
+      enddo
+      map1 = ll - 1
+      return
+      end
