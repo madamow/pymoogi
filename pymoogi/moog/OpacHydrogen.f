@@ -162,7 +162,8 @@ c  main opacity computation yielding "aHminus"
       do itheta=1,11
          nnnn = 22
          call linter (wfflog,fflog(1,itheta),nnnn,wavelog,fftlog,1)
-         fftt(itheta) = dexp(fftlog(1))/thetaff(itheta)*5040.0d0*1.380658E-16
+         fftt(itheta) =
+     .      dexp(fftlog(1))/thetaff(itheta)*5040.0d0*1.380658E-16
       enddo
       hminbf(1) = 0.
       nnnn = 85
