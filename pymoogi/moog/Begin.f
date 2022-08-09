@@ -12,60 +12,6 @@ c***************************************************************************
       integer num
 
 
-c*****define the number of text screen lines for silent mode;
-c     this number is hardwired, since it is not really needed at run time.
-      if (silent .eq. 'y') then
-         maxline = 24
-         go to 10
-      endif
-
-
-c*****define the number of lines available on the text screen for
-c     interactive mode; this number is discovered from the "stty -a"
-c     command, for which the output format is unique to the operating
-c     system.
-      write (systemcall,*) 'stty -a > tmpsize'
-      call system (systemcall)
-      open (99,file='tmpsize')
-5     read (99,1010,end=15) line
-      do i=1,77
-         if (line(i:i+3) .eq. 'rows') then
-            if     (machine .eq. 'pcl') then
-            read (line(i+4:i+6),1011) maxline
-            elseif (machine .eq. 'mac') then
-               read (line(i-4:i-2),1011) maxline
-            elseif (machine .eq. 'uni') then
-               read (line(i+6:i+8),1011) maxline
-            endif
-            go to 10
-         endif
-      enddo
-      go to 5
-15    array = 'SCREEN ROW COUNT UNKNOWN; USE 24 ([y]/n)? '
-      nchars = 42
-      ikount = 2
-      call getasci (nchars,ikount)
-      choice = chinfo(1:1)
-      if (choice.eq.'y' .or. nchars.le.0) then
-         go to 10
-      else
-         call finish (0)
-      endif
-10    close (99,status='delete')
-      write (systemcall,*) '\\rm -f tmpsize'
-      call system (systemcall)
-      if (maxline .lt. 10) then
-         maxline = 24
-      else
-         maxline = maxline - 2
-      endif
-
-
-c*****clear the text screen
-      write (systemcall,*) 'clear'
-      call system (systemcall)
-
-
 c*****open data files carried with the source code: Barklem damping
       nfbarklem = 35
       num = 60
