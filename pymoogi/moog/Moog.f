@@ -50,6 +50,8 @@ c*****use one of the standard driver routines ("isotop" is obsolete):
          call ewfind
       elseif (control .eq. 'blends ') then
          call blends
+      elseif (control .eq. 'synpop ') then
+         call synpop
 
 c*****or, put in your own drivers in the form below....
       elseif (control .eq. 'mine  ') then

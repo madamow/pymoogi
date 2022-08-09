@@ -19,7 +19,7 @@ OBJECTS = Abfind.o Batom.o Begin.o  \
 	Prinfo.o Putasci.o Readobs.o \
 	Rinteg.o Setmols.o Smooth.o Stats.o Sunder.o Synspec.o \
 	Synth.o Tablepop.o Taukap.o Total.o Trudamp.o Ucalc.o Vargauss.o \
-	Vmacro.o Voigt.o \
+	Synpop.o Vmacro.o Voigt.o \
         Weedout.o Wavecalc.o Writenumber.o
 
 
@@ -31,7 +31,7 @@ COMMON =  Atmos.com Dummy.com Equivs.com Factor.com Kappa.com Linex.com \
 #edit this file here if you prefer other compiler
 CC = cc
 FC = gfortran
-FFLAGS = -O2 -g
+FFLAGS = -O2 -g -fcheck=all -fbounds-check -ffpe-trap=invalid,zero,overflow -ffixed-line-length-72
 
 
 #        here are the compilation and linking commands
@@ -48,7 +48,7 @@ all: MOOG ;
 	@echo -----------------------------------------------------------------
 
 MOOG:  $(OBJECTS);
-	$(FC) $(FFLAGS) $(OBJECTS) -static-libgfortran -o MOOG
+	$(FC) -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib $(OBJECTS) -static-libgfortran -o MOOG 
 
 $(OBJECTS): $(COMMON)
 

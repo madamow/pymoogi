@@ -19,7 +19,7 @@ c*****open the model table input file and the summary table output file
       lscreen = 4
       array = 'MODEL TABLE INPUT FILE'
       nchars = 22
-      call infile ('input ',nftable,'formatted  ',0,nchars,
+      call infile ('input  ',nftable,'formatted  ',0,nchars,
      .             ftable,lscreen)      
       nf7out = 24
       lscreen = 6

@@ -32,6 +32,7 @@ c*****decide if certain element abundances need to be modified.
       endif
       if (num .ne. 5) then
          write (nf1out,1004)
+         print *, "isynth = ", isynth
          xmetals = abscale + abfactor(isynth)
          if (ninetynineflag .eq. 1) then
             write (nf1out,1005) xmetals

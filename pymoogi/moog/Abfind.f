@@ -7,13 +7,13 @@ c******************************************************************************
       implicit real*8 (a-h,o-z)
       include 'Atmos.com'
       include 'Linex.com'
+      include 'Factor.com'
       include 'Mol.com'
       include 'Pstuff.com'
 
   
 c*****read the parameter file
       call params
-
 
 c*****open the files for standard output and summary abundances
       nf1out = 20
@@ -58,6 +58,7 @@ c*****open and read the line list file; get ready for the line calculations
 c*****get ready for the line calculations: generate a curve-of-growth lookup
 c     table, read the linelist, etc.
 100   call fakeline
+      isynth = 1
       call inlines (1)
       call eqlib
       call nearly (1)

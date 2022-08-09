@@ -62,6 +62,7 @@ c         if (choice .eq. 'x') call pltspec (lscreen,ncall)
 
 
 c*****now do the syntheses
+      print *, numpecatom, numatomsyn
       if (numpecatom .eq. 0 .or. numatomsyn .eq. 0) then
          isynth = 1
          isorun = 1
