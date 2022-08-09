@@ -1,6 +1,6 @@
 abfind
-standard_out    'eqw1'
-summary_out     'eqw2'
+standard_out    'abfind_eqw1'
+summary_out     'abfind_eqw2'
 model_in        'ptps1413.odfnew'
 lines_in        'lines_abf.dat'  
 atmosphere      1

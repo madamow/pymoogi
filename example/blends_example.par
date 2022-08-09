@@ -1,6 +1,6 @@
 blends
-standard_out  'out1'
-summary_out   'out2'
+standard_out  'blends_out1'
+summary_out   'blends_out2'
 model_in      'ptps1413.odfnew'
 lines_in      'blends_input.list'
 atmosphere    1
