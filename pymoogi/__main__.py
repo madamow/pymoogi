@@ -61,10 +61,12 @@ def main():
     elif driver == 'ewfind':
         print_driver('ewfind')
         run_moog(driver, params)
+        print("All done! Check outputfiles for %s driver" % driver)
 
     elif driver == 'blends':
         print_driver('blends')
         run_moog(driver, params)
+        print("All done! Check outputfiles for %s driver" % driver)
 
 if __name__ == "__main__":
 
