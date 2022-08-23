@@ -66,6 +66,13 @@ def main():
         print_driver('blends')
         run_moog(driver, params)
 
+    elif driver == 'synpop':
+        print_driver('synpop')
+        run_moog(driver, params)
+
+    else:
+        print("Unknown driver. Exiting.")
+
 if __name__ == "__main__":
 
     main()
