@@ -24,6 +24,7 @@ for package in required:
 
 plt.switch_backend('qt5Agg')
 
+
 def main():
 
     clear()
@@ -58,12 +59,8 @@ def main():
         p = AbfindPlot(params)
         p.run()
 
-    elif driver == 'ewfind':
-        print_driver('ewfind')
-        run_moog(driver, params)
-
-    elif driver == 'blends':
-        print_driver('blends')
+    elif driver == 'ewfind' or driver == 'blends':
+        print_driver(driver)
         run_moog(driver, params)
 
     elif driver == 'synpop':
@@ -72,6 +69,7 @@ def main():
 
     else:
         print("Unknown driver. Exiting.")
+
 
 if __name__ == "__main__":
 

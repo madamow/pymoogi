@@ -260,7 +260,7 @@ c*****now plot the spectrum
      .                   f5out,lscreen)
          endif
 c         if (plotopt .eq. 3) then
-c            call smooth (-1,ncall)
+         call smooth (-1,ncall)
 c            choice = 'q'
 c         else
 c            call pltspec (lscreen,ncall)
