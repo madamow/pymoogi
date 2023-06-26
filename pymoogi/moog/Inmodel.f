@@ -114,6 +114,22 @@ c     using a reference wavelength that it reads in before the model.
          do i=1,ntau
             read (nfmodel,*) rhox(i),t(i),pgas(i),ne(i)
          enddo
+c*****Wolf Norgren written:
+c or Read in an interpolated PHOENIX model.
+c On each line the numbers are tau(ref), t, pgas, rho, pe
+      elseif (modtype .eq. 'PHOENIX   ') then
+         read (nfmodel,*) wavref
+         do i=1,ntau
+            read (nfmodel,*) tauref(i),t(i),pgas(i),rho(i),ne(i)
+         enddo
+c     OR: Read in a model from the output of the MARCS code.  This modtype
+c     type is called "BEGN".  On each line the numbers are:
+c     tauross, t, log(pg), log(pe), mol weight, and kappaross.
+      elseif (modtype .eq. 'BEGN      ') then
+         do i=1,ntau
+            read (nfmodel,*) tauref(i),t(i),pgas(i),ne(i),
+     .                          molweight(i),  kaprefmass(i)
+         enddo
 c     OR: Read in a model generated from ATLAS, with output generated
 c     in Padova.  The columns are in somewhat different order than normal
       elseif (modtype .eq. 'KUR-PADOVA') then
@@ -365,8 +381,10 @@ c     SPECIAL NEEDS: for NEWMARCS models, to convert kaprefs to our units
             kapref(i) = kaprefmass(i)*rho(i)
          enddo
 c     SPECIAL NEEDS: for generic models, to create internal kaprefs,
+c     (PHOENIX PART added by Monika Adamow)
       elseif (modtype .eq. 'GENERIC   ' .or.
      .        modtype .eq. 'WEBMARCS  ' .or.
+     .        modtype .eq. 'PHOENIX   ' .or.
      .        modtype .eq. 'WEB2MARC  ') then
          call opacit (1,wavref)
       endif
