@@ -9,12 +9,11 @@ print(path)
 sys.path.append("%s/lib/" % path)
 
 from Common_functions import *
-import matplotlib.pyplot as plt
 from plot_style import SM_style
 from Synth import SynthPlot
 from Abfind import AbfindPlot
 
-required = ['numpy', 'scipy', 'matplotlib']
+required = ['numpy', 'scipy', 'matplotlib', 'yaml']
 for package in required:
     try:
         exec('import {}'.format(package))
@@ -22,6 +21,7 @@ for package in required:
         print(('\nYou need to install the package "{}"'.format(package)))
         exit()
 
+import matplotlib.pyplot as plt
 plt.switch_backend('qt5Agg')
 
 def main():
