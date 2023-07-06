@@ -66,7 +66,7 @@ def list_to_dict(sf):
     l_par = {'isotopes', 'abundances', 'plotpars', 'synlimits', 'blenlimits'}
 
     # Transform list to dict
-    dict_par = {}
+    dict_par = {'driver': driver}
     for line in tab:
         if not isfloat(line[0]) and smoothing_types.count(line[0]) == 0:
             if not line[0] in l_par:
@@ -101,13 +101,12 @@ def list_to_dict(sf):
     except KeyError:
         pass
 
-
-    return driver, dict_par
+    return dict_par
 
 
 # Recreate back proper string
-def dict_to_str(driver, dict_par):
-    s = driver + "\n"
+def dict_to_str(dict_par):
+    s = dict_par['driver'] + "\n"
     keys = ['standard_out', 'summary_out', 'smoothed_out', 'model_in',
             'lines_in', 'strong', 'stronglines_in', 'freeform', 'opacit',
             'observed_in', 'atmosphere',
@@ -153,9 +152,9 @@ def dict_to_str(driver, dict_par):
     return s
 
 
-def run_moog(driver, pars):
+def run_moog(pars):
     print("Calling MOOG")
-    st = dict_to_str(driver, pars)
+    st = dict_to_str(pars)
 
     with open('./batch.par', 'w') as batchpar:
         batchpar.write(st)
