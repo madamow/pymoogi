@@ -62,6 +62,7 @@ def str_to_list(s):
 
 def list_to_dict(sf):
     driver, tab = str_to_list(sf)
+
     smoothing_types = ['g', 'l', 'v', 'm', 'c', 'd', 'r']
     l_par = {'isotopes', 'abundances', 'plotpars', 'synlimits', 'blenlimits'}
 
@@ -70,8 +71,7 @@ def list_to_dict(sf):
     for line in tab:
         if not isfloat(line[0]) and smoothing_types.count(line[0]) == 0:
             if not line[0] in l_par:
-                dict_par[line[0]] = []
-                dict_par[line[0]].append(line[1])
+                dict_par[line[0]] = line[1]
             else:
                 dict_par[line[0]] = []
                 ind = tab.index(line)
@@ -116,7 +116,7 @@ def dict_to_str(dict_par):
 
     for elem in keys:
         if elem in list(dict_par.keys()):
-            s = s + elem + " "+str(dict_par[elem][0]) + "\n"
+            s = s + elem + " "+str(dict_par[elem]) + "\n"
 
     if 'abundances' in list(dict_par.keys()):
         no_ab = int(dict_par['abundances'][0][1])

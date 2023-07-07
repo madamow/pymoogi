@@ -43,9 +43,9 @@ class SynthPlot(object):
         else:
             dm = 'ALL'
 
-        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
+        self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
 
-        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
+        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'])
 
         self.m, self.ls = ['', '-']
         if len(self.slam) < 500:
@@ -57,7 +57,7 @@ class SynthPlot(object):
         self.obs = np.array([])
 
         if 'observed_in' in list(self.pars.keys()) or int(self.pars['plot'][0]) == 2:
-            self.obs_org = np.loadtxt(self.pars['observed_in'][0][1:-1])
+            self.obs_org = np.loadtxt(self.pars['observed_in'])
             self.obs_in_flag = True
             self.obs = np.copy(self.obs_org)
 
@@ -151,8 +151,8 @@ class SynthPlot(object):
             dm = 'Changing'
         else:
             dm = 'ALL'
-        self.out2 = out2_synth(self.pars['summary_out'][0][1:-1], delimiter=dm)
-        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'][0][1:-1])
+        self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
+        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'])
 
         # Create labels
         for i, spec in enumerate(self.sflux):
