@@ -5,7 +5,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import copy
 import time
-import numpy as np
 import scipy.constants as sc
 import scipy.optimize as so
 from matplotlib import rcParams
