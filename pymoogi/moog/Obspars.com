@@ -1,4 +1,3 @@
-
 c******************************************************************************
 c     this common block is simply to share information between the
 c     observation input routines
@@ -9,4 +8,3 @@ c******************************************************************************
       
       common/obspars/disp, bzero, bscale, 
      .               ibits, nblock, naxis, naxis1, byteswap
-
