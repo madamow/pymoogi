@@ -1,6 +1,5 @@
 import string
 import os
-import re
 import numpy as np
 import subprocess as sp
 import scipy.stats as ss
