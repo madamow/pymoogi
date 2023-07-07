@@ -12,11 +12,11 @@ OBJECTS = Abfind.o Batom.o Begin.o  \
 	Infile.o Inlines.o Inmodel.o Invert.o \
 	Jexpint.o Lineinfo.o Lineabund.o Linlimit.o \
 	Minimax.o Molquery.o Moog.o Mydriver.o \
-	Nansi.o Nearly.o Number.o Obshead.o \
+	Nansi.o Nearly.o Number.o \
 	Oneline.o Opaccouls.o OpacHelium.o OpacHydrogen.o \
 	Opacit.o Opacmetals.o Opacscat.o Params.o Partfn.o \
-	Partnew.o Plotremember.o  \
-	Prinfo.o Putasci.o Readobs.o \
+	Partnew.o \
+	Prinfo.o Putasci.o \
 	Rinteg.o Setmols.o Smooth.o Stats.o Sunder.o Synspec.o \
 	Synth.o Tablepop.o Taukap.o Total.o Trudamp.o Ucalc.o Vargauss.o \
 	Vmacro.o Voigt.o \
