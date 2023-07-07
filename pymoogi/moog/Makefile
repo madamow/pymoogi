@@ -11,7 +11,7 @@ OBJECTS = Abfind.o Batom.o Begin.o  \
 	Gammabark.o Getasci.o Getcount.o Getnum.o Getsyns.o \
 	Infile.o Inlines.o Inmodel.o Invert.o \
 	Jexpint.o Lineinfo.o Lineabund.o Linlimit.o \
-	Minimax.o Molquery.o Moog.o Mydriver.o \
+	Molquery.o Moog.o Mydriver.o \
 	Nansi.o Nearly.o Number.o \
 	Oneline.o Opaccouls.o OpacHelium.o OpacHydrogen.o \
 	Opacit.o Opacmetals.o Opacscat.o Params.o Partfn.o \

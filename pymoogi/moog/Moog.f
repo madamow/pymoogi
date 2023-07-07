@@ -17,16 +17,7 @@ c*****in compiling MOOG, here the various machine-specific things are
 c     declared.  First, define the directory where MOOG lives, in order to 
 c     be able to pull in auxiliary data files; executing 'make' will 
 c     generate a reminder of this necessity
-c      write (moogpath,1001)
-c      moogpath =
-c     .  '/Users/myszka/Documents/Nauka/moog'
       call getenv("MOOGPATH", moogpath)
-
-c*****What kind of machine are you using?  Possible ones are:
-c     "mac" = Intel-based Apple Mac 
-c     "pcl" = a PC or desktop running some standard linux like Redhat
-c     "uni" = a machine running Unix, specifically Sun Solaris
-      machine = "mac"
 
 
 c*****declare this to be the normal interactive version; variable "silent"
