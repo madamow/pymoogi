@@ -39,6 +39,12 @@ Do not forget to `source` your .bashrc, .profile, or eqiuvalent file.
 
 `python setup.py install`
 
+If you have more than one Python distribution and are unsure which one is the default one, run
+
+`python3 setup.py install`
+
+instead. This will point pyMOOGi to python3. 
+
 * now you are ready to run some calculations. Go to example catalog and type:
 
 `pymoogi synth_example.par`
