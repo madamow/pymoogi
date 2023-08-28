@@ -99,7 +99,7 @@ def vrot_func(dlamlim, step, limbdark=0):
     return p, prot0
 
 
-def get_kernel(sspec, smpar, type='g'):
+def get_kernel(sspec, smpar, type=None):
     step = sspec[0][2]
     ssize = sspec[-1].size
     k = np.arange(step, ssize, step)
@@ -115,7 +115,7 @@ def get_kernel(sspec, smpar, type='g'):
     elif type == 'v':
         start, stop = sspec[0][:2]
         dlamlim = (start + stop) / 2. * smpar / 3.0e5
-        p, pfact = vrot_func(dlamlim, step)
+        p, pfact = vrot_func(dlamlim, step, limbdark=0.9)
 
     cut = np.where(p >= 0.02)[0][-1] + 2
     p = p[:cut]
@@ -126,27 +126,21 @@ def get_kernel(sspec, smpar, type='g'):
 
 # The convolution must take all synthetic spectra at once. Kernel will be the same,
 # but the results of convvolution will be different for each syntetic spectra
-
-def convolution_moog_style(flux, kernel, power, pfact=1):
+def convolution_moog_style(flux, kernel, power, pfact=0):
     sf = np.ones_like(flux)
     ks = kernel.size
-    new_kernel = np.concatenate([kernel[::-1], np.array([1.]), kernel])
-    # wywal ten new_kernel
-    print(new_kernel)
+    new_kernel = np.concatenate([kernel[::-1], np.array([pfact]), kernel])
+
     for i, f in enumerate(sf):
         if i >= ks and flux.size - i > ks:
-            print(flux[i-ks:i+ks+1])
-            sf[i] = np.sum(flux[i-ks:i+ks+1]*new_kernel) #/ power
-            print(i, sf[i])
-            exit()
+            sf[i] = np.sum(flux[i-ks:i+ks+1]*new_kernel) / power
     return sf
 
 
 step = out2[0][0][2]
 
 k, power, pfact = get_kernel(out2[-1], 5., type='v')
-print(power, pfact)
-sf = convolution_moog_style(out2[-1][-1], k, power,pfact)
+sf = convolution_moog_style(out2[-1][-1], k, power, pfact=pfact)
 
 plt.plot(out2[-1][-1], label='not')
 plt.plot(sf, label='my smooth')
