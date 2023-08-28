@@ -1,15 +1,13 @@
 from read_out_files import out2_synth, out3_synth
 import numpy as np
-# from scipy.signal import gaussian
 import matplotlib.pyplot as plt
-
-out2 = out2_synth('/Users/madamow/Science/pymoogi/example/out2', delimiter='ALL')
-data = np.array(out2[-1][-1])
-slam, sflux = out3_synth('/Users/madamow/Science/pymoogi/example/out3')
 
 ln2 = np.log(2)
 
-# this is smoothing MOOG style
+"""
+This is a set of functions to perform synthetic spectra smoothing
+MOOG style.
+"""
 
 def vmacro():
     """ (Copy from Vmacro.f from MOOG)
@@ -81,7 +79,7 @@ def macrot_func(k, wavemac):
     return np.interp(wavei, xrt,yrt)
 
 
-def vrot_func(dlamlim, step, limbdark=0):
+def vrot_func(dlamlim, step, limbdark):
     """ (copy from Smooth.f from MOOG)
     Compute a stellar rotational broadening function; this follows
     D. F. Gray, 1976, "The Obs. & Anal. of Stell. Phot", p394-9
@@ -93,13 +91,13 @@ def vrot_func(dlamlim, step, limbdark=0):
     prot0 = c1 + c2
 
     jdelrot = int(dlamlim / step)
-    k = np.arange(0, step*(jdelrot), step)
+    k = np.arange(0, step*jdelrot, step)
     term = 1. - (k / dlamlim) ** 2
     p = c1*np.sqrt(term) + c2*term
     return p, prot0
 
 
-def get_kernel(sspec, smpar, type=None):
+def get_kernel(sspec, smpar, type=None, limbdark=0):
     step = sspec[0][2]
     ssize = sspec[-1].size
     k = np.arange(step, ssize, step)
@@ -115,13 +113,17 @@ def get_kernel(sspec, smpar, type=None):
     elif type == 'v':
         start, stop = sspec[0][:2]
         dlamlim = (start + stop) / 2. * smpar / 3.0e5
-        p, pfact = vrot_func(dlamlim, step, limbdark=0.9)
+        p, pfact = vrot_func(dlamlim, step, limbdark)
 
-    cut = np.where(p >= 0.02)[0][-1] + 2
-    p = p[:cut]
-    power = 2. * np.sum(p) + pfact
+    try:
+        cut = np.where(p >= 0.02)[0][-1] + 2
+        p = p[:cut]
+        power = 2. * np.sum(p) + pfact
+        return p, power, pfact
 
-    return p, power, pfact
+    except IndexError:
+        print("Smoothing parameter is too small")
+
 
 
 # The convolution must take all synthetic spectra at once. Kernel will be the same,
@@ -139,11 +141,5 @@ def convolution_moog_style(flux, kernel, power, pfact=0):
 
 step = out2[0][0][2]
 
-k, power, pfact = get_kernel(out2[-1], 5., type='v')
-sf = convolution_moog_style(out2[-1][-1], k, power, pfact=pfact)
-
-plt.plot(out2[-1][-1], label='not')
-plt.plot(sf, label='my smooth')
-plt.plot(sflux[-1], label='moog smooth')
-plt.legend()
-plt.show()
+k, power = get_kernel(out2[-1], 0.1, type='v')
+sf = convolution_moog_style(out2[-1][-1], k, power)
