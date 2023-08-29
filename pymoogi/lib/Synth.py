@@ -35,12 +35,14 @@ class SynthPlot(object):
     def __init__(self, org_pars):
         self.org_pars = org_pars
         self.pars = copy.deepcopy(self.org_pars)
+        print(self.pars['abundances'])
 
-
-        if self.pars['abundances'][1][0]=='99':
+        if list(self.pars['abundances'].keys())[0] == 99:
             dm = 'Changing'
         else:
             dm = 'ALL'
+
+
 
         self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
 
@@ -61,13 +63,13 @@ class SynthPlot(object):
             self.obs = np.copy(self.obs_org)
 
         self.points = []
-        if self.pars['plotpars'][0] == 1:
-            self.xylim = list(map(float, self.pars['plotpars'][1]))
+        if self.pars['plotpars']:
+            self.xylim = self.pars['plotpars']['plotlim']
         else:
             self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
         self.driver = 'synth'
 
-        self.labels = [None] * int(self.pars['abundances'][0][1])
+        self.labels = list(self.pars['abundances'].keys())
 
         self.fig, self.ax = plt.subplots()
         try:
@@ -82,13 +84,14 @@ class SynthPlot(object):
         if self.obs_in_flag:
             self.ax.plot(self.obs[:, 0], self.obs[:, 1], ls=self.ls, marker=self.m, color=rcParams['lines.color'])
 
-        if self.pars['plotpars'][0] == 1:
-            self.xylim = list(map(float, self.pars['plotpars'][1]))
+        if self.pars['plotpars']:
+            self.xylim = self.pars['plotpars']['plotlim']
             self.ax.set_xlim(self.xylim[0], self.xylim[1])
             self.ax.set_ylim(self.xylim[2], self.xylim[3])
 
         # Plot syntetic spectra
         colors = []
+        print(self.labels)
 
         for i, line in enumerate(self.sflux):
             ssp = self.ax.plot(self.slam, line, label=self.labels[i])
@@ -146,7 +149,7 @@ class SynthPlot(object):
         self.xylim[2], self.xylim[3] = axes.get_ylim()
     
     def do_plot(self):
-        if self.pars['abundances'][1][0] == '99':
+        if list(self.pars['abundances'].keys())[0] == 99:
             dm = 'Changing'
         else:
             dm = 'ALL'
@@ -164,7 +167,7 @@ class SynthPlot(object):
                     s += '[M/H] FOR ALL ELEMENTS: ' + l[1] + " "
 
 
-            self.labels[i] = s.strip()
+            #self.labels[i] = s.strip()
             
             if self.pars['veil'] > 0.0:
                 veil = float(self.pars['veil'])
@@ -356,9 +359,7 @@ class SynthPlot(object):
 
     def apply_shifts(self):
         # watch for double shifts!
-        v_shift, w_shift, a_fac, m_fac = self.pars['plotpars'][2]
-        print(w_shift)
-        print(self.obs_org.shape)
+        v_shift, w_shift, a_fac, m_fac = self.pars['plotpars']['shift']
 
         self.obs[:, 0] = self.obs_org[:, 0] + float(w_shift)
         l_shift = float(v_shift) / light_speed
@@ -637,7 +638,7 @@ class SynthPlot(object):
 
     ####################################################################
     def run_synth(self):
-        if self.obs_in_flag is True and self.pars['plotpars'][0] == 1:
+        if self.obs_in_flag is True and self.pars['plotpars']:
             self.apply_shifts()
 
         quit_moog = False

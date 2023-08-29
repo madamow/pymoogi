@@ -40,69 +40,6 @@ def isfloat(value):
         return False
 
 
-def str_to_list(s):
-    # Write long str as a list
-    # divide long string, get lines without spaces
-    
-    # Trace and replace \r
-    s = s.replace('\r', '').replace('\t', ' ')
-    
-    lines = s.split('\n')
-    
-    tab = []
-    driver = lines[0]
-    for line in lines[1:]:
-        # Remove unneccesary spaces
-        l_list = [_f for _f in line.split(" ") if _f]
-        tab.append(l_list)
-
-    return driver, [_f for _f in tab if _f]
-
-
-def list_to_dict(sf):
-    driver, tab = str_to_list(sf)
-
-    smoothing_types = ['g', 'l', 'v', 'm', 'c', 'd', 'r']
-    l_par = {'isotopes', 'abundances', 'plotpars', 'synlimits', 'blenlimits'}
-
-    # Transform list to dict
-    dict_par = {'driver': driver}
-    for line in tab:
-        if not isfloat(line[0]) and smoothing_types.count(line[0]) == 0:
-            if not line[0] in l_par:
-                dict_par[line[0]] = line[1]
-            else:
-                dict_par[line[0]] = []
-                ind = tab.index(line)
-
-                if line[0] == 'abundances' or line[0] == 'isotopes':
-                    dict_par[line[0]].append([line[1], line[2]])
-                    iline = np.arange(ind + 1, 1 + ind + int(line[1]))
-                    for i in iline:
-                        dict_par[line[0]].append([tab[i][0], tab[i][1:]])
-                elif line[0] == 'synlimits' or line[0] == 'blenlimits':
-                    dict_par[line[0]].append(tab[ind + 1])
-                elif line[0] == 'plotpars':
-                    if line[1] == '1':
-                        iline = np.arange(ind+1, ind+4)
-                        dict_par[line[0]].append(1)
-                        for i in iline:
-                            dict_par[line[0]].append(tab[i])
-                    else:  # default values are set for plotting parameters:
-                        dict_par[line[0]].append(0)
-    try:
-        dict_par['abundances'][1:] = sorted(dict_par['abundances'][1:], key=get_key)
-    except KeyError:
-        pass
-
-    try:
-        dict_par['isotopes'][1:] = sorted(dict_par['isotopes'][1:], key=get_key)
-    except KeyError:
-        pass
-
-    return dict_par
-
-
 # Recreate back proper string
 def dict_to_str(dict_par):
     s = dict_par['driver'] + "\n"
@@ -111,39 +48,53 @@ def dict_to_str(dict_par):
             'observed_in', 'atmosphere',
             'trudamp', 'units', 'lines', 'molecules',
             'flux/int', 'fluxlimits', 'coglimits',
-            'iraf', 'damping', 'plot', 'histogram']
+            'iraf', 'damping', 'histogram']
 
     for elem in keys:
         if elem in list(dict_par.keys()):
             s = s + elem + " "+str(dict_par[elem]) + "\n"
 
     if 'abundances' in list(dict_par.keys()):
-        no_ab = int(dict_par['abundances'][0][1])
-        s = s + "abundances " + dict_par['abundances'][0][0] + " " + dict_par['abundances'][0][1] + "\n"
-      
-        for line in dict_par['abundances'][1:]:
-            s = s + "    " + line[0] + "    "
-            s = s + (' '.join(line[1][:no_ab])) + "\n"
+        no_el = str(len(dict_par['abundances']))
+        # Check if each element has the same number of abundances
+        the_len = []
+        for elem in dict_par['abundances']:
+            the_len.append(len(dict_par['abundances'][elem]))
+        if len(list(set(the_len))) != 1:
+            raise ValueError('Different number of sythesis for elements')
+            exit()
+        else:
+            no_ab = list(set(the_len))[0]
+        s = s + "abundances " + no_el + " " + str(no_ab) + "\n"
+        for elem in dict_par['abundances']:
+            s = s + "    " + str(elem) + "    "
+            s = s + (' '.join(list(map(str, dict_par['abundances'][elem])))) + "\n"
 
     if 'isotopes' in list(dict_par.keys()):
-        no_iso = int(dict_par['isotopes'][0][1])
-        s = s + "isotopes " + dict_par['isotopes'][0][0] + " "+dict_par['isotopes'][0][1] + "\n"
-        for line in dict_par['isotopes'][1:]:
-            s = s + "    "+line[0] + "    "
-            s = s + (' '.join(line[1][:no_iso])) + "\n"
+        no_el = str(len(dict_par['isotopes']))
+        # Check if each element has the same number of abundances
+        the_len = []
+        for elem in dict_par['isotopes']:
+            the_len.append(len(dict_par['isotopes'][elem]))
+        if len(list(set(the_len))) != 1:
+            raise ValueError('Different number of sythesis for elements')
+            exit()
+        else:
+            no_ab = list(set(the_len))[0]
+        s = s + "isotopes " + no_el + " " + str(no_ab) + "\n"
+        for elem in dict_par['isotopes']:
+            s = s + "    " + str(elem) + "    "
+            s = s + (' '.join(list(map(str, dict_par['isotopes'][elem])))) + "\n"
+
 
     if 'synlimits' in list(dict_par.keys()):
         s = s + "synlimits\n"
-        s = s + "    "+' '.join(dict_par['synlimits'][0]) + "\n"
+        s = s + "    "+' '.join(dict_par['synlimits']) + "\n"
 
     if 'blenlimits' in list(dict_par.keys()):
         s = s + "blenlimits\n"
-        s = s + "    "+' '.join(dict_par['blenlimits'][0]) + "\n"
+        s = s + "    "+' '.join(dict_par['blenlimits']) + "\n"
 
-    if 'plotpars' in list(dict_par.keys()):
-        s = s + "plotpars" + " " + str(dict_par['plotpars'][0]) + "\n"
-        for line in dict_par['plotpars'][1:]:
-            s = s+(' '.join(line)) + "\n"
 
     if 'obspectrum' in list(dict_par.keys()):
         s = s + "obspectrum " + dict_par['obspectrum'][0] + "\n"

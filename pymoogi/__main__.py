@@ -26,24 +26,24 @@ plt.switch_backend('qt5Agg')
 
 def main():
 
-    clear()
+    #clear()
     syn_file = sys.argv[1]
-    if syn_file.split(".")[-1]=='yaml':
-        params = yaml.safe_load(open(syn_file).read())
-    else:
-        params = list_to_dict(open(syn_file).read())
+
+    params = yaml.safe_load(open(syn_file).read())
+    params['yaml'] = True
 
 
+    print(params)
     # Run MOOG for user's par file
-   # try:
+    #try:
     run_moog(params)
-  #  except:
-  #      print("#####################\n Cannot run MOOG.")
-  #      print("Check batch.par file and your input file for errors.")
-  #      exit()
-    exit()
+    #except:
+    #    print("#####################\n Cannot run MOOG.")
+    #    print("Check batch.par file and your input file for errors.")
+    #    exit()
     params['veil'] = 0.
     params['title'] = ""
+
 
     SM_style()
     plt.ion()
