@@ -42,8 +42,6 @@ class SynthPlot(object):
         else:
             dm = 'ALL'
 
-
-
         self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
 
         self.slam, self.sflux = out3_synth(self.pars['smoothed_out'])
@@ -69,7 +67,7 @@ class SynthPlot(object):
             self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
         self.driver = 'synth'
 
-        self.labels = list(self.pars['abundances'].keys())
+        self.labels = [None] * self.pars['syn_no']
 
         self.fig, self.ax = plt.subplots()
         try:
@@ -91,7 +89,6 @@ class SynthPlot(object):
 
         # Plot syntetic spectra
         colors = []
-        print(self.labels)
 
         for i, line in enumerate(self.sflux):
             ssp = self.ax.plot(self.slam, line, label=self.labels[i])
@@ -125,8 +122,8 @@ class SynthPlot(object):
 
     def isotope_labels(self):
         s = 'Isotopes:\n'
-        for item in self.pars['isotopes'][1:]:
-            s = s + item[0] + ": " + "/".join(item[1]) + "\n"
+        for item in self.pars['isotopes']:
+            s = s + str(item) + ": " + "/".join(list(map(str, self.pars['isotopes'][item]))) + "\n"
         return s
 
     def draw_marker(self, x, y):
@@ -206,9 +203,9 @@ class SynthPlot(object):
             files_info = self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
 
         # Set smoothing info:
-        if self.pars['plotpars'][0] == 1:
-            smo_info = "smoothing: "+str(self.pars['plotpars'][3][0]) + " = "
-            smo_nr = [x for x in self.pars['plotpars'][3][1:] if float(x) != 0]
+        if self.pars['plotpars']['smooth']:
+            smo_info = "smoothing: "+str(self.pars['plotpars']['smooth'][0]) + " = "
+            smo_nr = [str(x) for x in self.pars['plotpars']['smooth'][1:] if float(x) != 0]
             for item in smo_nr:
                 smo_info = smo_info + item + ", "
         else:

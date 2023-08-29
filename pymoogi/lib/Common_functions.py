@@ -54,7 +54,7 @@ def dict_to_str(dict_par):
         if elem in list(dict_par.keys()):
             s = s + elem + " "+str(dict_par[elem]) + "\n"
 
-    if 'abundances' in list(dict_par.keys()):
+    if dict_par['abundances']:
         no_el = str(len(dict_par['abundances']))
         # Check if each element has the same number of abundances
         the_len = []
@@ -64,8 +64,8 @@ def dict_to_str(dict_par):
             raise ValueError('Different number of sythesis for elements')
             exit()
         else:
-            no_ab = list(set(the_len))[0]
-        s = s + "abundances " + no_el + " " + str(no_ab) + "\n"
+            dict_par['syn_no'] = list(set(the_len))[0]
+        s = s + "abundances " + no_el + " " + str(dict_par['syn_no']) + "\n"
         for elem in dict_par['abundances']:
             s = s + "    " + str(elem) + "    "
             s = s + (' '.join(list(map(str, dict_par['abundances'][elem])))) + "\n"
@@ -79,9 +79,12 @@ def dict_to_str(dict_par):
         if len(list(set(the_len))) != 1:
             raise ValueError('Different number of sythesis for elements')
             exit()
+        elif dict_par['abundances'] and list(set(the_len))[0] != dict_par['syn_no']:
+            raise ValueError('Different number of sythesis for elements and isotopes')
         else:
-            no_ab = list(set(the_len))[0]
-        s = s + "isotopes " + no_el + " " + str(no_ab) + "\n"
+            pass # All good
+
+        s = s + "isotopes " + no_el + " " + str(dict_par['syn_no']) + "\n"
         for elem in dict_par['isotopes']:
             s = s + "    " + str(elem) + "    "
             s = s + (' '.join(list(map(str, dict_par['isotopes'][elem])))) + "\n"
@@ -94,7 +97,6 @@ def dict_to_str(dict_par):
     if 'blenlimits' in list(dict_par.keys()):
         s = s + "blenlimits\n"
         s = s + "    "+' '.join(dict_par['blenlimits']) + "\n"
-
 
     if 'obspectrum' in list(dict_par.keys()):
         s = s + "obspectrum " + dict_par['obspectrum'][0] + "\n"

@@ -23,6 +23,7 @@ def out2_abfind(file):
 
 def out2_synth(file, delimiter='ALL'):
     # split into blocks
+    print(file)
     with open(file, 'r') as fh:
         data_all = fh.read().split(delimiter)
 
