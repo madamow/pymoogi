@@ -86,7 +86,6 @@ c*****do the syntheses
       choice = '1'
       ncall = 1
       call getsyns (lscreen,ncall)
-      call smooth (-1,ncall)   
       call finish (0)
       end 
 

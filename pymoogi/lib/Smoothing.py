@@ -1,13 +1,12 @@
-from read_out_files import out2_synth, out3_synth
 import numpy as np
-import matplotlib.pyplot as plt
-
-ln2 = np.log(2)
 
 """
 This is a set of functions to perform synthetic spectra smoothing
 MOOG style.
 """
+
+ln2 = np.log(2)
+
 
 def vmacro():
     """ (Copy from Vmacro.f from MOOG)
@@ -61,6 +60,7 @@ def vmacro():
     ])
     return xrt, yrt
 
+
 def gauss_funt(smpar, k):
     # Here: smpar == gaussian fwhm
     aa = 4. * ln2 / (smpar * smpar)
@@ -97,7 +97,7 @@ def vrot_func(dlamlim, step, limbdark):
     return p, prot0
 
 
-def get_kernel(sspec, smpar, type=None, limbdark=0):
+def get_kernel(sspec, smpar=0, type=None, limbdark=0.):
     step = sspec[0][2]
     ssize = sspec[-1].size
     k = np.arange(step, ssize, step)
@@ -119,11 +119,10 @@ def get_kernel(sspec, smpar, type=None, limbdark=0):
         cut = np.where(p >= 0.02)[0][-1] + 2
         p = p[:cut]
         power = 2. * np.sum(p) + pfact
-        return p, power, pfact
+        return p, power
 
     except IndexError:
         print("Smoothing parameter is too small")
-
 
 
 # The convolution must take all synthetic spectra at once. Kernel will be the same,
@@ -139,7 +138,9 @@ def convolution_moog_style(flux, kernel, power, pfact=0):
     return sf
 
 
-step = out2[0][0][2]
+def smooth_synspec(synspec, spar):
+    for stype in spar:
+        k, power = get_kernel(synspec[0], type=stype, smpar=spar[stype])
+        for s in synspec:
+            sf = convolution_moog_style(out2[-1][-1], k, power)
 
-k, power = get_kernel(out2[-1], 0.1, type='v')
-sf = convolution_moog_style(out2[-1][-1], k, power)

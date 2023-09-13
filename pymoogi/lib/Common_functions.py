@@ -43,7 +43,7 @@ def isfloat(value):
 # Recreate back proper string
 def dict_to_str(dict_par):
     s = dict_par['driver'] + "\n"
-    keys = ['standard_out', 'summary_out', 'smoothed_out', 'model_in',
+    keys = ['standard_out', 'summary_out', 'model_in',
             'lines_in', 'strong', 'stronglines_in', 'freeform', 'opacit',
             'observed_in', 'atmosphere',
             'trudamp', 'units', 'lines', 'molecules',
@@ -92,7 +92,7 @@ def dict_to_str(dict_par):
 
     if 'synlimits' in list(dict_par.keys()):
         s = s + "synlimits\n"
-        s = s + "    "+' '.join(dict_par['synlimits']) + "\n"
+        s = s + "    "+' '.join(list(map(str, dict_par['synlimits']))) + "\n"
 
     if 'blenlimits' in list(dict_par.keys()):
         s = s + "blenlimits\n"

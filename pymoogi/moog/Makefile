@@ -17,7 +17,7 @@ OBJECTS = Abfind.o Batom.o Begin.o  \
 	Opacit.o Opacmetals.o Opacscat.o Params.o Partfn.o \
 	Partnew.o \
 	Prinfo.o Putasci.o \
-	Rinteg.o Setmols.o Smooth.o Stats.o Sunder.o Synspec.o \
+	Rinteg.o Setmols.o Stats.o Sunder.o Synspec.o \
 	Synth.o Tablepop.o Taukap.o Total.o Trudamp.o Ucalc.o Vargauss.o \
 	Vmacro.o Voigt.o \
         Weedout.o Wavecalc.o Writenumber.o

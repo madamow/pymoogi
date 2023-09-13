@@ -10,8 +10,9 @@ import scipy.optimize as so
 from matplotlib import rcParams
 from matplotlib import ticker
 from Common_functions import *
-from read_out_files import out2_synth, out3_synth
+from read_out_files import out2_synth
 from solar_abund import get_solar_abund
+from Smoothing import smooth_synspec
 
 light_speed = sc.c * 0.001
 solar = get_solar_abund()
@@ -35,7 +36,6 @@ class SynthPlot(object):
     def __init__(self, org_pars):
         self.org_pars = org_pars
         self.pars = copy.deepcopy(self.org_pars)
-        print(self.pars['abundances'])
 
         if list(self.pars['abundances'].keys())[0] == 99:
             dm = 'Changing'
@@ -43,8 +43,17 @@ class SynthPlot(object):
             dm = 'ALL'
 
         self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
+        points = len(self.out2[0][-1])
+        self.slam, step = np.linspace(self.pars['synlimits'][0],self.pars['synlimits'][1], points, retstep=True)
 
-        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'])
+        # check if the step is the same
+        if step == self.pars['synlimits'][2]:
+            print("All good")
+
+        # get synthetic spectra
+        if self.pars['smooth']:
+            self.out3 = smooth_synspec(self.out2, self.pars['smooth'])
+        exit()
 
         self.m, self.ls = ['', '-']
         if len(self.slam) < 500:
@@ -93,13 +102,13 @@ class SynthPlot(object):
         for i, line in enumerate(self.sflux):
             ssp = self.ax.plot(self.slam, line, label=self.labels[i])
             colors.append(ssp[0].get_color())
-
         # Create legend
         try:
             legend = self.ax.legend(loc=3, frameon=False)
             for color, text in zip(colors, legend.get_texts()):
                 text.set_color(color)
         except AttributeError:
+            print("Error while creating a legend")
             pass
 
 
@@ -163,8 +172,7 @@ class SynthPlot(object):
                 for l in self.out2[i][2]:
                     s += '[M/H] FOR ALL ELEMENTS: ' + l[1] + " "
 
-
-            #self.labels[i] = s.strip()
+            self.labels[i] = s.strip()
             
             if self.pars['veil'] > 0.0:
                 veil = float(self.pars['veil'])
@@ -197,10 +205,10 @@ class SynthPlot(object):
 
         # Print input files' names
         if self.obs_in_flag:
-            files_info = self.pars['observed_in'][0] + "\n" + \
-                         self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
+            files_info = self.pars['observed_in'] + "\n" + \
+                         self.pars['lines_in'] + "\n" + self.pars['model_in'] + "\n"
         else:
-            files_info = self.pars['lines_in'][0] + "\n" + self.pars['model_in'][0] + "\n"
+            files_info = self.pars['lines_in'] + "\n" + self.pars['model_in'] + "\n"
 
         # Set smoothing info:
         if self.pars['plotpars']['smooth']:
@@ -554,10 +562,10 @@ class SynthPlot(object):
        
     def abundances(self):
         iterate = True
-        clear()
+        #clear()
         sno = 0
         while iterate:
-            clear()
+            #clear()
             print_driver(self.driver)
 
             print("element, abundance offsets OR isotope number, isotope name, factors")
@@ -620,6 +628,7 @@ class SynthPlot(object):
                 for text in legend.get_texts():
                     text.set_color('k')
             except:
+                print("Legend did not work")
                 pass
         for artist in plt.gca().get_children():
             if hasattr(artist, 'get_label') and artist.get_label() == '_line0':
@@ -641,7 +650,7 @@ class SynthPlot(object):
         quit_moog = False
         while not quit_moog:
             self.do_plot()
-            clear()
+            #clear()
             
             print_driver(self.driver)
             if not self.obs_in_flag:
