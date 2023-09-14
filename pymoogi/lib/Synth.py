@@ -219,14 +219,24 @@ class SynthPlot(object):
             files_info = self.pars['lines_in'] + "\n" + self.pars['model_in'] + "\n"
 
         # Set smoothing info:
-
         if self.pars['smooth']:
             smo_info ="smoothing:"
-            for key in self.pars['smooth']:
-                smo_info += f" {key} = {self.pars['smooth'][key]}"
+            stype = self.pars['smooth']['type']
+            if  stype in ['g','l','m','v']:
+                smo_info += f" {stype}={self.pars['smooth'][stype]};"
+            elif stype =='c':
+                for key in ['v','g']:
+                    smo_info += f" {key}={self.pars['smooth'][key]};"
+            elif stype == 'd':
+                for key in ['m','g']:
+                    smo_info += f" {key}={self.pars['smooth'][key]};"
+            elif stype == 'r':
+                for key in ['m', 'v', 'g']:
+                    smo_info += f" {key}={self.pars['smooth'][key]};"
+                    # add limb darkening info
         else:
-            smo_info = ''
-        print(smo_info)
+                smo_info += "not smoothed"
+
 
         extra_info = files_info + smo_info + "\n"
 
@@ -314,33 +324,27 @@ class SynthPlot(object):
         v=ROTATION, m=MACROTURBULENCE\n \
                     c=v+g, d=m+g, r=m+v+g, p=VARIABLE GAUSS")
         smo = input()
+        self.pars['smooth']['type'] = smo
 
         if smo == 'n':
-            self.pars['smooth']['type'] = smo
-            self.pars['smooth']['val'] = None
+            self.pars['smooth']['n'] = None
         elif smo in ['g', 'l', 'm']:
-            self.pars['smooth']['type'] = smo
-            self.pars['smooth']['val'] = self.ask_for_smooth(smo)
+            self.pars['smooth'][smo] = self.ask_for_smooth(smo)
         elif smo == 'v':
-            self.pars['smooth']['type'] = smo
-            self.pars['smooth']['val'] = self.ask_for_smooth(smo)
-
-            self.pars['smooth']['type'] = 'limbdark'
-            self.pars['smooth']['ldval'] = self.ask_for_smooth('ld')
-
+            self.pars['smooth']['v'] = self.ask_for_smooth(smo)
+            self.pars['smooth']['limbdark'] = self.ask_for_smooth('ld')
         elif smo == 'c':
-            g = self.smo_g()
-            v1, v2 = self.smo_vrot()
-            self.pars['plotpars'][3] = ['c', g, v1, v2, '0.', '0.']
+            self.pars['smooth']['type']['v']= self.ask_for_smooth('v')
+            self.pars['smooth']['limbdark'] = self.ask_for_smooth('ld')
+            self.pars['smooth']['type']['g'] = self.ask_for_smooth('g')
         elif smo == 'd':
-            g = self.smo_g()
-            m = self.smo_vmac()
-            self.pars['plotpars'][3] = ['d', g, '0.', '0.', m, '0.']
+            self.pars['smooth']['type']['m'] = self.ask_for_smooth('m')
+            self.pars['smooth']['type']['g'] = self.ask_for_smooth('g')
         elif smo == 'r':
-            g = self.smo_g()
-            m = self.smo_vmac()
-            v1, v2 = self.smo_vrot()
-            self.pars['plotpars'][3] = ['r', g, v1, v2, m, '0.']
+            self.pars['smooth']['type']['m'] = self.ask_for_smooth('m')
+            self.pars['smooth']['type']['v']= self.ask_for_smooth('v')
+            self.pars['smooth']['limbdark'] = self.ask_for_smooth('ld')
+            self.pars['smooth']['type']['g'] = self.ask_for_smooth('g')
 
     ####################################################################
     # Apply shifts to observed spectrum

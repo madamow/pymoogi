@@ -140,10 +140,29 @@ def convolution_moog_style(flux, kernel, power, pfact=1):
 
 def smooth_synspec(synspec, spar):
     synout = []
+    try:
+        limbdark = spar['limbdark']
+    except KeyError:
+        limbdark = 0.
 
-    k, power, pfact = get_kernel(synspec[0], type=spar['type'], smpar=spar['val'])
+    if spar['type'] in ['g', 'm', 'l', 'v']:
+        tlist = [spar['type']]
+    elif spar['type'] == 'c':
+        tlist=['v','g']
+    elif spar['type'] == 'd':
+        tlist = ['m', 'g']
+    elif spar['type'] == 'r':
+        tlist = ['m', 'v','g']
+    else:
+        print(f"Unknown type of smoothing {spar['type']}")
+        exit()
+
     for s in synspec:
-        sf = convolution_moog_style(s[-1], k, power, pfact=pfact)
-        synout.append(sf)
-    return synout
+        synout.append(s[-1])
 
+    for stype in tlist:
+        k, power, pfact = get_kernel(synspec[0], type=stype, smpar=spar[stype], limbdark=limbdark)
+        for i, s in enumerate(synout):
+            synout[i] = convolution_moog_style(s, k, power, pfact=pfact)
+
+    return synout
