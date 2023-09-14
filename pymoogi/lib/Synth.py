@@ -12,7 +12,7 @@ from matplotlib import ticker
 from Common_functions import *
 from read_out_files import out2_synth
 from solar_abund import get_solar_abund
-from Smoothing import smooth_synspec
+from Smoothing import smooth_synspec, smooth_in_use
 
 light_speed = sc.c * 0.001
 solar = get_solar_abund()
@@ -42,6 +42,7 @@ class SynthPlot(object):
     def __init__(self, org_pars):
         self.org_pars = org_pars
         self.pars = copy.deepcopy(self.org_pars)
+        self.smoothlist = []
 
         if list(self.pars['abundances'].keys())[0] == 99:
             dm = 'Changing'
@@ -221,21 +222,9 @@ class SynthPlot(object):
         # Set smoothing info:
         if self.pars['smooth']:
             smo_info ="smoothing:"
-            stype = self.pars['smooth']['type']
-            if  stype in ['g','l','m','v']:
-                smo_info += f" {stype}={self.pars['smooth'][stype]};"
-            elif stype =='c':
-                for key in ['v','g']:
-                    smo_info += f" {key}={self.pars['smooth'][key]};"
-            elif stype == 'd':
-                for key in ['m','g']:
-                    smo_info += f" {key}={self.pars['smooth'][key]};"
-            elif stype == 'r':
-                for key in ['m', 'v', 'g']:
-                    smo_info += f" {key}={self.pars['smooth'][key]};"
-                    # add limb darkening info
-        else:
-                smo_info += "not smoothed"
+            slist = smooth_in_use(self.pars['smooth'])
+            for  stype in slist:
+                smo_info += f" {stype}={self.pars['smooth'][stype]}"
 
 
         extra_info = files_info + smo_info + "\n"
@@ -312,11 +301,11 @@ class SynthPlot(object):
             val = input()
         return float(val)
 
-
     def change_smoothing(self):
         # Last settings for smoothing
+        tlist = smooth_in_use(self.pars['smooth'])
         try:
-            print(f"Previous setting: {self.pars['smooth']} \n")
+            print(f"Previous setting: {self.pars['smooth']['type']} \n")
         except IndexError:
             pass
 

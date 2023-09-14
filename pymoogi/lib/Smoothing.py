@@ -137,6 +137,19 @@ def convolution_moog_style(flux, kernel, power, pfact=1):
             sf[i] = np.sum(flux[i-ks:i+ks+1]*new_kernel) / power
     return sf
 
+def smooth_in_use(spar):
+    if spar['type'] in ['g', 'm', 'l', 'v']:
+        smoothlist = [spar['type']]
+    elif spar['type'] == 'c':
+        smoothlist = ['v', 'g']
+    elif spar['type'] == 'd':
+        smoothlist = ['m', 'g']
+    elif spar['type'] == 'r':
+        smoothlist = ['m', 'v', 'g']
+    else:
+        print(f"Unknown type of smoothing {spar['type']}")
+        smoothlist = ['n']
+    return smoothlist
 
 def smooth_synspec(synspec, spar):
     synout = []
@@ -145,24 +158,16 @@ def smooth_synspec(synspec, spar):
     except KeyError:
         limbdark = 0.
 
-    if spar['type'] in ['g', 'm', 'l', 'v']:
-        tlist = [spar['type']]
-    elif spar['type'] == 'c':
-        tlist=['v','g']
-    elif spar['type'] == 'd':
-        tlist = ['m', 'g']
-    elif spar['type'] == 'r':
-        tlist = ['m', 'v','g']
-    else:
-        print(f"Unknown type of smoothing {spar['type']}")
-        exit()
-
     for s in synspec:
         synout.append(s[-1])
+
+    tlist = smooth_in_use(spar)
+
+    if 'n' in tlist:
+        return synout
 
     for stype in tlist:
         k, power, pfact = get_kernel(synspec[0], type=stype, smpar=spar[stype], limbdark=limbdark)
         for i, s in enumerate(synout):
             synout[i] = convolution_moog_style(s, k, power, pfact=pfact)
-
     return synout
