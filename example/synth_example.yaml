@@ -27,4 +27,5 @@ plotpars:
   plotlim: [6101.0, 6105.0, 0.00, 1.05]
   shift:   [0.00,  -0.015,  0.00, 1.00]
 smooth:
-  g: 0.10
+  type: g
+  val: 0.10

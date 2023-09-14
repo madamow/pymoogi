@@ -17,6 +17,12 @@ from Smoothing import smooth_synspec
 light_speed = sc.c * 0.001
 solar = get_solar_abund()
 
+smooth_strings = {
+    'g' : 'FWHM OF THE GAUSSIAN FUNCTION',
+    'l' : 'FWHM OF THE LORENTZIAN FUNCTION',
+    'm' : 'MACROTURBULENT VELOCITY',
+    'v' : 'STELLAR vsini',
+    'ld':'LIMB DARKENING COEFFICIENT'}
 
 def print_options():
     print("OPTIONS?    s=new smoothing     r=rescale obs.")
@@ -52,8 +58,7 @@ class SynthPlot(object):
 
         # get synthetic spectra
         if self.pars['smooth']:
-            self.out3 = smooth_synspec(self.out2, self.pars['smooth'])
-        exit()
+            self.sflux = smooth_synspec(self.out2, self.pars['smooth'])
 
         self.m, self.ls = ['', '-']
         if len(self.slam) < 500:
@@ -160,7 +165,10 @@ class SynthPlot(object):
         else:
             dm = 'ALL'
         self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
-        self.slam, self.sflux = out3_synth(self.pars['smoothed_out'])
+        points = len(self.out2[0][-1])
+        self.slam, step = np.linspace(self.pars['synlimits'][0], self.pars['synlimits'][1], points, retstep=True)
+        if self.pars['smooth']:
+            self.sflux = smooth_synspec(self.out2, self.pars['smooth'])
 
         # Create labels
         for i, spec in enumerate(self.sflux):
@@ -211,13 +219,14 @@ class SynthPlot(object):
             files_info = self.pars['lines_in'] + "\n" + self.pars['model_in'] + "\n"
 
         # Set smoothing info:
-        if self.pars['plotpars']['smooth']:
-            smo_info = "smoothing: "+str(self.pars['plotpars']['smooth'][0]) + " = "
-            smo_nr = [str(x) for x in self.pars['plotpars']['smooth'][1:] if float(x) != 0]
-            for item in smo_nr:
-                smo_info = smo_info + item + ", "
+
+        if self.pars['smooth']:
+            smo_info ="smoothing:"
+            for key in self.pars['smooth']:
+                smo_info += f" {key} = {self.pars['smooth'][key]}"
         else:
             smo_info = ''
+        print(smo_info)
 
         extra_info = files_info + smo_info + "\n"
 
@@ -275,6 +284,7 @@ class SynthPlot(object):
     ####################################################################
     # Check and edit plotpar parameter is it was 0 and user made changes
     # in default plot settings
+
     def add_plotparams(self):
         if self.pars['plotpars'][0] == 0:
             self.pars['plotpars'] = [1,
@@ -284,49 +294,21 @@ class SynthPlot(object):
     ####################################################################
     # Change smoothing
     ####################################################################
+    def ask_for_smooth(self, slab):
+        print(f"GIVE THE {smooth_strings[slab]}:")
+        val = input()
+        while isfloat(val) is False:
+            print("Your value is not float. Try again")
+            val = input()
+        return float(val)
 
-    def smo_g(self):
-        print('GIVE THE FWHM OF THE GAUSSIAN FUNCTION: [', self.pars['plotpars'][3][1], ']')
-        g = input()
-        if isfloat(g) is False:
-            g = self.pars['plotpars'][3][1]  # keep the old value
-        return g
-            
-    def smo_vrot(self):
-        print("GIVE THE STELLAR vsini: [", self.pars['plotpars'][3][2], ']')
-        v1 = input()
 
-        print("GIVE THE LIMB DARKENING COEFFICIENT:[",
-            self.pars['plotpars'][3][3], ']')
-        v2 = input()
-
-        if isfloat(v1) is False or isfloat(v2) is False:
-            v1 = self.pars['plotpars'][3][2]
-            v2 = self.pars['plotpars'][3][3]
-        return v1, v2
-
-    def smo_vmac(self):
-        print("GIVE THE MACROTURBULENT VELOCITY: [", self.pars['plotpars'][3][4], ']')
-        m = input()
-        if isfloat(m) is False:
-            m = self.pars['plotpars'][3][4]
-        return m
-
-    def smo_lntz(self):
-        print("GIVE THE FWHM OF THE LORENTZIAN FUNCTION:[",
-            self.pars['plotpars'][3][5], ']')
-        l_smooth = input()
-        if isfloat(l_smooth) is False:
-            l_smooth = self.pars['plotpars'][3][5]
-        return l_smooth
-    
     def change_smoothing(self):
         # Last settings for smoothing
         try:
-            ps = self.pars['plotpars'][3][0]
+            print(f"Previous setting: {self.pars['smooth']} \n")
         except IndexError:
-            ps = "n"
-        print("Previous setting:", ps, '\n')
+            pass
 
         print("  SMOOTHING: n=NONE, g=GAUSS, l=LORENZ, \
         v=ROTATION, m=MACROTURBULENCE\n \
@@ -334,16 +316,18 @@ class SynthPlot(object):
         smo = input()
 
         if smo == 'n':
-            self.pars['plotpars'][3] = ['n', '0.', '0.', '0.', '0.', '0.']
-        elif smo == 'g':
-            self.pars['plotpars'][3] = ['g', self.smo_g(), '0.', '0.', '0.', '0.']
+            self.pars['smooth']['type'] = smo
+            self.pars['smooth']['val'] = None
+        elif smo in ['g', 'l', 'm']:
+            self.pars['smooth']['type'] = smo
+            self.pars['smooth']['val'] = self.ask_for_smooth(smo)
         elif smo == 'v':
-            v1, v2 = self.smo_vrot()
-            self.pars['plotpars'][3] = ['v', '0.', v1, v2, '0.', '0.']
-        elif smo == 'm':
-            self.pars['plotpars'][3] = ['m', '0.', '0.', '0.', self.smo_vmac(), '0.']
-        elif smo == 'l':
-            self.pars['plotpars'][3] = ['m', '0.', '0.', '0.', '0.', self.smo_lntz()]
+            self.pars['smooth']['type'] = smo
+            self.pars['smooth']['val'] = self.ask_for_smooth(smo)
+
+            self.pars['smooth']['type'] = 'limbdark'
+            self.pars['smooth']['ldval'] = self.ask_for_smooth('ld')
+
         elif smo == 'c':
             g = self.smo_g()
             v1, v2 = self.smo_vrot()
@@ -682,9 +666,7 @@ class SynthPlot(object):
             elif self.flag == "m":
                 self.do_plot()
             elif self.flag == 's':
-                self.add_plotparams()
                 self.change_smoothing()
-                run_moog(self.driver, self.pars)
             elif self.flag == 'n':
                 self.abundances()               
             elif self.flag == 'u':

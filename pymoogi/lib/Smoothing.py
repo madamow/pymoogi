@@ -119,7 +119,7 @@ def get_kernel(sspec, smpar=0, type=None, limbdark=0.):
         cut = np.where(p >= 0.02)[0][-1] + 2
         p = p[:cut]
         power = 2. * np.sum(p) + pfact
-        return p, power
+        return p, power, pfact
 
     except IndexError:
         print("Smoothing parameter is too small")
@@ -127,7 +127,7 @@ def get_kernel(sspec, smpar=0, type=None, limbdark=0.):
 
 # The convolution must take all synthetic spectra at once. Kernel will be the same,
 # but the results of convvolution will be different for each syntetic spectra
-def convolution_moog_style(flux, kernel, power, pfact=0):
+def convolution_moog_style(flux, kernel, power, pfact=1):
     sf = np.ones_like(flux)
     ks = kernel.size
     new_kernel = np.concatenate([kernel[::-1], np.array([pfact]), kernel])
@@ -139,8 +139,11 @@ def convolution_moog_style(flux, kernel, power, pfact=0):
 
 
 def smooth_synspec(synspec, spar):
-    for stype in spar:
-        k, power = get_kernel(synspec[0], type=stype, smpar=spar[stype])
-        for s in synspec:
-            sf = convolution_moog_style(out2[-1][-1], k, power)
+    synout = []
+
+    k, power, pfact = get_kernel(synspec[0], type=spar['type'], smpar=spar['val'])
+    for s in synspec:
+        sf = convolution_moog_style(s[-1], k, power, pfact=pfact)
+        synout.append(sf)
+    return synout
 
