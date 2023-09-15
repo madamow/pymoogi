@@ -58,8 +58,14 @@ class SynthPlot(object):
             print("All good")
 
         # get synthetic spectra
-        if self.pars['smooth']:
+        if not self.pars['smooth']:
+            self.pars['smooth']['type'] = 'n'
+
+        if self.pars['smooth']['type'] == 'n':
+            self.sflux = [s[-1] for s in self.out2]
+        else:
             self.sflux = smooth_synspec(self.out2, self.pars['smooth'])
+
 
         self.m, self.ls = ['', '-']
         if len(self.slam) < 500:
@@ -168,7 +174,10 @@ class SynthPlot(object):
         self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
         points = len(self.out2[0][-1])
         self.slam, step = np.linspace(self.pars['synlimits'][0], self.pars['synlimits'][1], points, retstep=True)
-        if self.pars['smooth']:
+
+        if self.pars['smooth']['type'] == 'n':
+            self.sflux = [s[-1] for s in self.out2]
+        else:
             self.sflux = smooth_synspec(self.out2, self.pars['smooth'])
 
         # Create labels

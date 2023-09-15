@@ -126,7 +126,7 @@ def get_kernel(sspec, smpar=0, type=None, limbdark=0.):
 
 
 # The convolution must take all synthetic spectra at once. Kernel will be the same,
-# but the results of convvolution will be different for each syntetic spectra
+# but the results of convolution will be different for each synthetic spectra
 def convolution_moog_style(flux, kernel, power, pfact=1):
     sf = np.ones_like(flux)
     ks = kernel.size
@@ -152,22 +152,16 @@ def smooth_in_use(spar):
     return smoothlist
 
 def smooth_synspec(synspec, spar):
-    synout = []
     try:
         limbdark = spar['limbdark']
     except KeyError:
         limbdark = 0.
 
-    for s in synspec:
-        synout.append(s[-1])
+    synout = [s[-1] for s in synspec]
 
     tlist = smooth_in_use(spar)
 
-    if 'n' in tlist:
-        return synout
-
     for stype in tlist:
         k, power, pfact = get_kernel(synspec[0], type=stype, smpar=spar[stype], limbdark=limbdark)
-        for i, s in enumerate(synout):
-            synout[i] = convolution_moog_style(s, k, power, pfact=pfact)
+        synout= [convolution_moog_style(s, k, power, pfact=pfact) for s in synout]
     return synout
