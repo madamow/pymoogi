@@ -66,6 +66,10 @@ class SynthPlot(object):
         else:
             self.sflux = smooth_synspec(self.out2, self.pars['smooth'])
 
+        # Set initial plot params
+        if not self.pars['plotpars']:
+            self.pars['plotpars']['plotlim'] = self.pars['synlimits']
+            self.pars['plotpars']['shift'] = [0., 0., 0., 1.]
 
         self.m, self.ls = ['', '-']
         if len(self.slam) < 500:
@@ -269,35 +273,15 @@ class SynthPlot(object):
             self.points = []
 
     def change_plotlim(self):
-        print("LEFT WAVELENGTH (", self.pars['plotpars'][1][0], ")")
-        ll = input()
-        if isfloat(ll) and ll != '':
-            self.pars['plotpars'][1][0] = ll
-        
-        print("RIGHT WAVELENGTH (", self.pars['plotpars'][1][1], ")")
-        rl = input()
-        if isfloat(rl) and rl != '':
-            self.pars['plotpars'][1][1] = rl
-        
-        print("BOTTOM RELATIVE FLUX (", self.pars['plotpars'][1][2], ")")
-        brf = input()
-        if isfloat(brf) and brf != '':
-            self.pars['plotpars'][1][2] = brf
-        
-        print("TOP RELATIVE FLUX (", self.pars['plotpars'][1][3], ")")
-        trf = input()
-        if isfloat(trf) and trf != '':
-            self.pars['plotpars'][1][3] = trf
 
-    ####################################################################
-    # Check and edit plotpar parameter is it was 0 and user made changes
-    # in default plot settings
+        sides = ['LEFT WAVELENGTH','RIGHT WAVELENGTH','BOTTOM RELATIVE FLUX','TOP RELATIVE FLUX']
 
-    def add_plotparams(self):
-        if self.pars['plotpars'][0] == 0:
-            self.pars['plotpars'] = [1,
-                                     [str(self.xylim[0]), str(self.xylim[1]), str(self.xylim[2]), str(self.xylim[3])],
-                                     ['0.', '0.', '0.', '1.'], ['n', '0.', '0.', '0.', '0.', '0.']]
+        for i, lbl  in enumerate(sides):
+            print(f"{sides[i]} ({self.pars['plotpars']['plotlim'][i]}): ")
+            l = input()
+            if isfloat(l) and l != '':
+                 self.pars['plotpars']['plotlim'][i] = float(l)
+
 
     ####################################################################
     # Change smoothing
@@ -312,7 +296,6 @@ class SynthPlot(object):
 
     def change_smoothing(self):
         # Last settings for smoothing
-        tlist = smooth_in_use(self.pars['smooth'])
         try:
             print(f"Previous setting: {self.pars['smooth']['type']} \n")
         except IndexError:
@@ -393,47 +376,47 @@ class SynthPlot(object):
             time.sleep(2.0)
 
         if self.flag == 'r':
-            self.pars['plotpars'][2][3] = rfactor
+            self.pars['plotpars']['shift'][3] = rfactor
         elif self.flag == 'a':
-            self.pars['plotpars'][2][2] = rfactor
+            self.pars['plotpars']['shift'][2] = rfactor
 
 
         # Check if user uses additive and multiplicative shift at the same time
         message = "You cannot use additive shift and multiplicative shift at the same time.\n"
 
-        if float(self.pars['plotpars'][2][2]) != 0.0 and self.flag == 'r':
+        if float(self.pars['plotpars']['shift'][2]) != 0.0 and self.flag == 'r':
             message +=" Setting additive shift to 0\nPress enter to continue"
-            self.pars['plotpars'][2][2] = '0.0'
+            self.pars['plotpars']['shift'][2] = '0.0'
             print(message)
             input()
             
-        elif float(self.pars['plotpars'][2][3]) != 1.0 and self.flag == 'a':
+        elif float(self.pars['plotpars']['shift'][3]) != 1.0 and self.flag == 'a':
             message += "Setting multipl. shift to 1\nPress enter to continue"
-            self.pars['plotpars'][2][3] = '1.0'
+            self.pars['plotpars']['shift'][3] = '1.0'
             print(message)
             input()
        
     def v_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT VELOCITY (KM/S)?")
         rfactor = input()
-        self.pars['plotpars'][2][0] = rfactor
+        self.pars['plotpars']['shift'][0] = rfactor
         # Check if w_fac is 0, if not - change it to 0
-        if float(self.pars['plotpars'][2][1]) != 0.0:
+        if float(self.pars['plotpars']['shift'][1]) != 0.0:
             print("You cannot use wavelength shift and velocity\n \
             shift at the same time. Setting wavelength shift to 0")
-            self.pars['plotpars'][2][1] = '0.0'
+            self.pars['plotpars']['shift'][1] = '0.0'
             print("Press any key to continue")
             input()
     
     def w_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT WAVELENGTH?")
         rfactor = input()
-        self.pars['plotpars'][2][1] = rfactor
+        self.pars['plotpars']['shift'][1] = rfactor
         # Check if v_fac is 0, if not - change it to 0
-        if float(self.pars['plotpars'][2][0]) != 0.0:
+        if float(self.pars['plotpars']['shift'][0]) != 0.0:
             print("You cannot use wavelength shift and velocity\n \
             shift at the same time. Setting velocity shift to 0")
-            self.pars['plotpars'][2][0] = '0.0'
+            self.pars['plotpars']['shift'][0] = '0.0'
             print("Press enter to continue")
             input()
     
@@ -649,21 +632,17 @@ class SynthPlot(object):
             if self.flag == 'q':
                 quit_moog = True
             elif self.obs_in_flag and (self.flag == 'a' or self.flag == 'r'):
-                self.add_plotparams()
                 self.rescale_flux()
                 self.apply_shifts()
             elif self.obs_in_flag and self.flag == 'w':
-                self.add_plotparams()
                 self.w_shift()
                 self.apply_shifts()
             elif self.obs_in_flag and self.flag == 'v':
-                self.add_plotparams()
                 self.v_shift()
                 self.apply_shifts()
             elif self.flag == 'h' or self.flag == 'f':
                 self.hardcopy()
             elif self.flag == 'c':
-                self.add_plotparams()
                 self.change_plotlim()
             elif self.flag == "m":
                 self.do_plot()
@@ -673,9 +652,8 @@ class SynthPlot(object):
                 self.abundances()               
             elif self.flag == 'u':
                 self.pars = copy.deepcopy(self.org_pars)
-                if self.pars['plotpars'][0] == 1:
-                    self.apply_shifts()
-                run_moog(self.driver, self.pars)
+                self.apply_shifts()
+                run_moog(self.pars)
             elif self.flag == 'l':
                 self.add_veil()
             elif self.flag == 'p':
