@@ -443,24 +443,22 @@ class SynthPlot(object):
     def change_abund(self):
         in_list = []
         
-        if 'abundances' in list(self.pars.keys()):
-            for val in self.pars['abundances'][1:]:
-                in_list.append(val[0])
-            in_list = set(in_list)
-            syn_no = int(self.pars['abundances'][0][1])
+        if 'abundances' in self.pars:
+            in_list = list(self.pars['abundances'].keys())
+            syn_no = len(self.pars['abundances'][in_list[0]])
         else:
-            in_list = set([])
+            in_list = 0
             syn_no = 0
-            self.pars['abundances'] = [['0', '0']]
+            self.pars['abundances'] = {}
 
         print("Which element to change?")
-        a_id = input()
+        a_id = float(input())
         print("n = new abundances, or z = zero offsets?")
         flag = input()
         print("Enter the new abundances or offsets on the line below :")
         new = input().split(None)
         
-        if a_id in in_list and a_id != '99':
+        if a_id in self.pars['abundances'] and a_id != 99:
             for index, val in enumerate(self.pars['abundances'][1:]):
                 if val[0] == a_id:
                     if flag == 'n':
@@ -505,7 +503,7 @@ class SynthPlot(object):
             i_id = int(input())
             print("What are the new division factors?")
             new = input().split(None)
-            self.pars['isotopes'][i_id][1] = new
+            self.pars['isotopes'][i_id] = new
 
         elif flag == 'n':  # add new entry to isotopes table
             print("What is the new isotope designation?")
@@ -515,11 +513,10 @@ class SynthPlot(object):
 
             new_fac = input().split(None)
             
-            if 'isotopes' not in list(self.pars.keys()):
-                self.pars['isotopes'] = [['0', str(len(new_fac))]]
+            if 'isotopes' not in self.pars:
+                self.pars['isotopes'] = {}
                 
-            self.pars['isotopes'].append([new_iso, new_fac])
-            self.pars['isotopes'][0][0] = str(len(self.pars['isotopes'][1:]))
+            self.pars['isotopes'][new_iso] = new_fac
 
     def change_syn_no(self):
         print("How many synths?")
@@ -539,17 +536,16 @@ class SynthPlot(object):
 
             print("element, abundance offsets OR isotope number, isotope name, factors")
 
-            if 'abundances' in list(self.pars.keys()):
-                sno = int(self.pars['abundances'][0][1])
-                for elem in enumerate(self.pars['abundances'][1:]):
-                    print("%3s" % "", "%10s" % elem[1][0],
-                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][1][:sno])))
+            if 'abundances' in self.pars:
+                for elem in self.pars['abundances'].keys():
+                    print("%3s" % "", "%10s" % elem,
+                        ("".join("%10s " % ("%4.2f" % float(i)) for i in self.pars['abundances'][elem])))
                 print("")
             
-            if 'isotopes' in list(self.pars.keys()):
-                for i, elem in enumerate(self.pars['isotopes'][1:]):
-                    print("%3i" % int(i+1), "%10s" % elem[0],
-                        ("".join("%10s " % ("%4.2f" % float(i)) for i in elem[1][:sno])))
+            if 'isotopes' in self.pars:
+                for i, elem in enumerate(list(self.pars['isotopes'].keys())):
+                    print("%3i" % int(i+1), "%10s" % elem,
+                        ("".join("%10s " % ("%4.2f" % float(i)) for i in self.pars['isotopes'][elem])))
 
             print("%10s %-25s %-25s" %
                   ("\nOptions:", "c = change abundance", "i = change isotopic ratio"))
