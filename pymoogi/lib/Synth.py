@@ -7,22 +7,25 @@ import copy
 import time
 import scipy.constants as sc
 import scipy.optimize as so
+import numpy as np
 from matplotlib import rcParams
 from matplotlib import ticker
-from Common_functions import *
+import Common_functions as cf
 from read_out_files import out2_synth
 from solar_abund import get_solar_abund
 from Smoothing import smooth_synspec, smooth_in_use
+
 
 light_speed = sc.c * 0.001
 solar = get_solar_abund()
 
 smooth_strings = {
-    'g' : 'FWHM OF THE GAUSSIAN FUNCTION',
-    'l' : 'FWHM OF THE LORENTZIAN FUNCTION',
-    'm' : 'MACROTURBULENT VELOCITY',
-    'v' : 'STELLAR vsini',
-    'ld':'LIMB DARKENING COEFFICIENT'}
+    'g':  'FWHM OF THE GAUSSIAN FUNCTION',
+    'l':  'FWHM OF THE LORENTZIAN FUNCTION',
+    'm':  'MACROTURBULENT VELOCITY',
+    'v':  'STELLAR vsini',
+    'ld': 'LIMB DARKENING COEFFICIENT'}
+
 
 def print_options():
     print("OPTIONS?    s=new smoothing     r=rescale obs.")
@@ -51,7 +54,9 @@ class SynthPlot(object):
 
         self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
         points = len(self.out2[0][-1])
-        self.slam, step = np.linspace(self.pars['synlimits'][0],self.pars['synlimits'][1], points, retstep=True)
+        self.slam, step = np.linspace(self.pars['synlimits'][0],
+                                      self.pars['synlimits'][1], points,
+                                      retstep=True)
 
         # check if the step is the same
         if step == self.pars['synlimits'][2]:
@@ -91,7 +96,6 @@ class SynthPlot(object):
         else:
             self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
         self.driver = 'synth'
-
         self.labels = [None] * self.pars['syn_no']
 
         self.fig, self.ax = plt.subplots()
@@ -432,7 +436,7 @@ class SynthPlot(object):
             self.pars['veil'], "]")
 
         veil = input()
-        if isfloat(veil) is False:
+        if cf.isfloat(veil) is False:
             pass
         else:
             self.pars['veil'] = float(veil)
@@ -528,10 +532,10 @@ class SynthPlot(object):
        
     def abundances(self):
         iterate = True
-        #clear()
+        #cf.clear()
         sno = 0
         while iterate:
-            #clear()
+            #cf.clear()
             print_driver(self.driver)
 
             print("element, abundance offsets OR isotope number, isotope name, factors")
@@ -562,12 +566,12 @@ class SynthPlot(object):
             elif aopt == 'i':
                 self.change_isotopes()
             elif aopt == 'q':  # rerun synthesis
-                run_moog(self.driver, self.pars)
+                cf.run_moog(self.driver, self.pars)
                 iterate = False
             elif aopt == 'x':  # Forget all changes
                 if 'abundances' in list(self.pars.keys()):
                     self.pars['abundances'] = self.org_pars['abundances']
-                if 'isotopes' in list(self.pars.keys()):    
+                if 'isotopes' in list(self.pars.keys()):
                     self.pars['isotopes'] = self.org_pars['isotopes']
                 iterate = False
 
@@ -586,7 +590,7 @@ class SynthPlot(object):
                         isinstance(child, matplotlib.text.Annotation) or \
                         isinstance(child, matplotlib.text.Text):
                     child.set_color('k')
-              
+
             ax.title.set_color('k')
             legend = ax.get_legend()
             try:
@@ -603,9 +607,10 @@ class SynthPlot(object):
             print("Give the file name for the POSTSRIPT plot image:")
             tf = input() + ".pdf"
         else:
-            tf = "plot_"+id_generator() + ".pdf"
-        
-        plt.savefig(tf, facecolor='white', bbox_inches='tight', orientation='landscape')
+            tf = "plot_"+cf.id_generator() + ".pdf"
+
+        plt.savefig(tf, facecolor='white', bbox_inches='tight',
+                    orientation='landscape')
 
     ####################################################################
     def run_synth(self):
@@ -615,9 +620,9 @@ class SynthPlot(object):
         quit_moog = False
         while not quit_moog:
             self.do_plot()
-            #clear()
-            
-            print_driver(self.driver)
+            # cf.clear()
+
+            cf.print_driver(self.driver)
             if not self.obs_in_flag:
                 print(" !!! No observed spectrum provided")
                 print(" !!! Operations on observed spectrum are not active\n")
@@ -645,11 +650,11 @@ class SynthPlot(object):
             elif self.flag == 's':
                 self.change_smoothing()
             elif self.flag == 'n':
-                self.abundances()               
+                self.abundances()
             elif self.flag == 'u':
                 self.pars = copy.deepcopy(self.org_pars)
                 self.apply_shifts()
-                run_moog(self.pars)
+                cf.run_moog(self.pars)
             elif self.flag == 'l':
                 self.add_veil()
             elif self.flag == 'p':
