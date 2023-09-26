@@ -40,6 +40,24 @@ def isfloat(value):
         return False
 
 
+def check_syn_no(dict_par):
+    synths = []
+    if dict_par['abundances']:
+        for elem in dict_par['abundances']:
+            synths.append(len(dict_par['abundances'][elem]))
+    if dict_par['isotopes']:
+        for elem in dict_par['isotopes']:
+            synths.append(len(dict_par['isotopes'][elem]))
+
+    if len(list(set(synths))) != 1:
+        print('Different number of sythesis for elements')
+        synNo = min(list(set(synths)))
+    else:
+        synNo = list(set(synths))[0]
+
+    return synNo
+
+
 # Recreate back proper string
 def dict_to_str(dict_par):
     s = dict_par['driver'] + "\n"
@@ -56,15 +74,6 @@ def dict_to_str(dict_par):
 
     if dict_par['abundances']:
         no_el = str(len(dict_par['abundances']))
-        # Check if each element has the same number of abundances
-        the_len = []
-        for elem in dict_par['abundances']:
-            the_len.append(len(dict_par['abundances'][elem]))
-        if len(list(set(the_len))) != 1:
-            raise ValueError('Different number of sythesis for elements')
-            exit()
-        else:
-            dict_par['syn_no'] = list(set(the_len))[0]
         s = s + "abundances " + no_el + " " + str(dict_par['syn_no']) + "\n"
         for elem in dict_par['abundances']:
             s = s + "    " + str(elem) + "    "
@@ -72,23 +81,11 @@ def dict_to_str(dict_par):
 
     if 'isotopes' in list(dict_par.keys()):
         no_el = str(len(dict_par['isotopes']))
-        # Check if each element has the same number of abundances
-        the_len = []
-        for elem in dict_par['isotopes']:
-            the_len.append(len(dict_par['isotopes'][elem]))
-        if len(list(set(the_len))) != 1:
-            raise ValueError('Different number of sythesis for elements')
-            exit()
-        elif dict_par['abundances'] and list(set(the_len))[0] != dict_par['syn_no']:
-            raise ValueError('Different number of sythesis for elements and isotopes')
-        else:
-            pass # All good
 
         s = s + "isotopes " + no_el + " " + str(dict_par['syn_no']) + "\n"
         for elem in dict_par['isotopes']:
             s = s + "    " + str(elem) + "    "
             s = s + (' '.join(list(map(str, dict_par['isotopes'][elem])))) + "\n"
-
 
     if 'synlimits' in list(dict_par.keys()):
         s = s + "synlimits\n"
@@ -106,8 +103,9 @@ def dict_to_str(dict_par):
 
 def run_moog(pars):
     print("Calling MOOG")
+    pars['syn_no'] = check_syn_no(pars)
     st = dict_to_str(pars)
-
+    print(pars)
     with open('./batch.par', 'w') as batchpar:
         batchpar.write(st)
     sp.check_output('echo "batch.par\nq" | %s/MOOG' % MOOG_HOME, shell=True)
@@ -131,22 +129,22 @@ def do_stats(x, y):
 
 def print_stats(t):
     print("Here are abundances for", ELEMENTS[int(t[0, 1])])
-    print("%10s %5s %8s %8s %8s %7s %7s %8s" % \
+    print("%10s %5s %8s %8s %8s %7s %7s %8s" %
           ("wavelength", "ID", "EP", "logGF", "EWin", "logRWin", "abund", "delavg"))
     for l in t[t[:, 0].argsort()]:
-        print("%10.2f %5.1f %8.2f %8.2f %7.2f %7.3f %8.3f %8.3f" % \
+        print("%10.2f %5.1f %8.2f %8.2f %7.2f %7.3f %8.3f %8.3f" %
                   (l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7]))
     if t.shape[0] == 1.:
         print("Just one line, no stats")
     else:
-        print("average abundance  = %-9.3f std. deviation =  %-9.3f #lines = %3i" % \
+        print("average abundance  = %-9.3f std. deviation =  %-9.3f #lines = %3i" %
               (np.average(t[:, 6]), np.std(t[:, 6], ddof=1), len(t[:, 6])))
     if t.shape[0] > 3.:
-        print("E.P. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" % \
+        print("E.P. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" %
               (do_stats(t[:, 2], t[:, 6])))
-        print("R.W. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" % \
+        print("R.W. correlation:  slope = %7.3f  intercept = %7.3f  corr. coeff. = %7.3f" %
               (do_stats(t[:, 5], t[:, 6])))
-        print("wav. correl.:  slope = %7.3e  intercept = %7.3f  corr. coeff. = %7.3f\n" % \
+        print("wav. correl.:  slope = %7.3e  intercept = %7.3f  corr. coeff. = %7.3f\n" %
               (do_stats(t[:, 0], t[:, 6])))
     else:
         print("No statistics done for E.P. trends")

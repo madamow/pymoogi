@@ -445,14 +445,7 @@ class SynthPlot(object):
     # Change abundances and isotopes
     ####################################################################
     def change_abund(self):
-        in_list = []
-        
-        if 'abundances' in self.pars:
-            in_list = list(self.pars['abundances'].keys())
-            syn_no = len(self.pars['abundances'][in_list[0]])
-        else:
-            in_list = 0
-            syn_no = 0
+        if not 'abundances' in self.pars:
             self.pars['abundances'] = {}
 
         print("Which element to change?")
@@ -463,38 +456,19 @@ class SynthPlot(object):
         new = input().split(None)
         
         if a_id in self.pars['abundances'] and a_id != 99:
-            for index, val in enumerate(self.pars['abundances'][1:]):
-                if val[0] == a_id:
-                    if flag == 'n':
-                        new_off = []
-                        for a in new:
-                            new_off.append("%.2f" % (float(a) - solar[int(a_id)] - self.mh))
-                        new_off = list(map(str, new_off))
-                        self.pars['abundances'][index+1][1][:syn_no] = new_off
-                    elif flag== 'z':
-                        self.pars['abundances'][index+1][1][:syn_no] = new
+            if flag == 'n':
+                new_off = []
+                for a in new:
+                    new_off.append("%.2f" % (float(a) - solar[int(a_id)] - self.mh))
+                    self.pars['abundances'][a_id] = new_off
+            elif flag== 'z':
+                self.pars['abundances'][a_id] = new
         elif int(a_id) == 99:
-            print(r"""
-                     -''--.
-                   _`>   `\.-'<
-                _.'     _     '._
-              .'   _.='   '=._   '.
-              >_   / /_\ /_\ \   _<
-                / (  \o/\\o/  ) \
-                >._\ .-,_)-. /_.<
-            jgs     /__/ \__\
-                      '---' """)
-            time.sleep(0.5)
-            for index, val in enumerate(self.pars['abundances'][1:]):
-                self.pars['abundances'][index+1][1][:syn_no] = new
+            for index, val in enumerate(self.pars['abundances']):
+                self.pars['abundances'][a_id] = new
         else:
-            self.pars['abundances'].append([a_id, new])
-   
+            self.pars['abundances'][a_id]= new
 
-    
-        self.pars['abundances'][0][0] = str(len(self.pars['abundances'][1:]))
-        if self.pars['abundances'][0][1] == '0':
-            self.pars['abundances'][0][1] = str(len(new))
     
     def change_isotopes(self):
         print("\nOptions: c = change an isotopic factor")
@@ -524,11 +498,13 @@ class SynthPlot(object):
 
     def change_syn_no(self):
         print("How many synths?")
-        syn_no = input()
-        if 'abundances' in list(self.pars.keys()):
-            self.pars['abundances'][0][1] = syn_no
-        if 'isotopes' in list(self.pars.keys()):
-            self.pars['isotopes'][0][1] = syn_no
+        syn_no = int(input())
+
+        for tname in ['isotopes', 'abundances']:
+            if tname in self.pars:
+                for key in self.pars[tname]:
+                    self.pars[tname][key] = self.pars[tname][key][:syn_no]
+
        
     def abundances(self):
         iterate = True
@@ -536,7 +512,7 @@ class SynthPlot(object):
         sno = 0
         while iterate:
             #cf.clear()
-            print_driver(self.driver)
+            cf.print_driver(self.driver)
 
             print("element, abundance offsets OR isotope number, isotope name, factors")
 
@@ -566,7 +542,7 @@ class SynthPlot(object):
             elif aopt == 'i':
                 self.change_isotopes()
             elif aopt == 'q':  # rerun synthesis
-                cf.run_moog(self.driver, self.pars)
+                cf.run_moog(self.pars)
                 iterate = False
             elif aopt == 'x':  # Forget all changes
                 if 'abundances' in list(self.pars.keys()):

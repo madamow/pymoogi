@@ -32,8 +32,6 @@ def main():
     params = yaml.safe_load(open(syn_file).read())
     params['yaml'] = True
 
-
-    print(params)
     # Run MOOG for user's par file
     #try:
     run_moog(params)
