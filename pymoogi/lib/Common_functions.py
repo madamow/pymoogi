@@ -64,7 +64,6 @@ def check_if_number(checkval=None, expect_type='float'):
         return None
 
 
-
 def check_syn_no(dict_par):
     synths = []
     if dict_par['abundances']:

@@ -469,10 +469,11 @@ class SynthPlot(object):
 
         if flag == 'c':
             print("Which isotope number from the list?")
-            i_id = int(input())
+            i_id = cf.check_if_number(expect_type='int')
             print("What are the new division factors?")
             new = input().split(None)
-            self.pars['isotopes'][i_id] = new
+            iso_list = list(self.pars['isotopes'].keys())
+            self.pars['isotopes'][iso_list[i_id-1]] = new
 
         elif flag == 'n':  # add new entry to isotopes table
             print("What is the new isotope designation?")
