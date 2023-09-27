@@ -15,7 +15,6 @@ from read_out_files import out2_synth
 from solar_abund import get_solar_abund
 from Smoothing import smooth_synspec, smooth_in_use
 
-
 light_speed = sc.c * 0.001
 solar = get_solar_abund()
 
@@ -96,7 +95,6 @@ class SynthPlot(object):
         else:
             self.xylim = [float(self.pars['synlimits'][0][0]),
                           float(self.pars['synlimits'][0][1]), 0., 1.05]
-        self.driver = 'synth'
         self.labels = [None] * self.pars['syn_no']
 
         self.fig, self.ax = plt.subplots()
@@ -502,7 +500,7 @@ class SynthPlot(object):
         # cf.clear()
         while iterate:
             # cf.clear()
-            cf.print_driver(self.driver)
+            cf.print_driver(self.pars['driver'])
 
             print("element, abundance offsets OR isotope number, "
                   "isotope name, factors")
@@ -589,7 +587,7 @@ class SynthPlot(object):
             self.do_plot()
             # cf.clear()
 
-            cf.print_driver(self.driver)
+            cf.print_driver(self.pars['driver'])
             if not self.obs_in_flag:
                 print(" !!! No observed spectrum provided")
                 print(" !!! Operations on observed spectrum are not active\n")
