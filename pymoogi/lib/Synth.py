@@ -78,14 +78,14 @@ class SynthPlot(object):
 
         self.m, self.ls = ['', '-']
         if len(self.slam) < 500:
-            self.m, self.ls =['.', '']
+            self.m, self.ls = ['.', '']
 
         self.p2_flag = False
         self.flag = ''
         self.obs_in_flag = False
         self.obs = np.array([])
 
-        if 'observed_in' in list(self.pars.keys()) or int(self.pars['plot'][0]) == 2:
+        if 'observed_in' in self.pars:
             self.obs_org = np.loadtxt(self.pars['observed_in'])
             self.obs_in_flag = True
             self.obs = np.copy(self.obs_org)
@@ -94,22 +94,24 @@ class SynthPlot(object):
         if self.pars['plotpars']:
             self.xylim = self.pars['plotpars']['plotlim']
         else:
-            self.xylim = [float(self.pars['synlimits'][0][0]), float(self.pars['synlimits'][0][1]), 0., 1.05]
+            self.xylim = [float(self.pars['synlimits'][0][0]),
+                          float(self.pars['synlimits'][0][1]), 0., 1.05]
         self.driver = 'synth'
         self.labels = [None] * self.pars['syn_no']
 
         self.fig, self.ax = plt.subplots()
         try:
             self.mh = float(self.out2[0][1].split("=")[-1])
-        except:
-            self.mh=0.
-
+        except TypeError:
+            self.mh = 0.
 
     def ax_plot(self):
         # some basic formatting on plot
 
         if self.obs_in_flag:
-            self.ax.plot(self.obs[:, 0], self.obs[:, 1], ls=self.ls, marker=self.m, color=rcParams['lines.color'])
+            self.ax.plot(self.obs[:, 0], self.obs[:, 1],
+                         ls=self.ls, marker=self.m,
+                         color=rcParams['lines.color'])
 
         if self.pars['plotpars']:
             self.xylim = self.pars['plotpars']['plotlim']
@@ -131,28 +133,28 @@ class SynthPlot(object):
             print("Error while creating a legend")
             pass
 
-
     def bx_plot(self):
         # Plot O-C on second panel
         # bx.xaxis.set_minor_locator( ticker.AutoMinorLocator() )
-        yoc = np.interp(self.slam, self.obs[:, 0], self.obs[:,1])
-    
+        yoc = np.interp(self.slam, self.obs[:, 0], self.obs[:, 1])
+
         colors = []
         for spec in self.sflux:
-            l = self.bx.plot(self.slam, yoc - spec,
-                             label=round(np.std(yoc - spec, ddof=1), 4))
-            colors.append(l[0].get_color())
+            oc = self.bx.plot(self.slam, yoc - spec,
+                              label=round(np.std(yoc - spec, ddof=1), 4))
+            colors.append(oc[0].get_color())
         self.bx.axhline(0., ls='dotted', color='r')
-    
+
         # Set legend
         legend = self.bx.legend(loc=3, frameon=False)
         for color, text in zip(colors, legend.get_texts()):
-            text.set_color(color) 
+            text.set_color(color)
 
     def isotope_labels(self):
         s = 'Isotopes:\n'
         for item in self.pars['isotopes']:
-            s = s + str(item) + ": " + "/".join(list(map(str, self.pars['isotopes'][item]))) + "\n"
+            iso_labels = "/".join(list(map(str, self.pars['isotopes'][item])))
+            s = s + str(item) + ": " + iso_labels + "\n"
         return s
 
     def draw_marker(self, x, y):
@@ -173,7 +175,7 @@ class SynthPlot(object):
 
     def on_ylims_change(self, axes):
         self.xylim[2], self.xylim[3] = axes.get_ylim()
-    
+
     def do_plot(self):
         if list(self.pars['abundances'].keys())[0] == 99:
             dm = 'Changing'
@@ -181,7 +183,9 @@ class SynthPlot(object):
             dm = 'ALL'
         self.out2 = out2_synth(self.pars['summary_out'], delimiter=dm)
         points = len(self.out2[0][-1])
-        self.slam, step = np.linspace(self.pars['synlimits'][0], self.pars['synlimits'][1], points, retstep=True)
+        self.slam, step = np.linspace(self.pars['synlimits'][0],
+                                      self.pars['synlimits'][1],
+                                      points, retstep=True)
 
         if self.pars['smooth']['type'] == 'n':
             self.sflux = [s[-1] for s in self.out2]
@@ -192,19 +196,18 @@ class SynthPlot(object):
         for i, spec in enumerate(self.sflux):
             s = ''
             if dm == 'ALL':
-                for l in self.out2[i][2]:
-                    s += l[0] + "=" + l[1] + " "
+                for elem in self.out2[i][2]:
+                    s += elem[0] + "=" + elem[1] + " "
             else:
-                for l in self.out2[i][2]:
-                    s += '[M/H] FOR ALL ELEMENTS: ' + l[1] + " "
+                for elem in self.out2[i][2]:
+                    s += '[M/H] FOR ALL ELEMENTS: ' + elem[1] + " "
 
             self.labels[i] = s.strip()
-            
+
             if self.pars['veil'] > 0.0:
                 veil = float(self.pars['veil'])
                 self.sflux[i, 1, :] = (spec[1] + veil)/(1. + veil)
 
-        
         if self.p2_flag is True and self.obs_in_flag is True:
             self.ax = plt.subplot2grid((2, 1), (0, 0))
             self.bx = plt.subplot2grid((2, 1), (1, 0), sharex=self.ax)
@@ -213,15 +216,14 @@ class SynthPlot(object):
             self.bx_plot()
             plt.setp(self.ax.get_xticklabels(), visible=False)
             plt.subplots_adjust(hspace=0.)
-            
+
             self.bx.set_xlabel('Wavelength')
             self.bx.set_ylabel('Obs - comp')
-        
         else:
             self.ax = plt.subplot2grid((1, 1), (0, 0))
             self.ax_plot()
             self.ax.set_xlabel('Wavelength')
-        
+
         self.ax.set_ylabel('Rel. flux')
         self.ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         self.ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
@@ -231,18 +233,19 @@ class SynthPlot(object):
 
         # Print input files' names
         if self.obs_in_flag:
-            files_info = self.pars['observed_in'] + "\n" + \
-                         self.pars['lines_in'] + "\n" + self.pars['model_in'] + "\n"
+            files_info = self.pars['observed_in'] + "\n"
+            files_info += self.pars['lines_in'] + "\n"
+            files_info += self.pars['model_in'] + "\n"
         else:
-            files_info = self.pars['lines_in'] + "\n" + self.pars['model_in'] + "\n"
+            files_info = self.pars['lines_in'] + "\n"
+            files_info += self.pars['model_in'] + "\n"
 
         # Set smoothing info:
         if self.pars['smooth']:
-            smo_info ="smoothing:"
+            smo_info = "smoothing:"
             slist = smooth_in_use(self.pars['smooth'])
-            for  stype in slist:
+            for stype in slist:
                 smo_info += f" {stype}={self.pars['smooth'][stype]}"
-
 
         extra_info = files_info + smo_info + "\n"
 
@@ -260,11 +263,11 @@ class SynthPlot(object):
         if len(self.points) != 0:
             for x, y in self.points:
                 self.draw_marker(x, y)
-                
+
         plt.sca(self.ax)
         self.ax.callbacks.connect('xlim_changed', self.on_xlims_change)
-        self.ax.callbacks.connect('ylim_changed', self.on_ylims_change)  
-        
+        self.ax.callbacks.connect('ylim_changed', self.on_ylims_change)
+
     def set_cursor(self):
         cid = plt.gcf().canvas.mpl_connect('button_press_event',
                                            self.mark_points)
@@ -278,14 +281,12 @@ class SynthPlot(object):
 
     def change_plotlim(self):
 
-        sides = ['LEFT WAVELENGTH','RIGHT WAVELENGTH','BOTTOM RELATIVE FLUX','TOP RELATIVE FLUX']
+        sides = ['LEFT WAVELENGTH', 'RIGHT WAVELENGTH',
+                 'BOTTOM RELATIVE FLUX', 'TOP RELATIVE FLUX']
 
-        for i, lbl  in enumerate(sides):
+        for i, lbl in enumerate(sides):
             print(f"{sides[i]} ({self.pars['plotpars']['plotlim'][i]}): ")
-            l = input()
-            if isfloat(l) and l != '':
-                 self.pars['plotpars']['plotlim'][i] = float(l)
-
+            self.pars['plotpars']['plotlim'][i] = cf.check_if_number()
 
     ####################################################################
     # Change smoothing
@@ -316,7 +317,7 @@ class SynthPlot(object):
             self.pars['smooth']['v'] = self.ask_for_smooth(smo)
             self.pars['smooth']['limbdark'] = self.ask_for_smooth('ld')
         elif smo == 'c':
-            self.pars['smooth']['type']['v']= self.ask_for_smooth('v')
+            self.pars['smooth']['type']['v'] = self.ask_for_smooth('v')
             self.pars['smooth']['limbdark'] = self.ask_for_smooth('ld')
             self.pars['smooth']['type']['g'] = self.ask_for_smooth('g')
         elif smo == 'd':
@@ -324,7 +325,7 @@ class SynthPlot(object):
             self.pars['smooth']['type']['g'] = self.ask_for_smooth('g')
         elif smo == 'r':
             self.pars['smooth']['type']['m'] = self.ask_for_smooth('m')
-            self.pars['smooth']['type']['v']= self.ask_for_smooth('v')
+            self.pars['smooth']['type']['v'] = self.ask_for_smooth('v')
             self.pars['smooth']['limbdark'] = self.ask_for_smooth('ld')
             self.pars['smooth']['type']['g'] = self.ask_for_smooth('g')
 
@@ -337,8 +338,9 @@ class SynthPlot(object):
         v_shift, w_shift, a_fac, m_fac = self.pars['plotpars']['shift']
 
         self.obs[:, 0] = self.obs_org[:, 0] + float(w_shift)
-        l_shift = float(v_shift) / light_speed
-        self.obs[:, 0] = self.obs_org[:, 0] * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
+        l_shift = v_shift / light_speed
+        dop_fact = np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
+        self.obs[:, 0] = self.obs_org[:, 0] * dop_fact
         self.obs[:, 1] = self.obs_org[:, 1] * float(m_fac) + float(a_fac)
 
     def find_multip_res(self, factor, d):
@@ -355,7 +357,7 @@ class SynthPlot(object):
         factor = so.leastsq(self.find_multip_res, [1.],
                             args=([obsf, syntf]), full_output=1)
         return round(factor[0][0], 2)
-            
+
     def rescale_flux(self):
         if self.flag == 'r':
             print("MULTIPLY THE OBSERVED POINTS BY WHAT FACTOR?")
@@ -378,22 +380,22 @@ class SynthPlot(object):
         elif self.flag == 'a':
             self.pars['plotpars']['shift'][2] = rfactor
 
-
         # Check if user uses additive and multiplicative shift at the same time
-        message = "You cannot use additive shift and multiplicative shift at the same time.\n"
+        message = "You cannot use additive shift "
+        message += "and multiplicative shift at the same time.\n"
 
-        if float(self.pars['plotpars']['shift'][2]) != 0.0 and self.flag == 'r':
-            message +=" Setting additive shift to 0\nPress enter to continue"
+        if self.pars['plotpars']['shift'][2] != 0.0 and self.flag == 'r':
+            message += " Setting additive shift to 0\nPress enter to continue"
             self.pars['plotpars']['shift'][2] = '0.0'
             print(message)
             input()
-            
-        elif float(self.pars['plotpars']['shift'][3]) != 1.0 and self.flag == 'a':
+
+        elif self.pars['plotpars']['shift'][3] != 1.0 and self.flag == 'a':
             message += "Setting multipl. shift to 1\nPress enter to continue"
             self.pars['plotpars']['shift'][3] = '1.0'
             print(message)
             input()
-       
+
     def v_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT VELOCITY (KM/S)?")
         rfactor = cf.check_if_number()
@@ -405,7 +407,7 @@ class SynthPlot(object):
             self.pars['plotpars']['shift'][1] = '0.0'
             print("Press any key to continue")
             input()
-    
+
     def w_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT WAVELENGTH?")
         rfactor = cf.check_if_number()
@@ -417,7 +419,7 @@ class SynthPlot(object):
             self.pars['plotpars']['shift'][0] = '0.0'
             print("Press enter to continue")
             input()
-    
+
     ####################################################################
     # Add veil
     ####################################################################
@@ -426,41 +428,40 @@ class SynthPlot(object):
         print("Use it wisely! Setting veiling to 0.0 will remove \
         veiling from synthetic spectra. \n")
 
-        print("WHAT IS THE ADDITIONAL FLUX IN TERMS OF CONTINUUM? [",
-            self.pars['veil'], "]")
+        print(f"WHAT IS THE ADDITIONAL FLUX IN TERMS OF CONTINUUM? "
+              f"[{self.pars['veil']}]")
 
         veil = cf.check_if_number()
         self.pars['veil'] = veil
-            
+
     ####################################################################
     # Change abundances and isotopes
     ####################################################################
     def change_abund(self):
-        if not 'abundances' in self.pars:
+        if 'abundances' not in self.pars:
             self.pars['abundances'] = {}
 
         print("Which element to change?")
-        a_id = float(input())
+        a_id = cf.check_if_number(expect_type='int')
         print("n = new abundances, or z = zero offsets?")
         flag = input()
         print("Enter the new abundances or offsets on the line below :")
         new = input().split(None)
-        
+
         if a_id in self.pars['abundances'] and a_id != 99:
             if flag == 'n':
                 new_off = []
                 for a in new:
-                    new_off.append("%.2f" % (float(a) - solar[int(a_id)] - self.mh))
+                    new_off.append("%.2f" % (float(a) - solar[a_id] - self.mh))
                     self.pars['abundances'][a_id] = new_off
-            elif flag== 'z':
+            elif flag == 'z':
                 self.pars['abundances'][a_id] = new
         elif int(a_id) == 99:
             for index, val in enumerate(self.pars['abundances']):
                 self.pars['abundances'][a_id] = new
         else:
-            self.pars['abundances'][a_id]= new
+            self.pars['abundances'][a_id] = new
 
-    
     def change_isotopes(self):
         print("\nOptions: c = change an isotopic factor")
         print("         n = enter a new isotope ")
@@ -477,15 +478,14 @@ class SynthPlot(object):
 
         elif flag == 'n':  # add new entry to isotopes table
             print("What is the new isotope designation?")
-            new_iso = input()
-                        
-            print("What are its division factors?")
+            new_iso = cf.check_if_number()
 
+            print("What are its division factors?")
             new_fac = input().split(None)
-            
+
             if 'isotopes' not in self.pars:
                 self.pars['isotopes'] = {}
-                
+
             self.pars['isotopes'][new_iso] = new_fac
 
     def change_syn_no(self):
@@ -497,33 +497,35 @@ class SynthPlot(object):
                 for key in self.pars[tname]:
                     self.pars[tname][key] = self.pars[tname][key][:syn_no]
 
-       
     def abundances(self):
         iterate = True
-        #cf.clear()
-        sno = 0
+        # cf.clear()
         while iterate:
-            #cf.clear()
+            # cf.clear()
             cf.print_driver(self.driver)
 
-            print("element, abundance offsets OR isotope number, isotope name, factors")
+            print("element, abundance offsets OR isotope number, "
+                  "isotope name, factors")
 
             if 'abundances' in self.pars:
                 for elem in self.pars['abundances'].keys():
-                    print("%3s" % "", "%10s" % elem,
-                        ("".join("%10s " % ("%4.2f" % float(i)) for i in self.pars['abundances'][elem])))
+                    id_elem = "".join(f"{float(i):>4.2f} "
+                                      for i in self.pars['abundances'][elem])
+                    print(f"{''} {elem:>10s} {id_elem}")
                 print("")
-            
+
             if 'isotopes' in self.pars:
                 for i, elem in enumerate(list(self.pars['isotopes'].keys())):
-                    print("%3i" % int(i+1), "%10s" % elem,
-                        ("".join("%10s " % ("%4.2f" % float(i)) for i in self.pars['isotopes'][elem])))
+                    id_iso = "".join(f"{float(i):>10.2f} "
+                                     for i in self.pars['isotopes'][elem])
+                    print(f"{int(i + 1):3d} {elem:>10.4f} {id_iso}")
 
-            print("%10s %-25s %-25s" %
-                  ("\nOptions:", "c = change abundance", "i = change isotopic ratio"))
-            print("%10s %-25s %-25s %-10s" %
-                  ("", "n = change # syntheses", "q = rerun syntheses", "x = exit"))
-            print("What is your choice?")
+            print(f"\n{'Options:':>10s} {'c = change abundance':<25s} "
+                  f"{'i = change isotopic ratio':<25s}")
+            print(f"{'':>10s} {'n = change # syntheses':<25s} "
+                  f"{'q = rerun syntheses':<25s} {'x = exit':<10s}")
+
+            print("\n What is your choice?")
 
             aopt = input()
 
@@ -561,12 +563,9 @@ class SynthPlot(object):
 
             ax.title.set_color('k')
             legend = ax.get_legend()
-            try:
-                for text in legend.get_texts():
-                    text.set_color('k')
-            except:
-                print("Legend did not work")
-                pass
+            for text in legend.get_texts():
+                text.set_color('k')
+
         for artist in plt.gca().get_children():
             if hasattr(artist, 'get_label') and artist.get_label() == '_line0':
                 artist.set_color('k')
