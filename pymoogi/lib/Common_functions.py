@@ -31,22 +31,38 @@ def get_key(item):
     return item[0]
 
 
-def isfloat(value):
+def istype(value, expect_type='float'):
     # Check if value is a float
-    try:
-        float(value)
-        return True
-    except ValueError:
+    if  expect_type == 'float':
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+    elif expect_type == 'int':
+         try:
+            int(value)
+            return True
+         except ValueError:
+            return False
+    else:
         return False
 
 
-def check_if_number(checkval=None):
+def check_if_number(checkval=None, expect_type='float'):
     if not checkval:
         checkval = input()
-    while not isfloat(checkval):
-        print("Your value is not a number. Try again")
+    while not istype(checkval, expect_type=expect_type):
+        print(f"Your value is not a(n) {expect_type}. Try again")
         checkval = input()
-    return checkval
+
+    if expect_type == 'float':
+        return float(checkval)
+    elif expect_type == 'int':
+        return int(checkval)
+    else:
+        return None
+
 
 
 def check_syn_no(dict_par):

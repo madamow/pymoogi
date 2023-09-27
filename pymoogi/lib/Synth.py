@@ -489,7 +489,7 @@ class SynthPlot(object):
 
     def change_syn_no(self):
         print("How many synths?")
-        syn_no = cf.check_if_number()
+        syn_no = cf.check_if_number(expect_type='int')
 
         for tname in ['isotopes', 'abundances']:
             if tname in self.pars:
