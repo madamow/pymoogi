@@ -1,0 +1,12 @@
+driver: abfind
+standard_out:    abfind_eqw1
+summary_out:     abfind_eqw2
+model_in:        ptps1413.odfnew
+lines_in:        lines_abf.dat  
+atmosphere:      1
+lines:           1
+molecules:       2
+freeform:        0
+flux/int:        0
+plot:            2
+damping:         1
