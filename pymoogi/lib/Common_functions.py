@@ -96,29 +96,29 @@ def dict_to_str(dict_par):
         if elem in list(dict_par.keys()):
             s = s + elem + " "+str(dict_par[elem]) + "\n"
 
-    if dict_par['abundances']:
+    if 'abundances' in dict_par:
         no_el = str(len(dict_par['abundances']))
         s = s + "abundances " + no_el + " " + str(dict_par['syn_no']) + "\n"
         for elem in dict_par['abundances']:
             ab_string = ' '.join(list(map(str, dict_par['abundances'][elem])))
             s = s + "    " + str(elem) + "    " + ab_string + "\n"
 
-    if 'isotopes' in list(dict_par.keys()):
+    if 'isotopes' in dict_par:
         no_el = str(len(dict_par['isotopes']))
         s = s + "isotopes " + no_el + " " + str(dict_par['syn_no']) + "\n"
         for elem in dict_par['isotopes']:
             iso_string = ' '.join(list(map(str, dict_par['isotopes'][elem])))
             s = s + "    " + str(elem) + "    " + iso_string + "\n"
 
-    if 'synlimits' in list(dict_par.keys()):
+    if 'synlimits' in dict_par:
         s = s + "synlimits\n"
         s = s + "    "+' '.join(list(map(str, dict_par['synlimits']))) + "\n"
 
-    if 'blenlimits' in list(dict_par.keys()):
+    if 'blenlimits' in dict_par:
         s = s + "blenlimits\n"
         s = s + "    "+' '.join(dict_par['blenlimits']) + "\n"
 
-    if 'obspectrum' in list(dict_par.keys()):
+    if 'obspectrum' in dict_par:
         s = s + "obspectrum " + dict_par['obspectrum'][0] + "\n"
 
     return s
@@ -126,7 +126,8 @@ def dict_to_str(dict_par):
 
 def run_moog(pars):
     print("Calling MOOG")
-    pars['syn_no'] = check_syn_no(pars)
+    if pars['driver'] == 'synth':
+        pars['syn_no'] = check_syn_no(pars)
     st = dict_to_str(pars)
     print(pars)
     with open('./batch.par', 'w') as batchpar:
