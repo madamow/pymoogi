@@ -292,10 +292,7 @@ class SynthPlot(object):
     ####################################################################
     def ask_for_smooth(self, slab):
         print(f"GIVE THE {smooth_strings[slab]}:")
-        val = input()
-        while isfloat(val) is False:
-            print("Your value is not float. Try again")
-            val = input()
+        val = cf.check_if_number()
         return float(val)
 
     def change_smoothing(self):
@@ -373,10 +370,7 @@ class SynthPlot(object):
             print(f'Your new factor is: {rfactor}')
             time.sleep(2.0)
         else:
-            try:
-                float(rfactor)
-            except ValueError:
-                print('Your new value is not a number!')
+            rfactor = cf.check_if_number(checkval=rfactor)
             time.sleep(2.0)
 
         if self.flag == 'r':
@@ -402,7 +396,7 @@ class SynthPlot(object):
        
     def v_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT VELOCITY (KM/S)?")
-        rfactor = input()
+        rfactor = cf.check_if_number()
         self.pars['plotpars']['shift'][0] = rfactor
         # Check if w_fac is 0, if not - change it to 0
         if float(self.pars['plotpars']['shift'][1]) != 0.0:
@@ -414,7 +408,7 @@ class SynthPlot(object):
     
     def w_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT WAVELENGTH?")
-        rfactor = input()
+        rfactor = cf.check_if_number()
         self.pars['plotpars']['shift'][1] = rfactor
         # Check if v_fac is 0, if not - change it to 0
         if float(self.pars['plotpars']['shift'][0]) != 0.0:
@@ -435,11 +429,8 @@ class SynthPlot(object):
         print("WHAT IS THE ADDITIONAL FLUX IN TERMS OF CONTINUUM? [",
             self.pars['veil'], "]")
 
-        veil = input()
-        if cf.isfloat(veil) is False:
-            pass
-        else:
-            self.pars['veil'] = float(veil)
+        veil = cf.check_if_number()
+        self.pars['veil'] = veil
             
     ####################################################################
     # Change abundances and isotopes
@@ -498,7 +489,7 @@ class SynthPlot(object):
 
     def change_syn_no(self):
         print("How many synths?")
-        syn_no = int(input())
+        syn_no = cf.check_if_number()
 
         for tname in ['isotopes', 'abundances']:
             if tname in self.pars:

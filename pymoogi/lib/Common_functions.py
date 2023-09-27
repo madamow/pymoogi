@@ -32,12 +32,21 @@ def get_key(item):
 
 
 def isfloat(value):
-    # Check if value can be float
+    # Check if value is a float
     try:
         float(value)
         return True
     except ValueError:
         return False
+
+
+def check_if_number(checkval=None):
+    if not checkval:
+        checkval = input()
+    while not isfloat(checkval):
+        print("Your value is not a number. Try again")
+        checkval = input()
+    return checkval
 
 
 def check_syn_no(dict_par):
