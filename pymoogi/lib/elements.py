@@ -153,6 +153,16 @@ class Element(object):
         Isotopic composition.
         keys: isotope mass number
         values: Isotope(relative atomic mass, abundance)
+    solar : float
+        xabu = the set of current solar (when available) or meteorite
+        abundances, scaled to log(h) = 12.00 .  The data are from Asplund
+        et al. (2009, Ann. Rev. Ast. Ap., 47, 481)
+    partfunc : dict
+        partition function constants are from ATLAS9; not that those
+        data do not extend to the third ion (e.g. Ag IV) for elements
+        heavier than Ni, and they should be updated as needed.  Here I
+        simply put placeholder partition function data
+        
 
     """
     def __init__(self, number, symbol, name, **kwargs):
@@ -346,7 +356,11 @@ ELEMENTS = ElementsDict(
         oxistates='1*, -1',
         ionenergy=(13.5984, ),
         isotopes={1: Isotope(1.0078250321, 0.999885, 1),
-                  2: Isotope(2.014101778, 0.000115, 2)}),
+                  2: Isotope(2.014101778, 0.000115, 2)},
+        solar=12.00,
+        partfunc={
+            
+        }),
     Element(
         2, 'He', 'Helium',
         group=18, period=1, block='s', series=2,
@@ -357,7 +371,8 @@ ELEMENTS = ElementsDict(
         oxistates='*',
         ionenergy=(24.5874, 54.416, ),
         isotopes={3: Isotope(3.0160293097, 1.37e-06, 3),
-                  4: Isotope(4.0026032497, 0.99999863, 4)}),
+                  4: Isotope(4.0026032497, 0.99999863, 4)},
+        solar=10.93),
     Element(
         3, 'Li', 'Lithium',
         group=1, period=2, block='s', series=3,
@@ -368,7 +383,8 @@ ELEMENTS = ElementsDict(
         oxistates='1*',
         ionenergy=(5.3917, 75.638, 122.451, ),
         isotopes={6: Isotope(6.0151223, 0.0759, 6),
-                  7: Isotope(7.016004, 0.9241, 7)}),
+                  7: Isotope(7.016004, 0.9241, 7)},
+        solar=1.05),
     Element(
         4, 'Be', 'Beryllium',
         group=2, period=2, block='s', series=4,
@@ -378,7 +394,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[He] 2s2',
         oxistates='2*',
         ionenergy=(9.3227, 18.211, 153.893, 217.713, ),
-        isotopes={9: Isotope(9.0121821, 1.0, 9)}),
+        isotopes={9: Isotope(9.0121821, 1.0, 9)},
+        solar=1.38),
     Element(
         5, 'B', 'Boron',
         group=13, period=2, block='p', series=5,
@@ -389,7 +406,8 @@ ELEMENTS = ElementsDict(
         oxistates='3*',
         ionenergy=(8.298, 25.154, 37.93, 59.368, 340.217, ),
         isotopes={10: Isotope(10.012937, 0.199, 10),
-                  11: Isotope(11.0093055, 0.801, 11)}),
+                  11: Isotope(11.0093055, 0.801, 11)},
+        solar=2.70),
     Element(
         6, 'C', 'Carbon',
         group=14, period=2, block='p', series=1,
@@ -401,7 +419,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(11.2603, 24.383, 47.877, 64.492, 392.077,
                    489.981, ),
         isotopes={12: Isotope(12.0, 0.9893, 12),
-                  13: Isotope(13.0033548378, 0.0107, 13)}),
+                  13: Isotope(13.0033548378, 0.0107, 13)},
+        solar=8.43),
     Element(
         7, 'N', 'Nitrogen',
         group=15, period=2, block='p', series=1,
@@ -413,7 +432,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(14.5341, 39.601, 47.488, 77.472, 97.888,
                    522.057, 667.029, ),
         isotopes={14: Isotope(14.0030740052, 0.99632, 14),
-                  15: Isotope(15.0001088984, 0.00368, 15)}),
+                  15: Isotope(15.0001088984, 0.00368, 15)},
+                  solar=7.83),
     Element(
         8, 'O', 'Oxygen',
         group=16, period=2, block='p', series=1,
@@ -426,7 +446,8 @@ ELEMENTS = ElementsDict(
                    113.896, 138.116, 739.315, 871.387, ),
         isotopes={16: Isotope(15.9949146221, 0.99757, 16),
                   17: Isotope(16.9991315, 0.00038, 17),
-                  18: Isotope(17.9991604, 0.00205, 18)}),
+                  18: Isotope(17.9991604, 0.00205, 18)},
+        solar=8.69),
     Element(
         9, 'F', 'Fluorine',
         group=17, period=2, block='p', series=6,
@@ -437,7 +458,8 @@ ELEMENTS = ElementsDict(
         oxistates='-1*',
         ionenergy=(17.4228, 34.97, 62.707, 87.138, 114.24,
                    157.161, 185.182, 953.886, 1103.089, ),
-        isotopes={19: Isotope(18.9984032, 1.0, 19)}),
+        isotopes={19: Isotope(18.9984032, 1.0, 19)},
+        solar=4.56),
     Element(
         10, 'Ne', 'Neon',
         group=18, period=2, block='p', series=2,
@@ -450,7 +472,8 @@ ELEMENTS = ElementsDict(
                    157.93, 207.27, 239.09, 1195.797, 1362.164, ),
         isotopes={20: Isotope(19.9924401759, 0.9048, 20),
                   21: Isotope(20.99384674, 0.0027, 21),
-                  22: Isotope(21.99138551, 0.0925, 22)}),
+                  22: Isotope(21.99138551, 0.0925, 22)},
+        solar=7.93),
     Element(
         11, 'Na', 'Sodium',
         group=1, period=3, block='s', series=3,
@@ -462,7 +485,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(5.1391, 47.286, 71.64, 98.91, 138.39,
                    172.15, 208.47, 264.18, 299.87, 1465.091,
                    1648.659, ),
-        isotopes={23: Isotope(22.98976967, 1.0, 23)}),
+        isotopes={23: Isotope(22.98976967, 1.0, 23)},
+        solar=6.24),
     Element(
         12, 'Mg', 'Magnesium',
         group=2, period=3, block='s', series=4,
@@ -476,7 +500,8 @@ ELEMENTS = ElementsDict(
                    1761.802, 1962.613, ),
         isotopes={24: Isotope(23.9850419, 0.7899, 24),
                   25: Isotope(24.98583702, 0.1, 25),
-                  26: Isotope(25.98259304, 0.1101, 26)}),
+                  26: Isotope(25.98259304, 0.1101, 26)},
+        solar=7.60),
     Element(
         13, 'Al', 'Aluminium',
         group=13, period=3, block='p', series=7,
@@ -488,7 +513,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(5.9858, 18.828, 28.447, 119.99, 153.71,
                    190.47, 241.43, 284.59, 330.21, 398.57,
                    442.07, 2085.983, 2304.08, ),
-        isotopes={27: Isotope(26.98153844, 1.0, 27)}),
+        isotopes={27: Isotope(26.98153844, 1.0, 27)},
+        solar=6.45),
     Element(
         14, 'Si', 'Silicon',
         group=14, period=3, block='p', series=5,
@@ -502,7 +528,8 @@ ELEMENTS = ElementsDict(
                    476.06, 523.5, 2437.676, 2673.108, ),
         isotopes={28: Isotope(27.9769265327, 0.922297, 28),
                   29: Isotope(28.97649472, 0.046832, 29),
-                  30: Isotope(29.97377022, 0.030871, 30)}),
+                  30: Isotope(29.97377022, 0.030871, 30)},
+        solar=7.51),
     Element(
         15, 'P', 'Phosphorus',
         group=15, period=3, block='p', series=1,
@@ -514,7 +541,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(10.4867, 19.725, 30.18, 51.37, 65.023,
                    220.43, 263.22, 309.41, 371.73, 424.5,
                    479.57, 560.41, 611.85, 2816.943, 3069.762, ),
-        isotopes={31: Isotope(30.97376151, 1.0, 31)}),
+        isotopes={31: Isotope(30.97376151, 1.0, 31)},
+        solar=5.41),
     Element(
         16, 'S', 'Sulfur',
         group=16, period=3, block='p', series=1,
@@ -530,7 +558,8 @@ ELEMENTS = ElementsDict(
         isotopes={32: Isotope(31.97207069, 0.9493, 32),
                   33: Isotope(32.9714585, 0.0076, 33),
                   34: Isotope(33.96786683, 0.0429, 34),
-                  36: Isotope(35.96708088, 0.0002, 36)}),
+                  36: Isotope(35.96708088, 0.0002, 36)},
+        solar=7.12),
     Element(
         17, 'Cl', 'Chlorine',
         group=17, period=3, block='p', series=6,
@@ -544,7 +573,8 @@ ELEMENTS = ElementsDict(
                    529.97, 591.97, 656.69, 749.75, 809.39,
                    3658.425, 3946.193, ),
         isotopes={35: Isotope(34.96885271, 0.7578, 35),
-                  37: Isotope(36.9659026, 0.2422, 37)}),
+                  37: Isotope(36.9659026, 0.2422, 37)},
+        solar=5.50),
     Element(
         18, 'Ar', 'Argon',
         group=18, period=3, block='p', series=2,
@@ -559,7 +589,8 @@ ELEMENTS = ElementsDict(
                    918.0, 4120.778, 4426.114, ),
         isotopes={36: Isotope(35.96754628, 0.003365, 36),
                   38: Isotope(37.9627322, 0.000632, 38),
-                  40: Isotope(39.962383123, 0.996003, 40)}),
+                  40: Isotope(39.962383123, 0.996003, 40)},
+        solar=6.40),
     Element(
         19, 'K', 'Potassium',
         group=1, period=4, block='s', series=3,
@@ -574,7 +605,8 @@ ELEMENTS = ElementsDict(
                    968.0, 1034.0, 4610.955, 4933.931, ),
         isotopes={39: Isotope(38.9637069, 0.932581, 39),
                   40: Isotope(39.96399867, 0.000117, 40),
-                  41: Isotope(40.96182597, 0.067302, 41)}),
+                  41: Isotope(40.96182597, 0.067302, 41)},
+        solar=5.03),
     Element(
         20, 'Ca', 'Calcium',
         group=2, period=4, block='s', series=4,
@@ -592,7 +624,8 @@ ELEMENTS = ElementsDict(
                   43: Isotope(42.9587668, 0.00135, 43),
                   44: Isotope(43.9554811, 0.02086, 44),
                   46: Isotope(45.9536928, 4e-05, 46),
-                  48: Isotope(47.952534, 0.00187, 48)}),
+                  48: Isotope(47.952534, 0.00187, 48)},
+        solar=6.34),
     Element(
         21, 'Sc', 'Scandium',
         group=3, period=4, block='d', series=8,
@@ -604,7 +637,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(6.5615, 12.8, 24.76, 73.47, 91.66,
                    11.1, 138.0, 158.7, 180.02, 225.32,
                    225.32, 685.89, 755.47, 829.79, 926.0, ),
-        isotopes={45: Isotope(44.9559102, 1.0, 45)}),
+        isotopes={45: Isotope(44.9559102, 1.0, 45)},
+        solar=3.15),
     Element(
         22, 'Ti', 'Titanium',
         group=4, period=4, block='d', series=8,
@@ -620,7 +654,8 @@ ELEMENTS = ElementsDict(
                   47: Isotope(46.9517638, 0.0744, 47),
                   48: Isotope(47.9479471, 0.7372, 48),
                   49: Isotope(48.9478708, 0.0541, 49),
-                  50: Isotope(49.9447921, 0.0518, 50)}),
+                  50: Isotope(49.9447921, 0.0518, 50)},
+        solar=4.95),
     Element(
         23, 'V', 'Vanadium',
         group=5, period=4, block='d', series=8,
@@ -633,7 +668,8 @@ ELEMENTS = ElementsDict(
                    128.12, 150.17, 173.7, 205.8, 230.5,
                    255.04, 308.25, 336.267, 895.58, 974.02, ),
         isotopes={50: Isotope(49.9471628, 0.0025, 50),
-                  51: Isotope(50.9439637, 0.9975, 51)}),
+                  51: Isotope(50.9439637, 0.9975, 51)},
+        solar=3.93),
     Element(
         24, 'Cr', 'Chromium',
         group=6, period=4, block='d', series=8,
@@ -648,7 +684,8 @@ ELEMENTS = ElementsDict(
         isotopes={50: Isotope(49.9460496, 0.04345, 50),
                   52: Isotope(51.9405119, 0.83789, 52),
                   53: Isotope(52.9406538, 0.09501, 53),
-                  54: Isotope(53.9388849, 0.02365, 54)}),
+                  54: Isotope(53.9388849, 0.02365, 54)},
+        solar=5.64),
     Element(
         25, 'Mn', 'Manganese',
         group=7, period=4, block='d', series=8,
@@ -661,7 +698,8 @@ ELEMENTS = ElementsDict(
                    95.0, 119.27, 196.46, 221.8, 248.3,
                    286.0, 314.4, 343.6, 404.0, 435.3,
                    1136.2, ),
-        isotopes={55: Isotope(54.9380496, 1.0, 55)}),
+        isotopes={55: Isotope(54.9380496, 1.0, 55)},
+        solar=5.43),
     Element(
         26, 'Fe', 'Iron',
         group=8, period=4, block='d', series=8,
@@ -677,7 +715,8 @@ ELEMENTS = ElementsDict(
         isotopes={54: Isotope(53.9396148, 0.05845, 54),
                   56: Isotope(55.9349421, 0.91754, 56),
                   57: Isotope(56.9353987, 0.02119, 57),
-                  58: Isotope(57.9332805, 0.00282, 58)}),
+                  58: Isotope(57.9332805, 0.00282, 58)},
+        solar=7.50),
     Element(
         27, 'Co', 'Cobalt',
         group=9, period=4, block='d', series=8,
@@ -690,7 +729,8 @@ ELEMENTS = ElementsDict(
                    102.0, 129.0, 157.0, 186.13, 276.0,
                    305.0, 336.0, 376.0, 411.0, 444.0,
                    512.0, 546.8, 1403.0, ),
-        isotopes={59: Isotope(58.9332002, 1.0, 59)}),
+        isotopes={59: Isotope(58.9332002, 1.0, 59)},
+        solar=4.99),
     Element(
         28, 'Ni', 'Nickel',
         group=10, period=4, block='d', series=8,
@@ -707,7 +747,8 @@ ELEMENTS = ElementsDict(
                   60: Isotope(59.9307906, 0.262231, 60),
                   61: Isotope(60.9310604, 0.011399, 61),
                   62: Isotope(61.9283488, 0.036345, 62),
-                  64: Isotope(63.9279696, 0.009256, 64)}),
+                  64: Isotope(63.9279696, 0.009256, 64)},
+        solar=6.22),
     Element(
         29, 'Cu', 'Copper',
         group=11, period=4, block='d', series=8,
@@ -721,7 +762,8 @@ ELEMENTS = ElementsDict(
                    266.0, 368.8, 401.0, 435.0, 484.0,
                    520.0, 557.0, 633.0, 671.0, 1698.0, ),
         isotopes={63: Isotope(62.9296011, 0.6917, 63),
-                  65: Isotope(64.9277937, 0.3083, 65)}),
+                  65: Isotope(64.9277937, 0.3083, 65)},
+        solar=4.19),
     Element(
         30, 'Zn', 'Zinc',
         group=12, period=4, block='d', series=8,
@@ -739,7 +781,8 @@ ELEMENTS = ElementsDict(
                   66: Isotope(65.9260368, 0.279, 66),
                   67: Isotope(66.9271309, 0.041, 67),
                   68: Isotope(67.9248476, 0.1875, 68),
-                  70: Isotope(69.925325, 0.0062, 70)}),
+                  70: Isotope(69.925325, 0.0062, 70)},
+        solar=4.56),
     Element(
         31, 'Ga', 'Gallium',
         group=13, period=4, block='p', series=7,
@@ -750,7 +793,8 @@ ELEMENTS = ElementsDict(
         oxistates='3*',
         ionenergy=(5.9993, 20.51, 30.71, 64.0, ),
         isotopes={69: Isotope(68.925581, 0.60108, 69),
-                  71: Isotope(70.924705, 0.39892, 71)}),
+                  71: Isotope(70.924705, 0.39892, 71)},
+        solar=3.04),
     Element(
         32, 'Ge', 'Germanium',
         group=14, period=4, block='p', series=5,
@@ -764,7 +808,8 @@ ELEMENTS = ElementsDict(
                   72: Isotope(71.9220762, 0.2754, 72),
                   73: Isotope(72.9234594, 0.0773, 73),
                   74: Isotope(73.9211782, 0.3628, 74),
-                  76: Isotope(75.9214027, 0.0761, 76)}),
+                  76: Isotope(75.9214027, 0.0761, 76)},
+        solar=3.65),
     Element(
         33, 'As', 'Arsenic',
         group=15, period=4, block='p', series=5,
@@ -775,7 +820,8 @@ ELEMENTS = ElementsDict(
         oxistates='5, 3*, -3',
         ionenergy=(9.7886, 18.633, 28.351, 50.13, 62.63,
                    127.6, ),
-        isotopes={75: Isotope(74.9215964, 1.0, 75)}),
+        isotopes={75: Isotope(74.9215964, 1.0, 75)},
+        solar=2.30),
     Element(
         34, 'Se', 'Selenium',
         group=16, period=4, block='p', series=1,
@@ -791,7 +837,8 @@ ELEMENTS = ElementsDict(
                   77: Isotope(76.9199146, 0.0763, 77),
                   78: Isotope(77.9173095, 0.2377, 78),
                   80: Isotope(79.9165218, 0.4961, 80),
-                  82: Isotope(81.9167, 0.0873, 82)}),
+                  82: Isotope(81.9167, 0.0873, 82)},
+        solar=3.34),
     Element(
         35, 'Br', 'Bromine',
         group=17, period=4, block='p', series=6,
@@ -803,7 +850,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(11.8138, 21.8, 36.0, 47.3, 59.7,
                    88.6, 103.0, 192.8, ),
         isotopes={79: Isotope(78.9183376, 0.5069, 79),
-                  81: Isotope(80.916291, 0.4931, 81)}),
+                  81: Isotope(80.916291, 0.4931, 81)},
+        solar=2.54),
     Element(
         36, 'Kr', 'Krypton',
         group=18, period=4, block='p', series=2,
@@ -819,7 +867,8 @@ ELEMENTS = ElementsDict(
                   82: Isotope(81.9134846, 0.1158, 82),
                   83: Isotope(82.914136, 0.1149, 83),
                   84: Isotope(83.911507, 0.57, 84),
-                  86: Isotope(85.9106103, 0.173, 86)}),
+                  86: Isotope(85.9106103, 0.173, 86)},
+        solar=3.25),
     Element(
         37, 'Rb', 'Rubidium',
         group=1, period=5, block='s', series=3,
@@ -831,7 +880,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(4.1771, 27.28, 40.0, 52.6, 71.0,
                    84.4, 99.2, 136.0, 150.0, 277.1, ),
         isotopes={85: Isotope(84.9117893, 0.7217, 85),
-                  87: Isotope(86.9091835, 0.2783, 87)}),
+                  87: Isotope(86.9091835, 0.2783, 87)},
+        solar=2.52),
     Element(
         38, 'Sr', 'Strontium',
         group=2, period=5, block='s', series=4,
@@ -846,7 +896,8 @@ ELEMENTS = ElementsDict(
         isotopes={84: Isotope(83.913425, 0.0056, 84),
                   86: Isotope(85.9092624, 0.0986, 86),
                   87: Isotope(86.9088793, 0.07, 87),
-                  88: Isotope(87.9056143, 0.8258, 88)}),
+                  88: Isotope(87.9056143, 0.8258, 88)},
+        solar=2.87),
     Element(
         39, 'Y', 'Yttrium',
         group=3, period=5, block='d', series=8,
@@ -858,7 +909,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(6.2173, 12.24, 20.52, 61.8, 77.0,
                    93.0, 116.0, 129.0, 146.52, 191.0,
                    206.0, 374.0, ),
-        isotopes={89: Isotope(88.9058479, 1.0, 89)}),
+        isotopes={89: Isotope(88.9058479, 1.0, 89)},
+        solar=2.21),
     Element(
         40, 'Zr', 'Zirconium',
         group=4, period=5, block='d', series=8,
@@ -872,7 +924,8 @@ ELEMENTS = ElementsDict(
                   91: Isotope(90.905645, 0.1122, 91),
                   92: Isotope(91.9050401, 0.1715, 92),
                   94: Isotope(93.9063158, 0.1738, 94),
-                  96: Isotope(95.908276, 0.028, 96)}),
+                  96: Isotope(95.908276, 0.028, 96)},
+        solar=2.58),
     Element(
         41, 'Nb', 'Niobium',
         group=5, period=5, block='d', series=8,
@@ -883,7 +936,8 @@ ELEMENTS = ElementsDict(
         oxistates='5*, 3',
         ionenergy=(6.7589, 14.32, 25.04, 38.3, 50.55,
                    102.6, 125.0, ),
-        isotopes={93: Isotope(92.9063775, 1.0, 93)}),
+        isotopes={93: Isotope(92.9063775, 1.0, 93)},
+        solar=1.46),
     Element(
         42, 'Mo', 'Molybdenum',
         group=6, period=5, block='d', series=8,
@@ -900,7 +954,8 @@ ELEMENTS = ElementsDict(
                   96: Isotope(95.9046789, 0.1668, 96),
                   97: Isotope(96.906021, 0.0955, 97),
                   98: Isotope(97.9054078, 0.2413, 98),
-                  100: Isotope(99.907477, 0.0963, 100)}),
+                  100: Isotope(99.907477, 0.0963, 100)},
+        solar=1.88),
     Element(
         43, 'Tc', 'Technetium',
         group=7, period=5, block='d', series=8,
@@ -910,7 +965,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Kr] 4d5 5s2',
         oxistates='7*',
         ionenergy=(7.28, 15.26, 29.54, ),
-        isotopes={98: Isotope(97.907216, 1.0, 98)}),
+        isotopes={98: Isotope(97.907216, 1.0, 98)},
+        solar=-5.00),
     Element(
         44, 'Ru', 'Ruthenium',
         group=8, period=5, block='d', series=8,
@@ -926,7 +982,8 @@ ELEMENTS = ElementsDict(
                   100: Isotope(99.9042197, 0.126, 100),
                   101: Isotope(100.9055822, 0.1706, 101),
                   102: Isotope(101.9043495, 0.3155, 102),
-                  104: Isotope(103.90543, 0.1862, 104)}),
+                  104: Isotope(103.90543, 0.1862, 104)},
+        solar=1.75),
     Element(
         45, 'Rh', 'Rhodium',
         group=9, period=5, block='d', series=8,
@@ -936,7 +993,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Kr] 4d8 5s',
         oxistates='5, 4, 3*, 1*, 2, 0',
         ionenergy=(7.4589, 18.08, 31.06, ),
-        isotopes={103: Isotope(102.905504, 1.0, 103)}),
+        isotopes={103: Isotope(102.905504, 1.0, 103)},
+        solar=0.91),
     Element(
         46, 'Pd', 'Palladium',
         group=10, period=5, block='d', series=8,
@@ -951,7 +1009,8 @@ ELEMENTS = ElementsDict(
                   105: Isotope(104.905084, 0.2233, 105),
                   106: Isotope(105.903483, 0.2733, 106),
                   108: Isotope(107.903894, 0.2646, 108),
-                  110: Isotope(109.905152, 0.1172, 110)}),
+                  110: Isotope(109.905152, 0.1172, 110)},
+        solar=1.57),
     Element(
         47, 'Ag', 'Silver',
         group=11, period=5, block='d', series=8,
@@ -962,7 +1021,8 @@ ELEMENTS = ElementsDict(
         oxistates='2, 1*',
         ionenergy=(7.5762, 21.49, 34.83, ),
         isotopes={107: Isotope(106.905093, 0.51839, 107),
-                  109: Isotope(108.904756, 0.48161, 109)}),
+                  109: Isotope(108.904756, 0.48161, 109)},
+        solar=0.94),
     Element(
         48, 'Cd', 'Cadmium',
         group=12, period=5, block='d', series=8,
@@ -979,7 +1039,8 @@ ELEMENTS = ElementsDict(
                   112: Isotope(111.9027572, 0.2413, 112),
                   113: Isotope(112.9044009, 0.1222, 113),
                   114: Isotope(113.9033581, 0.2873, 114),
-                  116: Isotope(115.904755, 0.0749, 116)}),
+                  116: Isotope(115.904755, 0.0749, 116)},
+        solar=1.71),
     Element(
         49, 'In', 'Indium',
         group=13, period=5, block='p', series=7,
@@ -990,7 +1051,8 @@ ELEMENTS = ElementsDict(
         oxistates='3*',
         ionenergy=(5.7864, 18.869, 28.03, 28.03, ),
         isotopes={113: Isotope(112.904061, 0.0429, 113),
-                  115: Isotope(114.903878, 0.9571, 115)}),
+                  115: Isotope(114.903878, 0.9571, 115)},
+        solar=0.80),
     Element(
         50, 'Sn', 'Tin',
         group=14, period=5, block='p', series=7,
@@ -1009,7 +1071,8 @@ ELEMENTS = ElementsDict(
                   119: Isotope(118.903309, 0.0859, 119),
                   120: Isotope(119.9021966, 0.3258, 120),
                   122: Isotope(121.9034401, 0.0463, 122),
-                  124: Isotope(123.9052746, 0.0579, 124)}),
+                  124: Isotope(123.9052746, 0.0579, 124)},
+        solar=2.04),
     Element(
         51, 'Sb', 'Antimony',
         group=15, period=5, block='p', series=5,
@@ -1021,7 +1084,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(8.6084, 16.53, 25.3, 44.2, 56.0,
                    108.0, ),
         isotopes={121: Isotope(120.903818, 0.5721, 121),
-                  123: Isotope(122.9042157, 0.4279, 123)}),
+                  123: Isotope(122.9042157, 0.4279, 123)},
+        solar=1.01),
     Element(
         52, 'Te', 'Tellurium',
         group=16, period=5, block='p', series=5,
@@ -1039,7 +1103,8 @@ ELEMENTS = ElementsDict(
                   125: Isotope(124.9044247, 0.0707, 125),
                   126: Isotope(125.9033055, 0.1884, 126),
                   128: Isotope(127.9044614, 0.3174, 128),
-                  130: Isotope(129.9062228, 0.3408, 130)}),
+                  130: Isotope(129.9062228, 0.3408, 130)},
+        solar=2.18),
     Element(
         53, 'I', 'Iodine',
         group=17, period=5, block='p', series=6,
@@ -1049,7 +1114,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Kr] 4d10 5s2 5p5',
         oxistates='7, 5, 1, -1*',
         ionenergy=(10.4513, 19.131, 33.0, ),
-        isotopes={127: Isotope(126.904468, 1.0, 127)}),
+        isotopes={127: Isotope(126.904468, 1.0, 127)},
+        solar=1.55),
     Element(
         54, 'Xe', 'Xenon',
         group=18, period=5, block='p', series=2,
@@ -1067,7 +1133,8 @@ ELEMENTS = ElementsDict(
                   131: Isotope(130.9050819, 0.2118, 131),
                   132: Isotope(131.9041545, 0.2689, 132),
                   134: Isotope(133.9053945, 0.1044, 134),
-                  136: Isotope(135.90722, 0.0887, 136)}),
+                  136: Isotope(135.90722, 0.0887, 136)},
+        solar=2.24),
     Element(
         55, 'Cs', 'Caesium',
         group=1, period=6, block='s', series=3,
@@ -1077,7 +1144,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 6s',
         oxistates='1*',
         ionenergy=(3.8939, 25.1, ),
-        isotopes={133: Isotope(132.905447, 1.0, 133)}),
+        isotopes={133: Isotope(132.905447, 1.0, 133)},
+        solar=1.08),
     Element(
         56, 'Ba', 'Barium',
         group=2, period=6, block='s', series=4,
@@ -1093,7 +1161,8 @@ ELEMENTS = ElementsDict(
                   135: Isotope(134.905683, 0.06592, 135),
                   136: Isotope(135.90457, 0.07854, 136),
                   137: Isotope(136.905821, 0.11232, 137),
-                  138: Isotope(137.905241, 0.71698, 138)}),
+                  138: Isotope(137.905241, 0.71698, 138)},
+        solar=2.18),
     Element(
         57, 'La', 'Lanthanum',
         group=3, period=6, block='f', series=9,
@@ -1104,7 +1173,8 @@ ELEMENTS = ElementsDict(
         oxistates='3*',
         ionenergy=(5.5769, 11.06, 19.175, ),
         isotopes={138: Isotope(137.907107, 0.0009, 138),
-                  139: Isotope(138.906348, 0.9991, 139)}),
+                  139: Isotope(138.906348, 0.9991, 139)},
+        solar=1.10),
     Element(
         58, 'Ce', 'Cerium',
         group=3, period=6, block='f', series=9,
@@ -1117,7 +1187,8 @@ ELEMENTS = ElementsDict(
         isotopes={136: Isotope(135.90714, 0.00185, 136),
                   138: Isotope(137.905986, 0.00251, 138),
                   140: Isotope(139.905434, 0.8845, 140),
-                  142: Isotope(141.90924, 0.11114, 142)}),
+                  142: Isotope(141.90924, 0.11114, 142)},
+        solar=1.58),
     Element(
         59, 'Pr', 'Praseodymium',
         group=3, period=6, block='f', series=9,
@@ -1127,7 +1198,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f3 6s2',
         oxistates='4, 3*',
         ionenergy=(5.473, 10.55, 21.62, 38.95, 57.45, ),
-        isotopes={141: Isotope(140.907648, 1.0, 141)}),
+        isotopes={141: Isotope(140.907648, 1.0, 141)},
+        solar=0.72),
     Element(
         60, 'Nd', 'Neodymium',
         group=3, period=6, block='f', series=9,
@@ -1143,7 +1215,8 @@ ELEMENTS = ElementsDict(
                   145: Isotope(144.912569, 0.083, 145),
                   146: Isotope(145.913112, 0.172, 146),
                   148: Isotope(147.916889, 0.057, 148),
-                  150: Isotope(149.920887, 0.056, 150)}),
+                  150: Isotope(149.920887, 0.056, 150)},
+        solar=1.42),
     Element(
         61, 'Pm', 'Promethium',
         group=3, period=6, block='f', series=9,
@@ -1153,7 +1226,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f5 6s2',
         oxistates='3*',
         ionenergy=(5.582, 10.9, ),
-        isotopes={145: Isotope(144.912744, 1.0, 145)}),
+        isotopes={145: Isotope(144.912744, 1.0, 145)},
+        solar=-5.00),
     Element(
         62, 'Sm', 'Samarium',
         group=3, period=6, block='f', series=9,
@@ -1169,7 +1243,8 @@ ELEMENTS = ElementsDict(
                   149: Isotope(148.91718, 0.1382, 149),
                   150: Isotope(149.917271, 0.0738, 150),
                   152: Isotope(151.919728, 0.2675, 152),
-                  154: Isotope(153.922205, 0.2275, 154)}),
+                  154: Isotope(153.922205, 0.2275, 154)},
+        solar=0.96),
     Element(
         63, 'Eu', 'Europium',
         group=3, period=6, block='f', series=9,
@@ -1180,7 +1255,8 @@ ELEMENTS = ElementsDict(
         oxistates='3*, 2',
         ionenergy=(5.6704, 11.25, ),
         isotopes={151: Isotope(150.919846, 0.4781, 151),
-                  153: Isotope(152.921226, 0.5219, 153)}),
+                  153: Isotope(152.921226, 0.5219, 153)},
+        solar=0.52),
     Element(
         64, 'Gd', 'Gadolinium',
         group=3, period=6, block='f', series=9,
@@ -1196,7 +1272,8 @@ ELEMENTS = ElementsDict(
                   156: Isotope(155.92212, 0.2047, 156),
                   157: Isotope(156.923957, 0.1565, 157),
                   158: Isotope(157.924101, 0.2484, 158),
-                  160: Isotope(159.927051, 0.2186, 160)}),
+                  160: Isotope(159.927051, 0.2186, 160)},
+        solar=1.07),
     Element(
         65, 'Tb', 'Terbium',
         group=3, period=6, block='f', series=9,
@@ -1206,7 +1283,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f9 6s2',
         oxistates='4, 3*',
         ionenergy=(5.8638, 11.52, ),
-        isotopes={159: Isotope(158.925343, 1.0, 159)}),
+        isotopes={159: Isotope(158.925343, 1.0, 159)},
+        solar=0.30),
     Element(
         66, 'Dy', 'Dysprosium',
         group=3, period=6, block='f', series=9,
@@ -1222,7 +1300,8 @@ ELEMENTS = ElementsDict(
                   161: Isotope(160.92693, 0.1891, 161),
                   162: Isotope(161.926795, 0.2551, 162),
                   163: Isotope(162.928728, 0.249, 163),
-                  164: Isotope(163.929171, 0.2818, 164)}),
+                  164: Isotope(163.929171, 0.2818, 164)},
+        solar=1.10),
     Element(
         67, 'Ho', 'Holmium',
         group=3, period=6, block='f', series=9,
@@ -1232,7 +1311,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f11 6s2',
         oxistates='3*',
         ionenergy=(6.0215, 11.8, ),
-        isotopes={165: Isotope(164.930319, 1.0, 165)}),
+        isotopes={165: Isotope(164.930319, 1.0, 165)},
+        solar=0.48),
     Element(
         68, 'Er', 'Erbium',
         group=3, period=6, block='f', series=9,
@@ -1247,7 +1327,8 @@ ELEMENTS = ElementsDict(
                   166: Isotope(165.93029, 0.3361, 166),
                   167: Isotope(166.932045, 0.2293, 167),
                   168: Isotope(167.932368, 0.2678, 168),
-                  170: Isotope(169.93546, 0.1493, 170)}),
+                  170: Isotope(169.93546, 0.1493, 170)},
+        solar=0.92),
     Element(
         69, 'Tm', 'Thulium',
         group=3, period=6, block='f', series=9,
@@ -1257,7 +1338,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f13 6s2',
         oxistates='3*, 2',
         ionenergy=(6.1843, 12.05, 23.71, ),
-        isotopes={169: Isotope(168.934211, 1.0, 169)}),
+        isotopes={169: Isotope(168.934211, 1.0, 169)},
+        0.10),
     Element(
         70, 'Yb', 'Ytterbium',
         group=3, period=6, block='f', series=9,
@@ -1273,7 +1355,8 @@ ELEMENTS = ElementsDict(
                   172: Isotope(171.9363777, 0.2183, 172),
                   173: Isotope(172.9382068, 0.1613, 173),
                   174: Isotope(173.9388581, 0.3183, 174),
-                  176: Isotope(175.942568, 0.1276, 176)}),
+                  176: Isotope(175.942568, 0.1276, 176)},
+        solar=0.84),
     Element(
         71, 'Lu', 'Lutetium',
         group=3, period=6, block='d', series=9,
@@ -1284,7 +1367,8 @@ ELEMENTS = ElementsDict(
         oxistates='3*',
         ionenergy=(5.4259, 13.9, ),
         isotopes={175: Isotope(174.9407679, 0.9741, 175),
-                  176: Isotope(175.9426824, 0.0259, 176)}),
+                  176: Isotope(175.9426824, 0.0259, 176)},
+        solar=0.10),
     Element(
         72, 'Hf', 'Hafnium',
         group=4, period=6, block='d', series=8,
@@ -1299,7 +1383,8 @@ ELEMENTS = ElementsDict(
                   177: Isotope(176.94322, 0.186, 177),
                   178: Isotope(177.9436977, 0.2728, 178),
                   179: Isotope(178.9458151, 0.1362, 179),
-                  180: Isotope(179.9465488, 0.3508, 180)}),
+                  180: Isotope(179.9465488, 0.3508, 180)},
+        solar=0.85),
     Element(
         73, 'Ta', 'Tantalum',
         group=5, period=6, block='d', series=8,
@@ -1310,7 +1395,8 @@ ELEMENTS = ElementsDict(
         oxistates='5*',
         ionenergy=(7.5496, ),
         isotopes={180: Isotope(179.947466, 0.00012, 180),
-                  181: Isotope(180.947996, 0.99988, 181)}),
+                  181: Isotope(180.947996, 0.99988, 181)},
+        solar=-0.12),
     Element(
         74, 'W', 'Tungsten',
         group=6, period=6, block='d', series=8,
@@ -1324,7 +1410,8 @@ ELEMENTS = ElementsDict(
                   182: Isotope(181.948206, 0.265, 182),
                   183: Isotope(182.9502245, 0.1431, 183),
                   184: Isotope(183.9509326, 0.3064, 184),
-                  186: Isotope(185.954362, 0.2843, 186)}),
+                  186: Isotope(185.954362, 0.2843, 186)},
+        solar=0.85),
     Element(
         75, 'Re', 'Rhenium',
         group=7, period=6, block='d', series=8,
@@ -1335,7 +1422,8 @@ ELEMENTS = ElementsDict(
         oxistates='7, 6, 4, 2, -1',
         ionenergy=(7.8335, ),
         isotopes={185: Isotope(184.9529557, 0.374, 185),
-                  187: Isotope(186.9557508, 0.626, 187)}),
+                  187: Isotope(186.9557508, 0.626, 187)},
+        solar=0.26),
     Element(
         76, 'Os', 'Osmium',
         group=8, period=6, block='d', series=8,
@@ -1351,7 +1439,8 @@ ELEMENTS = ElementsDict(
                   188: Isotope(187.955836, 0.1324, 188),
                   189: Isotope(188.9581449, 0.1615, 189),
                   190: Isotope(189.958445, 0.2626, 190),
-                  192: Isotope(191.961479, 0.4078, 192)}),
+                  192: Isotope(191.961479, 0.4078, 192)},
+        solar=1.40),
     Element(
         77, 'Ir', 'Iridium',
         group=9, period=6, block='d', series=8,
@@ -1362,7 +1451,8 @@ ELEMENTS = ElementsDict(
         oxistates='6, 4*, 3, 2, 1*, 0, -1',
         ionenergy=(8.967, ),
         isotopes={191: Isotope(190.960591, 0.373, 191),
-                  193: Isotope(192.962924, 0.627, 193)}),
+                  193: Isotope(192.962924, 0.627, 193)},
+        solar=1.38),
     Element(
         78, 'Pt', 'Platinum',
         group=10, period=6, block='d', series=8,
@@ -1377,7 +1467,8 @@ ELEMENTS = ElementsDict(
                   194: Isotope(193.962664, 0.32967, 194),
                   195: Isotope(194.964774, 0.33832, 195),
                   196: Isotope(195.964935, 0.25242, 196),
-                  198: Isotope(197.967876, 0.07163, 198)}),
+                  198: Isotope(197.967876, 0.07163, 198)},
+        solar=1.62),
     Element(
         79, 'Au', 'Gold',
         group=11, period=6, block='d', series=8,
@@ -1387,7 +1478,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f14 5d10 6s',
         oxistates='3*, 1',
         ionenergy=(9.2255, 20.5, ),
-        isotopes={197: Isotope(196.966552, 1.0, 197)}),
+        isotopes={197: Isotope(196.966552, 1.0, 197)},
+        solar=0.92),
     Element(
         80, 'Hg', 'Mercury',
         group=12, period=6, block='d', series=8,
@@ -1403,7 +1495,8 @@ ELEMENTS = ElementsDict(
                   200: Isotope(199.968309, 0.231, 200),
                   201: Isotope(200.970285, 0.1318, 201),
                   202: Isotope(201.970626, 0.2986, 202),
-                  204: Isotope(203.973476, 0.0687, 204)}),
+                  204: Isotope(203.973476, 0.0687, 204)},
+        solar=1.17),
     Element(
         81, 'Tl', 'Thallium',
         group=13, period=6, block='p', series=7,
@@ -1414,7 +1507,8 @@ ELEMENTS = ElementsDict(
         oxistates='3, 1*',
         ionenergy=(6.1082, 20.428, 29.83, ),
         isotopes={203: Isotope(202.972329, 0.29524, 203),
-                  205: Isotope(204.974412, 0.70476, 205)}),
+                  205: Isotope(204.974412, 0.70476, 205)},
+        solar=0.90),
     Element(
         82, 'Pb', 'Lead',
         group=14, period=6, block='p', series=7,
@@ -1427,7 +1521,8 @@ ELEMENTS = ElementsDict(
         isotopes={204: Isotope(203.973029, 0.014, 204),
                   206: Isotope(205.974449, 0.241, 206),
                   207: Isotope(206.975881, 0.221, 207),
-                  208: Isotope(207.976636, 0.524, 208)}),
+                  208: Isotope(207.976636, 0.524, 208)},
+        solar=1.75),
     Element(
         83, 'Bi', 'Bismuth',
         group=15, period=6, block='p', series=7,
@@ -1438,7 +1533,8 @@ ELEMENTS = ElementsDict(
         oxistates='5, 3*',
         ionenergy=(7.2855, 16.69, 25.56, 45.3, 56.0,
                    88.3, ),
-        isotopes={209: Isotope(208.980383, 1.0, 209)}),
+        isotopes={209: Isotope(208.980383, 1.0, 209)},
+        solar=0.65),
     Element(
         84, 'Po', 'Polonium',
         group=16, period=6, block='p', series=5,
@@ -1448,7 +1544,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f14 5d10 6s2 6p4',
         oxistates='6, 4*, 2',
         ionenergy=(8.414, ),
-        isotopes={209: Isotope(208.982416, 1.0, 209)}),
+        isotopes={209: Isotope(208.982416, 1.0, 209)},
+        solar=-5.00),
     Element(
         85, 'At', 'Astatine',
         group=17, period=6, block='p', series=6,
@@ -1458,7 +1555,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f14 5d10 6s2 6p5',
         oxistates='7, 5, 3, 1, -1*',
         ionenergy=(),
-        isotopes={210: Isotope(209.987131, 1.0, 210)}),
+        isotopes={210: Isotope(209.987131, 1.0, 210)},
+        solar=-5.00),
     Element(
         86, 'Rn', 'Radon',
         group=18, period=6, block='p', series=2,
@@ -1468,7 +1566,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Xe] 4f14 5d10 6s2 6p6',
         oxistates='2*',
         ionenergy=(10.7485, ),
-        isotopes={222: Isotope(222.0175705, 1.0, 222)}),
+        isotopes={222: Isotope(222.0175705, 1.0, 222)},
+        solar=-5.00),
     Element(
         87, 'Fr', 'Francium',
         group=1, period=7, block='s', series=3,
@@ -1478,7 +1577,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 7s',
         oxistates='1*',
         ionenergy=(4.0727, ),
-        isotopes={223: Isotope(223.0197307, 1.0, 223)}),
+        isotopes={223: Isotope(223.0197307, 1.0, 223)},
+        solar=-5.00),
     Element(
         88, 'Ra', 'Radium',
         group=2, period=7, block='s', series=4,
@@ -1488,7 +1588,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 7s2',
         oxistates='2*',
         ionenergy=(5.2784, 10.147, ),
-        isotopes={226: Isotope(226.0254026, 1.0, 226)}),
+        isotopes={226: Isotope(226.0254026, 1.0, 226)},
+        solar=-5.00),
     Element(
         89, 'Ac', 'Actinium',
         group=3, period=7, block='f', series=10,
@@ -1498,7 +1599,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 6d 7s2',
         oxistates='3*',
         ionenergy=(5.17, 12.1, ),
-        isotopes={227: Isotope(227.027747, 1.0, 227)}),
+        isotopes={227: Isotope(227.027747, 1.0, 227)},
+        solar=-5.00),
     Element(
         90, 'Th', 'Thorium',
         group=3, period=7, block='f', series=10,
@@ -1508,7 +1610,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 6d2 7s2',
         oxistates='4*',
         ionenergy=(6.3067, 11.5, 20.0, 28.8, ),
-        isotopes={232: Isotope(232.0380504, 1.0, 232)}),
+        isotopes={232: Isotope(232.0380504, 1.0, 232)},
+        solar=0.02),
     Element(
         91, 'Pa', 'Protactinium',
         group=3, period=7, block='f', series=10,
@@ -1518,7 +1621,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f2 6d 7s2',
         oxistates='5*, 4',
         ionenergy=(5.89, ),
-        isotopes={231: Isotope(231.0358789, 1.0, 231)}),
+        isotopes={231: Isotope(231.0358789, 1.0, 231)},
+        solar=-5.00),
     Element(
         92, 'U', 'Uranium',
         group=3, period=7, block='f', series=10,
@@ -1530,7 +1634,8 @@ ELEMENTS = ElementsDict(
         ionenergy=(6.1941, ),
         isotopes={234: Isotope(234.0409456, 5.5e-05, 234),
                   235: Isotope(235.0439231, 0.0072, 235),
-                  238: Isotope(238.0507826, 0.992745, 238)}),
+                  238: Isotope(238.0507826, 0.992745, 238)},
+        solar=-0.54),
     Element(
         93, 'Np', 'Neptunium',
         group=3, period=7, block='f', series=10,
@@ -1540,7 +1645,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f4 6d 7s2',
         oxistates='6, 5*, 4, 3',
         ionenergy=(6.2657, ),
-        isotopes={237: Isotope(237.0481673, 1.0, 237)}),
+        isotopes={237: Isotope(237.0481673, 1.0, 237)},
+        solar=-5.00),
     Element(
         94, 'Pu', 'Plutonium',
         group=3, period=7, block='f', series=10,
@@ -1550,7 +1656,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f6 7s2',
         oxistates='6, 5, 4*, 3',
         ionenergy=(6.026, ),
-        isotopes={244: Isotope(244.064198, 1.0, 244)}),
+        isotopes={244: Isotope(244.064198, 1.0, 244)},
+        solar=-5.00),
     Element(
         95, 'Am', 'Americium',
         group=3, period=7, block='f', series=10,
@@ -1560,7 +1667,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f7 7s2',
         oxistates='6, 5, 4, 3*',
         ionenergy=(5.9738, ),
-        isotopes={243: Isotope(243.0613727, 1.0, 243)}),
+        isotopes={243: Isotope(243.0613727, 1.0, 243)},
+        solar=-5.00),
     Element(
         96, 'Cm', 'Curium',
         group=3, period=7, block='f', series=10,
@@ -1570,7 +1678,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f7 6d 7s2',
         oxistates='4, 3*',
         ionenergy=(5.9914, ),
-        isotopes={247: Isotope(247.070347, 1.0, 247)}),
+        isotopes={247: Isotope(247.070347, 1.0, 247)},
+        solar=-5.00),
     Element(
         97, 'Bk', 'Berkelium',
         group=3, period=7, block='f', series=10,
@@ -1580,7 +1689,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f9 7s2',
         oxistates='4, 3*',
         ionenergy=(6.1979, ),
-        isotopes={247: Isotope(247.070299, 1.0, 247)}),
+        isotopes={247: Isotope(247.070299, 1.0, 247)},
+        solar=-5.00),
     Element(
         98, 'Cf', 'Californium',
         group=3, period=7, block='f', series=10,
@@ -1590,7 +1700,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f10 7s2',
         oxistates='4, 3*',
         ionenergy=(6.2817, ),
-        isotopes={251: Isotope(251.07958, 1.0, 251)}),
+        isotopes={251: Isotope(251.07958, 1.0, 251)},
+        solar=-5.00),
     Element(
         99, 'Es', 'Einsteinium',
         group=3, period=7, block='f', series=10,
@@ -1600,7 +1711,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f11 7s2',
         oxistates='3*',
         ionenergy=(6.42, ),
-        isotopes={252: Isotope(252.08297, 1.0, 252)}),
+        isotopes={252: Isotope(252.08297, 1.0, 252)},
+        solar=-5.00),
     Element(
         100, 'Fm', 'Fermium',
         group=3, period=7, block='f', series=10,
@@ -1610,7 +1722,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f12 7s2',
         oxistates='3*',
         ionenergy=(6.5, ),
-        isotopes={257: Isotope(257.095099, 1.0, 257)}),
+        isotopes={257: Isotope(257.095099, 1.0, 257)},
+        solar=-5.00),
     Element(
         101, 'Md', 'Mendelevium',
         group=3, period=7, block='f', series=10,
@@ -1620,7 +1733,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f13 7s2',
         oxistates='3*',
         ionenergy=(6.58, ),
-        isotopes={258: Isotope(258.098425, 1.0, 258)}),
+        isotopes={258: Isotope(258.098425, 1.0, 258)},
+        solar=-5.00),
     Element(
         102, 'No', 'Nobelium',
         group=3, period=7, block='f', series=10,
@@ -1630,7 +1744,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 7s2',
         oxistates='3, 2*',
         ionenergy=(6.65, ),
-        isotopes={259: Isotope(259.10102, 1.0, 259)}),
+        isotopes={259: Isotope(259.10102, 1.0, 259)},
+        solar=-5.00),
     Element(
         103, 'Lr', 'Lawrencium',
         group=3, period=7, block='d', series=10,
@@ -1640,7 +1755,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 6d 7s2',
         oxistates='3*',
         ionenergy=(4.9, ),
-        isotopes={262: Isotope(262.10969, 1.0, 262)}),
+        isotopes={262: Isotope(262.10969, 1.0, 262)},
+        solar=-5.00),
     Element(
         104, 'Rf', 'Rutherfordium',
         group=4, period=7, block='d', series=8,
@@ -1650,7 +1766,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 6d2 7s2',
         oxistates='*',
         ionenergy=(6.0, ),
-        isotopes={261: Isotope(261.10875, 1.0, 261)}),
+        isotopes={261: Isotope(261.10875, 1.0, 261)},
+        solar=-5.00),
     Element(
         105, 'Db', 'Dubnium',
         group=5, period=7, block='d', series=8,
@@ -1660,7 +1777,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 6d3 7s2',
         oxistates='*',
         ionenergy=(),
-        isotopes={262: Isotope(262.11415, 1.0, 262)}),
+        isotopes={262: Isotope(262.11415, 1.0, 262)},
+        solar=-5.00),
     Element(
         106, 'Sg', 'Seaborgium',
         group=6, period=7, block='d', series=8,
@@ -1670,7 +1788,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 6d4 7s2',
         oxistates='*',
         ionenergy=(),
-        isotopes={266: Isotope(266.12193, 1.0, 266)}),
+        isotopes={266: Isotope(266.12193, 1.0, 266),
+        solar=-5.00}),
     Element(
         107, 'Bh', 'Bohrium',
         group=7, period=7, block='d', series=8,
@@ -1680,7 +1799,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 6d5 7s2',
         oxistates='*',
         ionenergy=(),
-        isotopes={264: Isotope(264.12473, 1.0, 264)}),
+        isotopes={264: Isotope(264.12473, 1.0, 264)},
+        solar=-5.00),
     Element(
         108, 'Hs', 'Hassium',
         group=8, period=7, block='d', series=8,
@@ -1690,7 +1810,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 6d6 7s2',
         oxistates='*',
         ionenergy=(),
-        isotopes={269: Isotope(269.13411, 1.0, 269)}),
+        isotopes={269: Isotope(269.13411, 1.0, 269)},
+        solar=-5.00),
     Element(
         109, 'Mt', 'Meitnerium',
         group=9, period=7, block='d', series=8,
@@ -1700,7 +1821,8 @@ ELEMENTS = ElementsDict(
         eleconfig='[Rn] 5f14 6d7 7s2',
         oxistates='*',
         ionenergy=(),
-        isotopes={268: Isotope(268.13882, 1.0, 268)}))
+        isotopes={268: Isotope(268.13882, 1.0, 268)},
+        solar=-5.00))
 
 
 PERIODS = {1: 'K', 2: 'L', 3: 'M', 4: 'N', 5: 'O', 6: 'P', 7: 'Q'}
