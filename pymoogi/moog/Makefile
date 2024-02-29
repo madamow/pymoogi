@@ -4,7 +4,7 @@
 #     here are the object files
 OBJECTS = Abfind.o Batom.o Begin.o  \
 	Blankstring.o Blends.o Bmolec.o Boxit.o \
-	Cdcalc.o Chabund.o  \
+	Cdcalc.o \
 	Correl.o Crosscorr.o Curve.o Damping.o Discov.o \
 	Eqlib.o Estim.o Ewfind.o \
 	Ewweighted.o Fakeline.o Finish.o \
@@ -15,8 +15,7 @@ OBJECTS = Abfind.o Batom.o Begin.o  \
 	Nansi.o Nearly.o Number.o \
 	Oneline.o Opaccouls.o OpacHelium.o OpacHydrogen.o \
 	Opacit.o Opacmetals.o Opacscat.o Params.o Partfn.o \
-	Partnew.o \
-	Prinfo.o Putasci.o \
+	Partnew.o Putasci.o \
 	Rinteg.o Setmols.o Stats.o Sunder.o Synspec.o \
 	Synth.o Tablepop.o Taukap.o Total.o Trudamp.o Ucalc.o Vargauss.o \
 	Vmacro.o Voigt.o \
@@ -25,7 +24,7 @@ OBJECTS = Abfind.o Batom.o Begin.o  \
 
 #     here are the common files
 COMMON =  Atmos.com Dummy.com Equivs.com Factor.com Kappa.com Linex.com \
-	Mol.com Multistar.com Obspars.com Plotval.com Pstuff.com \
+	Mol.com Multistar.com Obspars.com Pstuff.com \
 	Quants.com Multimod.com Dampdat.com
 
 #edit this file here if you prefer other compiler

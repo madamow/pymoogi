@@ -180,12 +180,10 @@ c     look here also for the calls to the trend line calculations
       if (atom1(lim1obs) .lt. 100.) then
          write (array,3002) names(iatom), ion(ich) ,xab
          line = 1
-         call prinfo (line)
          write (nf2out,*)
          write (nf2out,3002) names(iatom), ion(ich), xab
          write (array,3003)
          line = 2
-         call prinfo (line)
          write (nf2out,3003)
       else
          call sunder (atom1(lim1obs),ia,ib)
@@ -203,16 +201,13 @@ c     look here also for the calls to the trend line calculations
          endif
          write (array,3004) molname,xab
          line = 1
-         call prinfo (line)
          write (nf2out,*)
          write (nf2out,3004) molname,xab
          write (array,3005) names(iabatom)
          line = 2
-         call prinfo (line)
          write (nf2out,3005) names(iabatom)
          write (array,3006)
          line = 3
-         call prinfo (line)
          write (nf2out,3006)
       endif
       do l=lim1obs,lim2obs
@@ -228,27 +223,23 @@ c     look here also for the calls to the trend line calculations
      .         ew, rw, abundout(l), diff
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
-            call prinfo (line)
          endif
          write (nf2out,3007) wave1(l), atom1(l), e(l,1), loggf,
      .         ew, rw, abundout(l), diff
       enddo
       write (array,3008) average, deviate, kount
       line = line + 1
-      if (errmess(1:9) .ne. 'stopinfo!') call prinfo (line)
       write (nf2out,3008) average, deviate, kount
       if (kount .gt. 2 .and. deltaep .gt. 1.5) then
          write (array,3009) xxm1, xxb1, xxr1 
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
-            call prinfo (line)
          endif
          write (nf2out,3009) xxm1, xxb1, xxr1
       else
          write (array,*) 'No statistics done for E.P. trends' 
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
-            call prinfo (line)
          endif
          write (nf2out,*) 'No statistics done for E.P. trends' 
       endif
@@ -256,14 +247,12 @@ c     look here also for the calls to the trend line calculations
          write (array,3010) xxm2, xxb2, xxr2   
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
-            call prinfo (line)
          endif
          write (nf2out,3010) xxm2, xxb2, xxr2   
       else
          write (array,*) 'No statistics done for R.W. trends' 
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
-            call prinfo (line)
          endif
          write (nf2out,*) 'No statistics done for R.W. trends' 
       endif
@@ -271,14 +260,12 @@ c     look here also for the calls to the trend line calculations
          write (array,3011) xxm3, xxb3, xxr3
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
-            call prinfo (line)
          endif
          write (nf2out,3011) xxm3, xxb3, xxr3
       else
          write (array,*) 'No statistics done for wavelength trends'
          if (errmess(1:9) .ne. 'stopinfo!') then
             line = line + 1
-            call prinfo (line)
          endif
          write (nf2out,*) 'No statistics done for wavelength trends'
       endif

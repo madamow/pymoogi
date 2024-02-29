@@ -14,6 +14,7 @@ c******************************************************************************
 c*****read the parameter file
       call params
 
+      print *, 'doing abfind'
 
 c*****open the files for standard output and summary abundances
       nf1out = 20
@@ -127,7 +128,6 @@ c     agreement
                write (array,1003) molecule, dlog10(abundin),
      .                            dlog10(average)
                lscreen = lscreen + 2
-               call prinfo (lscreen)
                stop
             endif
          endif

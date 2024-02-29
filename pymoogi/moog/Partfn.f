@@ -16,7 +16,7 @@ c******************************************************************************
       iat = 10*nint(atom) - 1
       at = dfloat(iat)/10.
       iatom = nint(atom)
-
+      
 
 c*****compute partition functions for 4 ionization states of an element.
       do k=1,4
@@ -25,6 +25,8 @@ c*****compute partition functions for 4 ionization states of an element.
          if (partflag(iatom,k) .gt. 0) then
             do i=1,ntau   
                u(jmark,k,i) = partnew(at,k,i)
+               print *, 'jmark,k,i', jmark,k,i
+               print *, 'val, at', u(jmark,k,i),at
             enddo
          else
             do i=1,ntau   

@@ -34,7 +34,6 @@ c*****halt if M.E. wasn't done or didn't include this species
          if (neq .eq. 0) then
             lscreen = lscreen + 2
             write (array,1001) iabatom
-            call prinfo (lscreen)
             stop
          endif
          call sunder(atom1(lim1obs),ia,ib)
@@ -46,7 +45,6 @@ c*****halt if M.E. wasn't done or didn't include this species
          if (molflag .eq. 0) then
             lscreen = lscreen + 2
             write (array,1002) iabatom
-            call prinfo (lscreen)
             stop
          endif
          molflag = 1

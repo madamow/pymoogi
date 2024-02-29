@@ -40,7 +40,6 @@ c*****Read the number of depth points
       read (list2,*) ntau
       if (ntau .gt. 100) then
          write (array,1012)
-         call prinfo (10)
          stop
       endif
 
@@ -170,7 +169,9 @@ c*****Convert from Pe to Ne, if needed
 
 
 c*****compute the atomic partition functions
+      print *, 'partf'
       do j=1,95
+         print *, elem(j)
          elem(j) = dble(j)
          call partfn (elem(j),j)
       enddo

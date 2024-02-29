@@ -11,7 +11,6 @@ c******************************************************************************
       include 'Linex.com'
       include 'Pstuff.com'
       include 'Equivs.com'
-      include 'Plotval.com'
       real*4 xgood(100000), ygood(100000), zgood(100000)
       real*8 spx(1000), spy(1000)
       real*4 q

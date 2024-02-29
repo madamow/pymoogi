@@ -13,54 +13,6 @@ c******************************************************************************
       include 'Dummy.com'
 
 
-c*****if the syntheses need to be redone: first rewind the output files,
-c     then close/reopen line list(s), then rewrite model atmosphere output
-      if (choice .eq. 'n') then
-         call chabund
-c         if (choice .eq. 'x') call pltspec (lscreen,ncall)
-         rewind nf1out
-         rewind nf2out
-         if (nflines .ne. 0) then
-            close (unit=nflines)
-            open (unit=nflines,file=flines,access='sequential',
-     .            form='formatted',blank='null',status='old',
-     .            iostat=jstat,err=10)
-         endif
-         if (nfslines .ne. 0) then
-            close (unit=nfslines)
-            open (unit=nfslines,file=fslines,access='sequential',
-     .            form='formatted',blank='null',status='old',
-     .            iostat=jstat,err=10)
-         endif
-         if (plotopt .ne. 0) then
-            rewind nf3out
-         endif
-         write (nf1out,1002) modtype
-         if (modprintopt .ge. 1) then
-            if (modtype .eq. 'begn      ' .or.
-     .          modtype .eq. 'BEGN      ') write (nf1out,1003)
-            write (nf1out,1102) moditle
-            do i=1,ntau
-               dummy1(i) = dlog10(pgas(i))
-               dummy2(i) = dlog10(ne(i)*1.38054d-16*t(i))
-            enddo
-            write (nf1out,1103) wavref,(i,xref(i),tauref(i),t(i),
-     .                          dummy1(i), pgas(i),dummy2(i),ne(i),
-     .                          vturb(i),i=1,ntau)
-            write (nf1out,1104)
-            do i=1,95
-               dummy1(i) = dlog10(xabund(i)) + 12.0
-            enddo
-            write (nf1out,1105) (names(i),i,dummy1(i),i=1,95)
-            write (nf1out,1106) modprintopt, molopt, linprintopt, 
-     .                          fluxintopt
-            write (nf1out,1107) (kapref(i),i=1,ntau)
-         endif
-         linprintopt = linprintalt
-         choice = '1' 
-      endif
-
-
 c*****now do the syntheses
       if (numpecatom .eq. 0 .or. numatomsyn .eq. 0) then
          isynth = 1

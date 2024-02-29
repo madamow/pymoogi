@@ -728,7 +728,6 @@ c  if value is <= 0 then it does not do it
 c  any other keyword causes great grudge
       else
          write (array,1006) keyword
-         call prinfo (5)
          stop
 
       endif

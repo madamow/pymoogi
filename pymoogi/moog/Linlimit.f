@@ -119,9 +119,7 @@ c     lines in a particular blend
          if (lim1line .eq. 0) lim1line = 1
          if (group(lim1line) .ne. 0.) then
             write (array,1001)
-            call prinfo (10)
             write (array,1002)
-            call prinfo (11)
             stop
          endif
          if (lim1line .eq. nlines) then
@@ -138,7 +136,6 @@ c     lines in a particular blend
          return
       else
          write (array,1003) mode
-         call prinfo (10)
          stop
       endif
 
