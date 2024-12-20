@@ -8,6 +8,11 @@ setup(
     author='Monika Adamow',
     author_email='madamow@icloud.com',
     description='Interactive MOOG wrapper',
+    install_requires=[
+    'numpy',
+    'scipy',
+    'matplotlib[PyQt5]'
+    ],
     entry_points = {
         'console_scripts': ['pymoogi = pymoogi.__main__:main']
         },
