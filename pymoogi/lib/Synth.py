@@ -358,12 +358,15 @@ class SynthPlot(object):
     def apply_shifts(self):
         # watch for double shifts!
         v_shift, w_shift, a_fac, m_fac = self.pars['plotpars'][2]
-        print(w_shift)
-        print(self.obs_org.shape)
 
-        self.obs[:, 0] = self.obs_org[:, 0] + float(w_shift)
-        l_shift = float(v_shift) / light_speed
-        self.obs[:, 0] = self.obs_org[:, 0] * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
+        if w_shift != 0.:
+            self.obs[:, 0] = self.obs_org[:, 0] + float(w_shift)
+        elif v_shift != 0.:
+            l_shift = float(v_shift) / light_speed
+            self.obs[:, 0] = self.obs_org[:, 0] * np.sqrt((1.0 + l_shift) / (1.0 - l_shift))
+        else:
+            # No shifts or double shifts
+            pass
         self.obs[:, 1] = self.obs_org[:, 1] * float(m_fac) + float(a_fac)
 
     def find_multip_res(self, factor, d):
@@ -424,25 +427,39 @@ class SynthPlot(object):
        
     def v_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT VELOCITY (KM/S)?")
-        rfactor = input()
+
+        isNo = False
+        while not isNo:
+            try:
+                rfactor = float(input())
+                isNo = True
+            except ValueError:
+                print(f"This value is not a number. Try again.")
+            
         self.pars['plotpars'][2][0] = rfactor
         # Check if w_fac is 0, if not - change it to 0
         if float(self.pars['plotpars'][2][1]) != 0.0:
             print("You cannot use wavelength shift and velocity\n \
             shift at the same time. Setting wavelength shift to 0")
-            self.pars['plotpars'][2][1] = '0.0'
+            self.pars['plotpars'][2][1] = 0.0
             print("Press any key to continue")
             input()
     
     def w_shift(self):
         print("SHIFT THE OBSERVED POINTS BY WHAT WAVELENGTH?")
-        rfactor = input()
-        self.pars['plotpars'][2][1] = rfactor
+        isNo = False
+        while not isNo:
+            try:
+                rfactor = float(input())
+                isNo = True
+            except ValueError:
+                print("Tihs value is not a number. Try again.")
+        self.pars['plotpars'][2][1] = float(rfactor)
         # Check if v_fac is 0, if not - change it to 0
         if float(self.pars['plotpars'][2][0]) != 0.0:
             print("You cannot use wavelength shift and velocity\n \
             shift at the same time. Setting velocity shift to 0")
-            self.pars['plotpars'][2][0] = '0.0'
+            self.pars['plotpars'][2][0] = 0.0
             print("Press enter to continue")
             input()
     
