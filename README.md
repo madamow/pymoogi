@@ -39,8 +39,3 @@ Please note that I may not be able to help you with solving issues that are spec
 My general tip for Mac OS X users is to make sure that their XCode is up to date. Having XCode Tools installed may also help.
 
 For issues related to pyMOOGi - report an issue. Please use the **Issues** tab at the top of the pyMOOGi GitHub page, and then start **New issue**.
-
-#### Who do I talk to? ####
-
-* Email me if you have an idea how to make pymoogi better:
-madamow[at]icloud.com
